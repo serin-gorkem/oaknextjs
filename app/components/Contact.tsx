@@ -119,15 +119,14 @@ const Contact = memo(function () {
             Our office is located in Turkey / Kusadasi
           </p>
           {/* Will change in feature updates. */}
-          <iframe
+            <iframe
             loading="lazy"
             allowFullScreen
             title="location-map"
             className="w-full h-64 lg:h-full"
             referrerPolicy="no-referrer-when-downgrade"
-            src="https://www.google.com/maps/embed/v1/place?q=place_id:ChIJ9eNRs4OpvhQREf4JZnlssoQ&key=AIzaSyAgnp8azpZeKDhalpnFadk00RxnCulWBNM
-    &q=Space+Needle,Seattle+WA"
-          ></iframe>
+            src={`https://www.google.com/maps/embed/v1/place?q=place_id:ChIJ9eNRs4OpvhQREf4JZnlssoQ&key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&q=Space+Needle,Seattle+WA`}
+            ></iframe>
         </div>
       </div>
     </section>
