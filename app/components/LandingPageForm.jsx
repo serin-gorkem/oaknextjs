@@ -1,5 +1,5 @@
 "use client";
-import React, { memo, useMemo } from "react";
+import { memo, useMemo } from "react";
 import { useRef } from "react";
 import  { useLandingPageFormState } from "./useLandingPageFormState";
 import { DayPicker } from "react-day-picker";
@@ -103,28 +103,27 @@ const LandingPageForm = memo(function () {
     []
   );
 
-  function handlePickupTimeChange(e: React.ChangeEvent<HTMLInputElement>) {
+  function handlePickupTimeChange(e) {
     const time = e.target.value;
     setPickupHour(time);
   }
 
-  function handlePickupDaySelect(date: Date | undefined) {
+  function handlePickupDaySelect(date) {
     const newDate = date.toString().slice(0, 15);
     setPickupDate(newDate);
   }
-  function handleReturnTimeChange(e: React.ChangeEvent<HTMLInputElement>) {
+  function handleReturnTimeChange(e) {
     const time = e.target.value;
     setReturnHour(time);
   }
 
-  function handleReturnDaySelect(date: Date | undefined) {
-    if (!date) return;
+  function handleReturnDaySelect(date) {
     const newDate = date.toString().slice(0, 15);
     setReturnDate(newDate);
   }
 
-  const handleReturnTripChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setWantsReturnTrip(e.target.checked);
+  const handleReturnTripChange = (event) => {
+    setWantsReturnTrip(event.target.checked);
   };
 
 
@@ -151,7 +150,7 @@ const LandingPageForm = memo(function () {
   };
   
   const { setFormVariables } = useFormVariables();
-  const handleSubmit = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     if (!validateForm()) {
       return;
