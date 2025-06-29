@@ -49,7 +49,7 @@ type NavProps = {
 };
 
 function PageNav(props: NavProps) {
-  const [scrollPosition, setScrollPosition] = useState(window.pageYOffset);
+  const [scrollPosition, setScrollPosition] = useState<number>(typeof window !== "undefined" ? window.pageYOffset : 0);
   const [showNav, setShowNav] = useState<string>("opacity-0 pointer-events-none");
 
   const handleNavBehavior = () => {
@@ -68,7 +68,7 @@ function PageNav(props: NavProps) {
   useEffect(() => {
     window.addEventListener("scroll", handleNavBehavior);
     return () => window.removeEventListener("scroll", handleNavBehavior);
-  });
+  }, []);
   return (
     <nav
       className={`px-2 p-8  ${showNav} duration-200 opacity-0 fixed w-full flex bg-black/10 backdrop-blur-md top-0 -z-10 `}
@@ -88,7 +88,7 @@ function PageNav(props: NavProps) {
             Book Now
           </button>
           <button
-            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+            onClick={() => typeof window.scrollTo({ top: 0, behavior: "smooth" })}
             aria-label="Go back to top button"
             className="btn w-30 lg:w-36 btn-primary hover:bg-white hover:text-primary"
           >
