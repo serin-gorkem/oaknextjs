@@ -1,12 +1,12 @@
 import { DayPicker } from "react-day-picker";
 import "react-day-picker/style.css";
 
-type ReturnTripFormProps = {
-  returnDate: Date | undefined;
+export type ReturnTripFormProps = {
+  returnDate: string;
   handleReturnTrip: () => void;
   returnHour: string;
   handleDaySelect: (date: Date | undefined) => void;
-  returnPersonCount: number;
+  returnPassengerCount: number;
   handlePersonCount: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleTimeChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   confirmReturn: (e: React.FormEvent<HTMLButtonElement>) => void;
@@ -18,7 +18,7 @@ export function ReturnTripForm({
   handleReturnTrip,
   returnHour,
   handleDaySelect,
-  returnPersonCount,
+  returnPassengerCount,
   handlePersonCount,
   handleTimeChange,
   confirmReturn,
@@ -42,7 +42,7 @@ export function ReturnTripForm({
           mode="single"
           required={true}
           disabled={{ before: new Date() }}
-          selected={returnDate}
+          selected={returnDate ? new Date(returnDate) : undefined}
           onSelect={handleDaySelect}
           className={`bg-base-300 rounded-box p-3 lg:px-8 flex flex-col items-center `}
           footer={returnDate ? `Return Date: ${returnDate}` : ""}
@@ -59,7 +59,7 @@ export function ReturnTripForm({
             placeholder="Passengers (1-10)"
             min="1"
             max="10"
-            value={returnPersonCount}
+            value={returnPassengerCount}
             onChange={handlePersonCount}
             title="Passenger Count"
           />

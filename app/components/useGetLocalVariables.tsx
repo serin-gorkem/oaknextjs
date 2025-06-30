@@ -1,3 +1,4 @@
+"use client";
 import { useCallback } from "react";
 
 const LOCAL_STORAGE_KEY = "formVariables";

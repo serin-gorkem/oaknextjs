@@ -4,7 +4,22 @@ import { ReturnTripForm } from "./ReturnTripForm";
 import useFormVariables from "../components/useGetLocalVariables";
 
 
-const TransferSummaryCard = memo(function (props) {
+type TransferSummaryCardProps = {
+  handleReturnTrip: () => void;
+  handleDaySelect: (date: Date | undefined) => void;
+  handlePersonCount: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handleTimeChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  confirmReturn: (e: React.FormEvent<HTMLButtonElement>) => void;
+  totalDistance: number;
+  flightDuration: string;
+  returnDate: Date | undefined;
+  returnHour: string;
+  returnPassengerCount: number;
+  shouldShowReturnUI: boolean;
+  showDateSetError: boolean;
+};
+
+const TransferSummaryCard = memo(function (props:TransferSummaryCardProps) {
 
   //Get local variables
   const { setFormVariables, getFormVariables } = useFormVariables();
@@ -21,27 +36,29 @@ const TransferSummaryCard = memo(function (props) {
   );
   const [showDateSetError, setShowDateSetError] = useState(false);
 
-  function handleTimeChange(e) {
+  function handleTimeChange(e: React.ChangeEvent<HTMLInputElement>) {
     const time = e.target.value;
     setReturnHour(time);
   }
-  function handleDaySelect(date) {
-    const newDate = date.toString().slice(0, 15);
+  function handleDaySelect(date: Date | undefined) {
+    const newDate = date ? date.toString().slice(0, 15) : "";
     setReturnDate(newDate);
   }
-  function handlePersonCount(e) {
+  function handlePersonCount(e:React.ChangeEvent<HTMLInputElement>) {
     const count = e.target.value;
     setReturnPassengerCount(count);
   }
   function handleReturnTrip() {
     const returnPanel = document.getElementById("return-panel");
-
+    if(returnPanel === null){
+      return;
+    }
     document.body.classList.toggle("overflow-hidden");
     returnPanel.classList.toggle("opacity-0");
     returnPanel.classList.toggle("pointer-events-none");
   }
 
-  function confirmReturn(e) {
+  function confirmReturn(e: React.FormEvent<HTMLButtonElement>) {
     document.body.classList.remove("overflow-hidden");
     e.preventDefault();
 
@@ -62,6 +79,9 @@ const TransferSummaryCard = memo(function (props) {
   function toggleReturnPanelVisibility() {
     const returnPanel = document.getElementById("return-panel");
     const returnButton = document.getElementById("return-btn");
+    if(returnPanel === null || returnButton === null){
+      return;
+    }
     returnPanel.classList.toggle("opacity-0");
     returnPanel.classList.toggle("pointer-events-none");
     returnButton.classList.remove("hidden");

@@ -1,3 +1,4 @@
+"use client";
 {
   /* React imports */
 }
@@ -7,19 +8,17 @@ import { lazy, memo } from "react";
   /* Lazy Loadings */
 }
 const TransferSummaryCard = lazy(() =>
-  import("./components/Vehicle-Features/TransferSummaryCard")
+  import("./TransferSummaryCard")
 );
 import Steps from "../components/Steps";
-const PageIndicator = lazy(() => import("./components/PageIndicator"));
+const PageIndicator = lazy(() => import("./PageIndicator"));
 const VehicleFeaturesCard = lazy(() =>
-  import("./components/Vehicle-Features/VehicleFeaturesCard")
+  import("./VehicleFeaturesCard")
 );
 
 {
   /* API Keys and images import */
 }
-const API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
-import CarVitoIMG from "./assets/img/vehicles/vito.webp";
 import {
   GoogleMap,
   useJsApiLoader,
@@ -27,8 +26,8 @@ import {
   Polyline,
 } from "@react-google-maps/api";
 
-import useFormVariables from "./hooks/useGetLocalVariables";
-
+import useFormVariables from "../components/useGetLocalVariables";
+import Navbar from "../components/Navbar";
 
 {
   /* On Form.jsx, there is a submit button and it will push form information to this jsx file and it will be used in Transfer Card  */
@@ -42,7 +41,7 @@ const VehicleFeatures = memo(function () {
   const libraries = ["places","geometry"];
   const { isLoaded } = useJsApiLoader({
     id: "google-map-script",
-    googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY || (() => {
+    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || (() => {
       console.error("Google Maps API key is missing. Please set VITE_GOOGLE_MAPS_API_KEY in your environment.");
       return ""; // Provide a fallback or empty string
     })(),
@@ -103,9 +102,9 @@ const VehicleFeatures = memo(function () {
 
   return (
     <>
-      <Nav isBookingPage={true} />
+      <Navbar isBookingPage={true} />
       <div className="flex relative flex-col justify-between lg:block xl:max-w-9/12 lg:max-w-11/12 mx-auto">
-        <section className="p-4 md:px-4 flex justify-between flex-col lg:flex-row-reverse gap-4 w-full lg:px-0 ">
+        <section className="p-4 md:px-4 flex justify-between flex-col mt-36 lg:flex-row-reverse gap-4 w-full lg:px-0 ">
           <div className="lg:hidden block">
             <PageIndicator />
           </div>
@@ -132,7 +131,7 @@ const VehicleFeatures = memo(function () {
               <div className="divider my-2"></div>
               <div className="flex items-center gap-2">
                 <a
-                  href={`https://api.whatsapp.com/send?phone=${import.meta.env.VITE_WHATSAPP_PHONE}`}
+                  href={`https://api.whatsapp.com/send?phone=${process.env.NEXT_PUBLIC_WHATSAPP_PHONE_NUMBER}`}
                   aria-label="whatsapp link"
                   className=" text-primary size-10"
                 >
@@ -174,8 +173,8 @@ const VehicleFeatures = memo(function () {
                     d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 0 0 2.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 0 1-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 0 0-1.091-.852H4.5A2.25 2.25 0 0 0 2.25 4.5v2.25Z"
                   />
                 </svg>
-                <a href= {`${import.meta.env.VITE_WHATSAPP_PHONE_NUMBER}`} className="text-xs lg:text-base">
-                  {`${import.meta.env.VITE_WHATSAPP_PHONE_NUMBER}`}
+                <a href= {`${process.env.NEXT_PUBLIC_WHATSAPP_PHONE_NUMBER}`} className="text-xs lg:text-base">
+                  {`${process.env.NEXT_PUBLIC_WHATSAPP_PHONE_NUMBER}`}
                 </a>
               </div>
               <div className="divider my-2"></div>
@@ -205,7 +204,7 @@ const VehicleFeatures = memo(function () {
             </div>
             {/*Price from the database should be passed here.*/}
             <VehicleFeaturesCard
-              img={CarVitoIMG}
+              img="./images/vito.webp"
               vehicleName={"Mercedes Vito"}
               person={8}
               bags={4}
@@ -247,9 +246,6 @@ const VehicleFeatures = memo(function () {
         </section>
         <div className="[&>section]:max-w-full">
           <Steps />
-        </div>
-        <div className="bg-primary h-fit mt-10">
-          <Footer />
         </div>
       </div>
     </>

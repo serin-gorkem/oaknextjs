@@ -1,8 +1,16 @@
 import { memo } from "react";
-import { useNavigate } from "react-router-dom";
 
 
-const VehicleFeaturesCard = memo(function (props) {
+interface VehicleFeaturesCardProps {
+  features: string[];
+  img: string;
+  vehicleName: string;
+  person: number;
+  bags: number;
+  price: string | number;
+}
+
+const VehicleFeaturesCard = memo(function (props: VehicleFeaturesCardProps) {
   const featuresList = props.features.map((feature,index) => {
     return (
       <li key={index} className="flex gap-1">
@@ -25,11 +33,6 @@ const VehicleFeaturesCard = memo(function (props) {
       </li>
     );
   });
-
-  const navigate = useNavigate();
-  function navigateToExtras(){
-    navigate("/extras");
-  }
 
 
   return (
@@ -121,7 +124,7 @@ const VehicleFeaturesCard = memo(function (props) {
           <p>Free Cancellation</p>
         </div>
       </div>
-      <button onClick={navigateToExtras} className="btn btn-warning w-36 text-base-100">SELECT</button>
+      <button className="btn btn-warning w-36 text-base-100">SELECT</button>
     </article>
   );
 });

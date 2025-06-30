@@ -9,6 +9,7 @@ export default function Home() {
       id="home"
       className="h-fit border-red-500 flex flex-col relative sm:gap-5 lg:gap-10"
     >
+      <Navbar isBookingPage={false}/>
       <img
         src="/images/Home_bg.webp" 
         className="object-center object-cover absolute w-full brightness-50 h-full"
