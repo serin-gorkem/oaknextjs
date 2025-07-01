@@ -112,20 +112,6 @@ const LandingPageForm = memo(function () {
     const newDate = date.toString().slice(0, 15);
     setPickupDate(newDate);
   }
-  function handleReturnTimeChange(e) {
-    const time = e.target.value;
-    setReturnHour(time);
-  }
-
-  function handleReturnDaySelect(date) {
-    const newDate = date.toString().slice(0, 15);
-    setReturnDate(newDate);
-  }
-
-  const handleReturnTripChange = (event) => {
-    setWantsReturnTrip(event.target.checked);
-  };
-
 
   const validateForm = () => {
     if (!pickupLocation || !dropOffLocation || !pickupDate || !pickupHour || !passengerCount) {
