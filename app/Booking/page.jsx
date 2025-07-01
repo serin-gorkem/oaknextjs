@@ -33,8 +33,6 @@ import Navbar from "../components/Navbar";
   /* On Form.jsx, there is a submit button and it will push form information to this jsx file and it will be used in Transfer Card  */
 }
 const VehicleFeatures = memo(function () {
-  window.scrollTo(0, 0);
-
   const { getFormVariables } = useFormVariables();
   const localData = getFormVariables();
   
