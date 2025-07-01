@@ -9,7 +9,7 @@ import useFormVariables from "../components/useGetLocalVariables";
   /* Lazy Loadings */
 }
 const Steps = lazy(() => import("../components/Steps"));
-const PageIndicator = lazy(() => import("../booking/PageIndicator"));
+const PageIndicator = lazy(() => import("../PageIndicator"));
 const SummaryCard = lazy(() => import("../extras/SummaryCard"));
 
 {

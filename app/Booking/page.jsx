@@ -11,7 +11,7 @@ const TransferSummaryCard = lazy(() =>
   import("./TransferSummaryCard")
 );
 import Steps from "../components/Steps";
-const PageIndicator = lazy(() => import("./PageIndicator"));
+const PageIndicator = lazy(() => import("../PageIndicator"));
 const VehicleFeaturesCard = lazy(() =>
   import("./VehicleFeaturesCard")
 );

@@ -8,7 +8,7 @@ import { lazy, memo } from "react";
   /* Lazy Loadings */
 }
 const Steps = lazy(() => import("../components/Steps"));
-const PageIndicator = lazy(() => import("../booking/PageIndicator"));
+const PageIndicator = lazy(() => import("../PageIndicator"));
 const SummaryCard = lazy(() => import("../extras/SummaryCard"));
 const ContactSummaryCard = lazy(() =>
   import("./ContactSummaryCard")
