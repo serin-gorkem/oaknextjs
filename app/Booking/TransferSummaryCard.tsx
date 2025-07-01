@@ -1,3 +1,4 @@
+"use client";
 import { memo, useState } from "react";
 import "react-day-picker/style.css";
 import { ReturnTripForm } from "./ReturnTripForm";

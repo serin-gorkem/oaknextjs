@@ -4,6 +4,7 @@ import { useCallback } from "react";
 const LOCAL_STORAGE_KEY = "formVariables";
 
 export function getStoredFormVariables() {
+  if(typeof window === "undefined") return {};
   const stored = localStorage.getItem(LOCAL_STORAGE_KEY);
   return stored ? JSON.parse(stored) : {};
 }
