@@ -1,5 +1,4 @@
 
-import LandingPageForm from "./components/LandingPageForm";
 import Navbar from "../components/Navbar";
 import Stars from "./components/Stars";
 import Form from "./components/Form";
@@ -39,7 +38,6 @@ export default function Home() {
           </button>
         </div>
         <div className="relative sm:max-w-96 h-fit w-full">
-          {/* <LandingPageForm /> */}
           <Form/>
           <div className="absolute bg-base-300 rounded-box shadow-xl h-16 w-10/12 left-1/2 -translate-x-1/2 -bottom-13 pt-2 px-2 -z-10 flex justify-between items-center">
             <img
