@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
 import { query } from "../../lib/db";
 
-export async function POST(req: Request) {
-  const body = await req.json();
+export async function POST(request: Request) {
+  const body = await request.json();
   const { id, amount } = body;
   try {
     await query("UPDATE prices SET amount = $1 WHERE id = $2", [amount,id]);

@@ -10,7 +10,7 @@ import { lazy, memo, useEffect, useState } from "react";
 const Steps = lazy(() => import("../components/Steps"));
 const PageIndicator = lazy(() => import("../PageIndicator"));
 const SummaryCard = lazy(() => import("./SummaryCard"));
-import useFormVariables from "../components/useGetLocalVariables";
+import useFormVariables from "../(home)/components/useGetLocalVariables";
 
 {
   /* API Keys and images import */

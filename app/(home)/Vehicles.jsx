@@ -1,7 +1,7 @@
 "use client";
 import { lazy, memo, useEffect, useState } from "react";
 
-const VehicleCard = lazy(() => import("./VehicleCard"));
+const VehicleCard = lazy(() => import("./components/VehicleCard"));
 
 import '@splidejs/react-splide/css';
 import { Splide, SplideSlide } from '@splidejs/react-splide';

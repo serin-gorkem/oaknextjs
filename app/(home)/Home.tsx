@@ -1,15 +1,15 @@
 
-import LandingPageForm from "./LandingPageForm";
-import Navbar from "./Navbar";
-import Stars from "./Stars";
+import LandingPageForm from "./components/LandingPageForm";
+import Navbar from "../components/Navbar";
+import Stars from "./components/Stars";
+import Form from "./components/Form";
 
 export default function Home() {
   return (
     <section
       id="home"
-      className="h-fit border-red-500 flex flex-col relative sm:gap-5 lg:gap-10"
+      className="h-fit flex flex-col relative sm:gap-5 lg:gap-10"
     >
-      <Navbar isBookingPage={false}/>
       <img
         src="/images/Home_bg.webp" 
         className="object-center object-cover absolute w-full brightness-50 h-full"
@@ -39,7 +39,8 @@ export default function Home() {
           </button>
         </div>
         <div className="relative sm:max-w-96 h-fit w-full">
-          <LandingPageForm />
+          {/* <LandingPageForm /> */}
+          <Form/>
           <div className="absolute bg-base-300 rounded-box shadow-xl h-16 w-10/12 left-1/2 -translate-x-1/2 -bottom-13 pt-2 px-2 -z-10 flex justify-between items-center">
             <img
               src="/images/Tripadvisor-Logo.webp"

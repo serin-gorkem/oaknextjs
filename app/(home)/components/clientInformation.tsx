@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-export function useLandingPageFormState() {
+export function clientInformation() {
     const [shouldShowReturnUI, setWantsReturnTrip] = useState(false);
     const [pickupLocation, setPickupLocation] = useState("");
     const [pickupInput, setPickupInput] = useState("");

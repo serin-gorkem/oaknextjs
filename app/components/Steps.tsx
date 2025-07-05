@@ -1,8 +1,4 @@
 import { memo } from "react";
-import step_1 from "./images/svgs/step_1.svg";
-import step_2 from "./images/svgs/step_2.svg";
-import step_3 from "./images/svgs/step_3.svg";
-import step_4 from "./images/svgs/step_4.svg";
 
 const Steps = memo(function () {
   return (

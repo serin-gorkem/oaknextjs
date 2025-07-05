@@ -1,6 +1,6 @@
 "use client";
 import { memo } from "react";
-import useFormVariables from "../components/useGetLocalVariables";
+import useFormVariables from "../(home)/components/useGetLocalVariables";
 
 type RideDetailsProps = {
   navigateToHome: () => void;

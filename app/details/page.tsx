@@ -3,7 +3,7 @@
   /* React imports */
 }
 import { lazy, memo, useState } from "react";
-import useFormVariables from "../components/useGetLocalVariables";
+import useFormVariables from "../(home)/components/useGetLocalVariables";
 
 {
   /* Lazy Loadings */

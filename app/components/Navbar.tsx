@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import {  useState } from "react";
 
 function Navbar(props: { isBookingPage?: boolean }) {
   const [selectedCurrency, setSelectedCurrency] = useState(currencyList[0]);
@@ -19,10 +19,10 @@ function Navbar(props: { isBookingPage?: boolean }) {
 
   return (
     <div className="my-5 absolute z-100 top-0 w-full">
-      <PageNav
+      {/* <PageNav
         currencySvg={selectedCurrency.svg}
         renderCurrencyList={renderCurrencyList}
-      />
+      /> */}
       {props.isBookingPage ? (
         <BookingNav
           currencySvg={selectedCurrency.svgBook}
@@ -48,68 +48,68 @@ type NavProps = {
   renderCurrencyList: React.ReactNode;
 };
 
-function PageNav(props: NavProps) {
-  const [scrollPosition, setScrollPosition] = useState<number>(typeof window !== "undefined" ? window.pageYOffset : 0);
-  const [showNav, setShowNav] = useState<string>("opacity-0 pointer-events-none");
+// function PageNav(props: NavProps) {
+//   const [scrollPosition, setScrollPosition] = useState<number>(typeof window !== "undefined" ? window.pageYOffset : 0);
+//   const [showNav, setShowNav] = useState<string>("opacity-0 pointer-events-none");
 
-  const handleNavBehavior = () => {
-    const position = window.pageYOffset;
-    setScrollPosition(position);
+//   const handleNavBehavior = () => {
+//     const position = window.pageYOffset;
+//     setScrollPosition(position);
 
-    if (scrollPosition < 1000) {
-      return setShowNav("opacity-0 pointer-events-none");
-    } else if (scrollPosition > window.pageYOffset) {
-      return setShowNav("opacity-100 pointer-events-all  z-20");
-    } else {
-      return setShowNav("opacity-0 pointer-events-none");
-    }
-  };
+//     if (scrollPosition < 1000) {
+//       return setShowNav("opacity-0 pointer-events-none");
+//     } else if (scrollPosition > window.pageYOffset) {
+//       return setShowNav("opacity-100 pointer-events-all  z-20");
+//     } else {
+//       return setShowNav("opacity-0 pointer-events-none");
+//     }
+//   };
 
-  useEffect(() => {
-    window.addEventListener("scroll", handleNavBehavior);
-    return () => window.removeEventListener("scroll", handleNavBehavior);
-  }, []);
-  return (
-    <nav
-      className={`px-2 p-8  ${showNav} duration-200 opacity-0 fixed w-full flex bg-black/10 backdrop-blur-md top-0 -z-10 `}
-    >
-      <ul className="flex flex-col md:flex-row md:justify-between gap-3 lg:p-0 lg:max-w-9/12 mx-auto w-full  ">
-        <li className=" cursor-pointer">
-          <h1 className="text-primary text-3xl hover:text-warning transition-all ">
-            OAK TRAVEL
-          </h1>
-        </li>
-        <li className="flex items-center gap-4 w-fit cursor-pointer">
+//   useEffect(() => {
+//     window.addEventListener("scroll", handleNavBehavior);
+//     return () => window.removeEventListener("scroll", handleNavBehavior);
+//   }, []);
+//   return (
+//     <nav
+//       className={`px-2 p-8  ${showNav} duration-200 opacity-0 fixed w-full flex bg-black/10 backdrop-blur-md top-0 -z-10 `}
+//     >
+//       <ul className="flex flex-col md:flex-row md:justify-between gap-3 lg:p-0 lg:max-w-9/12 mx-auto w-full  ">
+//         <li className=" cursor-pointer">
+//           <h1 className="text-primary text-3xl hover:text-warning transition-all ">
+//             OAK TRAVEL
+//           </h1>
+//         </li>
+//         <li className="flex items-center gap-4 w-fit cursor-pointer">
 
-          <button
-            aria-label="Book button"
-            className="btn btn-primary w-30 lg:w-36 hover:bg-white hover:text-primary"
-          >
-            Book Now
-          </button>
-          <button
-            onClick={() => typeof window.scrollTo({ top: 0, behavior: "smooth" })}
-            aria-label="Go back to top button"
-            className="btn w-30 lg:w-36 btn-primary hover:bg-white hover:text-primary"
-          >
-            Back To top
-          </button>
-          <div className="dropdown">
-            <div tabIndex={0} role="button" className=" m-1">
-              {props.currencySvg}
-            </div>
-            <ul
-              tabIndex={0}
-              className="menu dropdown-content mt-2 bg-base-300 right-1/2 left-1/2 -translate-x-1/2 rounded-box w-32 flex justify-center items-center shadow-sm"
-            >
-              {props.renderCurrencyList}
-            </ul>
-          </div>
-        </li>
-      </ul>
-    </nav>
-  );
-}
+//           <button
+//             aria-label="Book button"
+//             className="btn btn-primary w-30 lg:w-36 hover:bg-white hover:text-primary"
+//           >
+//             Book Now
+//           </button>
+//           <button
+//             onClick={() => typeof window.scrollTo({ top: 0, behavior: "smooth" })}
+//             aria-label="Go back to top button"
+//             className="btn w-30 lg:w-36 btn-primary hover:bg-white hover:text-primary"
+//           >
+//             Back To top
+//           </button>
+//           <div className="dropdown">
+//             <div tabIndex={0} role="button" className=" m-1">
+//               {props.currencySvg}
+//             </div>
+//             <ul
+//               tabIndex={0}
+//               className="menu dropdown-content mt-2 bg-base-300 right-1/2 left-1/2 -translate-x-1/2 rounded-box w-32 flex justify-center items-center shadow-sm"
+//             >
+//               {props.renderCurrencyList}
+//             </ul>
+//           </div>
+//         </li>
+//       </ul>
+//     </nav>
+//   );
+// }
 
 function MobileNav(props: NavProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);

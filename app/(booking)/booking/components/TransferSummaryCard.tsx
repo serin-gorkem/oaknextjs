@@ -2,38 +2,37 @@
 import { memo, useState } from "react";
 import "react-day-picker/style.css";
 import { ReturnTripForm } from "./ReturnTripForm";
-import useFormVariables from "../components/useGetLocalVariables";
 
+type Location = {
+  name?: string;
+  address?: string;
+};
+
+type ClientData = {
+  pickupLocation?: Location;
+  dropOffLocation?: Location;
+  pickupDate?: string;
+  pickupHour?: string;
+  passengerCount?: number;
+  returnDate?: string;
+  returnHour?: string;
+  returnPassengerCount?: number;
+  // Add any other fields as needed
+};
 
 type TransferSummaryCardProps = {
-  handleReturnTrip: () => void;
-  handleDaySelect: (date: Date | undefined) => void;
-  handlePersonCount: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  handleTimeChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  confirmReturn: (e: React.FormEvent<HTMLButtonElement>) => void;
   totalDistance: number;
   flightDuration: string;
-  returnDate: Date | undefined;
-  returnHour: string;
-  returnPassengerCount: number;
-  shouldShowReturnUI: boolean;
-  showDateSetError: boolean;
+  clientData: ClientData;
 };
 
 const TransferSummaryCard = memo(function (props:TransferSummaryCardProps) {
-
-  //Get local variables
-  const { setFormVariables, getFormVariables } = useFormVariables();
-  const localData = getFormVariables();
-  console.log(localData);
   
-  const [returnDate, setReturnDate] = useState(localData?.returnDate ?? "");
-  const [returnHour, setReturnHour] = useState(localData?.returnHour?? "");
-  const [shouldShowReturnUI, setShouldShowReturnUI] = useState(
-    localData?.shouldShowReturnUI ?? false
-  );
+  const [returnDate, setReturnDate] = useState(props.clientData?.returnDate ?? "");
+  const [returnHour, setReturnHour] = useState(props.clientData?.returnHour?? "");
+
   const [returnPassengerCount, setReturnPassengerCount] = useState(
-    localData?.returnPassengerCount ?? 0
+    props.clientData?.returnPassengerCount ?? 0
   );
   const [showDateSetError, setShowDateSetError] = useState(false);
 
@@ -46,7 +45,7 @@ const TransferSummaryCard = memo(function (props:TransferSummaryCardProps) {
     setReturnDate(newDate);
   }
   function handlePersonCount(e:React.ChangeEvent<HTMLInputElement>) {
-    const count = e.target.value;
+    const count = Number(e.target.value);
     setReturnPassengerCount(count);
   }
   function handleReturnTrip() {
@@ -65,9 +64,6 @@ const TransferSummaryCard = memo(function (props:TransferSummaryCardProps) {
 
     if (returnDate && returnHour && returnPassengerCount) {
       toggleReturnPanelVisibility();
-      console.log("return date set");
-      setShouldShowReturnUI(!shouldShowReturnUI);
-      setFormVariables({...localData, returnDate, returnHour, returnPassengerCount});
 
       setShowDateSetError(false);
     } else {
@@ -99,15 +95,15 @@ const TransferSummaryCard = memo(function (props:TransferSummaryCardProps) {
             <figcaption>Outward Journey</figcaption>
             <div className="p-2 flex flex-col gap-1">
               <h3 className="font-bold">
-                {localData?.pickupLocation.name ?? ""}
+                {props.clientData?.pickupLocation?.name ?? ""}
               </h3>
               <p className="text-xs">
-                {localData?.pickupLocation.address ?? ""}
+                {props.clientData?.pickupLocation?.address ?? ""}
               </p>
               <h3 className="font-bold">
-                {localData?.dropOffLocation.name ?? ""}
+                {props.clientData?.dropOffLocation?.name ?? ""}
               </h3>
-              <p className="text-xs">{localData?.dropOffLocation.address ?? ""}</p>
+              <p className="text-xs">{props.clientData?.dropOffLocation?.address ?? ""}</p>
             </div>
             <div className="flex items-center gap-2">
               <svg
@@ -124,7 +120,7 @@ const TransferSummaryCard = memo(function (props:TransferSummaryCardProps) {
                   d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5"
                 />
               </svg>
-              <p className="text-xs">{localData?.pickupDate ?? ""}</p>
+              <p className="text-xs">{props.clientData?.pickupDate ?? ""}</p>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
@@ -139,7 +135,7 @@ const TransferSummaryCard = memo(function (props:TransferSummaryCardProps) {
                   d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
                 />
               </svg>
-              <p className="text-xs">{localData?.pickupHour ?? ""}</p>
+              <p className="text-xs">{props.clientData?.pickupHour ?? ""}</p>
             </div>
           </div>
           <hr className=" text-gray w-full"></hr>
@@ -159,7 +155,7 @@ const TransferSummaryCard = memo(function (props:TransferSummaryCardProps) {
                 d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"
               />
             </svg>
-            <p className="text-xs">{`${localData?.passengerCount ?? 0} people`}</p>
+            <p className="text-xs">{`${props.clientData?.passengerCount ?? 0} people`}</p>
             {/* Destination Icon iconify */}
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -219,20 +215,19 @@ const TransferSummaryCard = memo(function (props:TransferSummaryCardProps) {
           </div>
           <hr className=" text-gray w-full"></hr>
           {/* Return Journey Container*/}
-          {shouldShowReturnUI == true && (
             <div id="return">
               <figcaption>Return Journey</figcaption>
               <div className="p-2 flex flex-col gap-1">
                 <h3 className="font-bold">
-                  {localData?.pickupLocation.name ?? ""}
+                  {props.clientData?.pickupLocation?.name ?? ""}
                 </h3>
                 <p className="text-xs">
-                  {localData?.pickupLocation.address ?? ""}
+                  {props.clientData?.pickupLocation?.address ?? ""}
                 </p>
                 <h3 className="font-bold">
-                  {localData?.dropOffLocation.name ?? ""}
+                  {props.clientData?.dropOffLocation?.name ?? ""}
                 </h3>
-                <p className="text-xs">{localData?.dropOffLocation.address ?? ""}</p>
+                <p className="text-xs">{props.clientData?.dropOffLocation?.address ?? ""}</p>
               </div>
               <div className="flex items-center gap-2 mb-2">
                 <svg
@@ -345,8 +340,6 @@ const TransferSummaryCard = memo(function (props:TransferSummaryCardProps) {
                 <hr className=" text-gray w-full"></hr>
               </div>
             </div>
-          )}
-          {shouldShowReturnUI == false && (
             <button
               id="return-btn"
               aria-label="add return trip button"
@@ -355,7 +348,6 @@ const TransferSummaryCard = memo(function (props:TransferSummaryCardProps) {
             >
               ADD A RETURN
             </button>
-          )}
         </figure>
       </div>
       <ReturnTripForm

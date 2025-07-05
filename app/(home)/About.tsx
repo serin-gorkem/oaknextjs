@@ -1,5 +1,4 @@
 import { memo } from "react";
-import TeamImg from "../assets/img/Team.webp";
 
 const About = memo(function () {
   return (

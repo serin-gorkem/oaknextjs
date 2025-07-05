@@ -1,7 +1,6 @@
 import { memo } from "react";
-import ReviewCard from "./ReviewCard";
-import Tripadvisor from "../assets/img/Tripadvisor-Logo.webp";
-import Stars from "./Stars";
+import ReviewCard from "./components/ReviewCard";
+import Stars from "./components/Stars";
 
 const Reviews = memo(function () {
   const reviewList = reviewInfo.map((element) => {
