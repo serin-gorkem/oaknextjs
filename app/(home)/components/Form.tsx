@@ -86,15 +86,6 @@ export default function Form() {
   function handlePickupDaySelect(date: Date) {
     setPickupDate(date);
   }
-  const handlePickup = (place: google.maps.places.PlaceResult) => {
-    setPickupLocation(place.formatted_address || "");
-    console.log("Pickup:", place);
-  };
-
-  const handleDropOff = (place: google.maps.places.PlaceResult) => {
-    setDropOffLocation(place.formatted_address || "");
-    console.log("Dropoff:", place);
-  };
 
   return (
     <>
@@ -109,7 +100,7 @@ export default function Form() {
           <legend className="font-semibold text-sm">
             From (We only operate on Turkey.)
           </legend>
-          <label className="input  focus-within:outline-0 w-full ">
+          <label htmlFor="pickup_location" className="input  focus-within:outline-0 w-full ">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -130,10 +121,12 @@ export default function Form() {
               />
             </svg>
             <AutocompleteInput
-              value={pickupLocation}
-              onChange={setPickupLocation}
-              onPlaceSelected={handlePickup}
-              placeholder="Select pickup airport"
+              value={pickupLocation?.address || ""}
+              onChange={(val) =>
+                setPickupLocation((prev: any) => ({ ...prev!, address: val }))
+              }
+              onPlaceSelected={setPickupLocation}
+              placeholder="Havalimanı seçin"
               locationType="airport"
             />
           </label>
@@ -142,7 +135,7 @@ export default function Form() {
           <legend className="font-semibold text-sm">
             To (We only operate on Turkey.)
           </legend>
-          <label className="input focus-within:outline-0 w-full">
+          <label htmlFor="drop_off_location" className="input focus-within:outline-0 w-full">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -163,10 +156,12 @@ export default function Form() {
               />
             </svg>
             <AutocompleteInput
-              value={dropOffLocation}
-              onChange={setDropOffLocation}
-              onPlaceSelected={handleDropOff}
-              placeholder="Where to?"
+              value={dropOffLocation?.address || ""}
+              onChange={(val) =>
+                setDropOffLocation((prev: any) => ({ ...prev!, address: val }))
+              }
+              onPlaceSelected={setDropOffLocation}
+              placeholder="Otel seçin"
               locationType="lodging"
             />
           </label>

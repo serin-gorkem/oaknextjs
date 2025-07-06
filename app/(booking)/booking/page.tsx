@@ -1,11 +1,10 @@
 "use client";
 import { MapProvider } from "@/app/providers/map-provider";
 import { lazy, useEffect, useState } from "react";
-import { MapComponent } from "./components/map";
 import VehicleFeaturesCard from "./components/VehicleFeaturesCard";
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
-
+import DirectionsMap from "./components/DirectionsMap";
 // #region lazy imports
 const PageIndicator = lazy(() => import("@/app/PageIndicator"));
 const TransferSummaryCard = lazy(
@@ -63,29 +62,14 @@ async function deleteData({ uuid }: { uuid: string }) {
 
 export default function Booking() {
   const [clientData, setClientData] = useState<any>(null);
-    getData({ clientData, setClientData });
-    console.log(clientData);
-    
+  getData({ clientData, setClientData });
 
-  //#region Load Google Maps API
-
-  const center = {
-    lat: clientData?.pickupLocation?.lat || 0,
-    lng: clientData?.pickupLocation?.lng || 0,
-  };
-
-  const positions = [
-    {
-      lat: clientData?.pickupLocation?.lat || 0,
-      lng: clientData?.pickupLocation?.lng || 0,
-    },
-    {
-      lat: clientData?.dropOffLocation?.lat || 0,
-      lng: clientData?.dropOffLocation?.lng || 0,
-    },
-  ];
-
-  // #endregion
+  const [routeInfo, setRouteInfo] = useState<{
+    distanceKm: number;
+    distanceMi: number;
+    durationHours: number;
+    durationMinutes: number;
+  } | null>(null);
 
   return (
     <main className="flex relative flex-col mt-30 justify-between lg:block xl:max-w-9/12 lg:max-w-11/12 mx-auto ">
@@ -96,8 +80,8 @@ export default function Booking() {
         <aside className="flex flex-col gap-3 xl:w-3/12 lg:w-5/12">
           <TransferSummaryCard
             clientData={clientData}
-            totalDistance={0}
-            flightDuration={"0"}
+            totalDistanceKM={routeInfo?.distanceKm}
+            flightDuration={routeInfo?.durationHours + "h " + routeInfo?.durationMinutes + "m"}
           />
           <div className="hidden lg:block rounded-box bg-base-300 p-2">
             <div className="flex items-center gap-2">
@@ -177,9 +161,11 @@ export default function Booking() {
             <PageIndicator />
           </div>
           <div className="w-full z-0 h-96 hidden md:block">
-            {/* <MapProvider>
-              <MapComponent positions={positions} center={center} />
-            </MapProvider> */}
+            <DirectionsMap
+              origin={clientData?.pickup_location}
+              destination={clientData?.drop_off_location}
+              onRouteInfo={(info) => setRouteInfo(info)}
+            />
           </div>
           {/*Price from the database should be passed here.*/}
           <VehicleFeaturesCard
