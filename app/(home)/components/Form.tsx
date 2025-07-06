@@ -5,6 +5,8 @@ import { DayPicker } from "react-day-picker";
 import "react-day-picker/style.css";
 
 import { v4 as uuidv4 } from "uuid";
+import AutocompleteInput from "./AutocompleteInput";
+import LoadGoogleMaps from "@/components/LoadGoogleMaps";
 
 export default function Form() {
   const [clientData, setClientData] = useState({});
@@ -84,6 +86,15 @@ export default function Form() {
   function handlePickupDaySelect(date: Date) {
     setPickupDate(date);
   }
+  const handlePickup = (place: google.maps.places.PlaceResult) => {
+    setPickupLocation(place.formatted_address || "");
+    console.log("Pickup:", place);
+  };
+
+  const handleDropOff = (place: google.maps.places.PlaceResult) => {
+    setDropOffLocation(place.formatted_address || "");
+    console.log("Dropoff:", place);
+  };
 
   return (
     <>
@@ -91,6 +102,7 @@ export default function Form() {
         className="bg-base-300 w-full rounded-box p-5 flex flex-col justify-between h-fit gap-3 shadow-xl"
         onSubmit={handleSubmit}
       >
+        <LoadGoogleMaps />
         <p className="font-semibold text-red-500">{message}</p>
 
         <fieldset className="fieldset">
@@ -117,12 +129,12 @@ export default function Form() {
                 d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"
               />
             </svg>
-            <input
+            <AutocompleteInput
               value={pickupLocation}
-              onChange={(e) => {
-                setPickupLocation(e.target.value);
-              }}
-              name="pickupLocation"
+              onChange={setPickupLocation}
+              onPlaceSelected={handlePickup}
+              placeholder="Select pickup airport"
+              locationType="airport"
             />
           </label>
         </fieldset>
@@ -150,12 +162,12 @@ export default function Form() {
                 d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"
               />
             </svg>
-            <input
+            <AutocompleteInput
               value={dropOffLocation}
-              onChange={(e) => {
-                setDropOffLocation(e.target.value);
-              }}
-              name="dropOffLocation"
+              onChange={setDropOffLocation}
+              onPlaceSelected={handleDropOff}
+              placeholder="Where to?"
+              locationType="lodging"
             />
           </label>
         </fieldset>

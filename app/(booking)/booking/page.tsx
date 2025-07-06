@@ -64,6 +64,8 @@ async function deleteData({ uuid }: { uuid: string }) {
 export default function Booking() {
   const [clientData, setClientData] = useState<any>(null);
     getData({ clientData, setClientData });
+    console.log(clientData);
+    
 
   //#region Load Google Maps API
 
