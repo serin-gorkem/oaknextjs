@@ -18,21 +18,26 @@ type GetDataProps = {
   setClientData: any;
 };
 
-async function postData({ clientData }: { clientData: any }) {
-  const router = useRouter();
-  const response = await fetch("api/form-data", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(clientData),
-  }).then((res) => res.json());
-  if (response.status === 200) {
-    router.push(`/booking?uuid=${clientData.uuid}`);
-  }
-  console.log("Response from API: ", response.status);
-}
+async function updateData({ clientData }: { clientData: any }) {
+  try {
+    const res = await fetch("/api/form-data", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        uuid: clientData.uuid,
+        return_date: clientData.return_date,
+        return_hour: clientData.return_hour,
+        return_count: clientData.return_count,
+      }),
+    });
 
+    const result = await res.json();
+    if (!res.ok) throw new Error(result.error || "Unknown error");
+    console.log("Booking updated successfully");
+  } catch (err) {
+    console.error("Booking update failed:", err);
+  }
+}
 async function getData({ clientData, setClientData }: GetDataProps) {
   const searchParams = useSearchParams();
   const uuid = searchParams.get("uuid");
@@ -63,6 +68,14 @@ async function deleteData({ uuid }: { uuid: string }) {
 export default function Booking() {
   const [clientData, setClientData] = useState<any>(null);
   getData({ clientData, setClientData });
+  console.log(clientData);
+  
+  useEffect(() => {
+    if (!clientData || !clientData.uuid) return;
+    updateData({ clientData });
+    console.log("Updated.");
+    
+  }, [clientData]);
 
   const [routeInfo, setRouteInfo] = useState<{
     distanceKm: number;
@@ -80,8 +93,9 @@ export default function Booking() {
         <aside className="flex flex-col gap-3 xl:w-3/12 lg:w-5/12">
           <TransferSummaryCard
             clientData={clientData}
-            totalDistanceKM={routeInfo?.distanceKm}
-            flightDuration={routeInfo?.durationHours + "h " + routeInfo?.durationMinutes + "m"}
+            updateClientData={(data:any)=> setClientData(data)}
+            totalDistanceKM={routeInfo?.distanceKm.toFixed(0)}
+            drivingDuration={routeInfo?.durationHours + "h " + routeInfo?.durationMinutes + "m"}
           />
           <div className="hidden lg:block rounded-box bg-base-300 p-2">
             <div className="flex items-center gap-2">

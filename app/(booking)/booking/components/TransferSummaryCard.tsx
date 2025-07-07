@@ -1,5 +1,5 @@
 "use client";
-import { memo, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import "react-day-picker/style.css";
 import { ReturnTripForm } from "./ReturnTripForm";
 
@@ -13,27 +13,31 @@ type ClientData = {
   drop_off_location?: Location;
   pickupDate?: string;
   pickupHour?: string;
-  passengerCount?: number;
-  returnDate?: string;
-  returnHour?: string;
-  returnPassengerCount?: number;
+  passenger_count?: number;
+  return_date?: string | null;
+  return_hour?: string | null;
+  return_count?: number | null;
   // Add any other fields as needed
 };
 
 type TransferSummaryCardProps = {
-  totalDistanceKM: number | undefined;
-  flightDuration: string;
+  totalDistanceKM: string | undefined;
+  drivingDuration: string;
   clientData: ClientData;
+  updateClientData: (data: ClientData) => void;
 };
 
-const TransferSummaryCard = memo(function (props:TransferSummaryCardProps) {
-  
-  const [returnDate, setReturnDate] = useState(props.clientData?.returnDate ?? "");
-  const [returnHour, setReturnHour] = useState(props.clientData?.returnHour?? "");
-  const [showReturnTrip, setShowReturnTrip] = useState(false);
+const TransferSummaryCard = memo(function (props: TransferSummaryCardProps) {
+  const [returnDate, setReturnDate] = useState(
+    props.clientData?.return_date ?? ""
+  );
+  const [returnHour, setReturnHour] = useState(
+    props.clientData?.return_hour ?? ""
+  );
+  const [showReturnTrip, setShowReturnTrip] = useState(true);
 
   const [returnPassengerCount, setReturnPassengerCount] = useState(
-    props.clientData?.returnPassengerCount ?? 0
+    props.clientData?.return_count ?? 1
   );
   const [showDateSetError, setShowDateSetError] = useState(false);
 
@@ -45,13 +49,18 @@ const TransferSummaryCard = memo(function (props:TransferSummaryCardProps) {
     const newDate = date ? date.toString().slice(0, 15) : "";
     setReturnDate(newDate);
   }
-  function handlePersonCount(e:React.ChangeEvent<HTMLInputElement>) {
+  function handlePersonCount(e: React.ChangeEvent<HTMLInputElement>) {
     const count = Number(e.target.value);
     setReturnPassengerCount(count);
   }
+  useEffect(() => {
+    setShowReturnTrip(
+      !!props.clientData?.return_count || !!props.clientData?.return_hour || !!props.clientData?.return_date
+    )
+  }, [props.clientData]);
   function handleReturnTrip() {
     const returnPanel = document.getElementById("return-panel");
-    if(returnPanel === null){
+    if (returnPanel === null) {
       return;
     }
     setShowReturnTrip(!showReturnTrip);
@@ -59,33 +68,57 @@ const TransferSummaryCard = memo(function (props:TransferSummaryCardProps) {
     returnPanel.classList.toggle("opacity-0");
     returnPanel.classList.toggle("pointer-events-none");
   }
+  function toggleReturnPanelVisibility() {
+    const returnPanel = document.getElementById("return-panel");
+    const returnButton = document.getElementById("return-btn");
+    console.log(returnPanel);
+    console.log(returnButton);
 
+    if (returnPanel === null || returnButton === null) {
+      console.log(`null ?`);
+      return;
+    }
+
+    returnPanel.classList.toggle("opacity-0");
+    returnPanel.classList.toggle("pointer-events-none");
+    returnButton.classList.remove("hidden");
+  }
   function confirmReturn(e: React.FormEvent<HTMLButtonElement>) {
     document.body.classList.remove("overflow-hidden");
-    console.log("return date: ", returnDate);
-    
+
     e.preventDefault();
 
     if (returnDate && returnHour && returnPassengerCount) {
       toggleReturnPanelVisibility();
 
       setShowDateSetError(false);
+
+      const updatedClientData = {
+        ...props.clientData,
+        return_date: returnDate,
+        return_hour: returnHour,
+        return_count: returnPassengerCount,
+      };
+      props.updateClientData(updatedClientData);
     } else {
       /* User has not set a return date  */
       setShowDateSetError(true);
       console.log(showDateSetError);
     }
   }
-
-  function toggleReturnPanelVisibility() {
-    const returnPanel = document.getElementById("return-panel");
-    const returnButton = document.getElementById("return-btn");
-    if(returnPanel === null || returnButton === null){
-      return;
-    }
-    returnPanel.classList.toggle("opacity-0");
-    returnPanel.classList.toggle("pointer-events-none");
-    returnButton.classList.remove("hidden");
+  function cancelReturn(){
+    setReturnDate("");
+    setReturnHour("");
+    setShowReturnTrip(false);
+    setReturnPassengerCount(1);
+    setShowDateSetError(false);
+    const updatedClientData = {
+      ...props.clientData,
+      return_date: null,
+      return_hour: null,
+      return_count: null,
+    };
+    props.updateClientData(updatedClientData);
   }
 
   return (
@@ -107,7 +140,9 @@ const TransferSummaryCard = memo(function (props:TransferSummaryCardProps) {
               <h3 className="font-bold">
                 {props.clientData?.drop_off_location?.name ?? ""}
               </h3>
-              <p className="text-xs">{props.clientData?.drop_off_location?.address ?? ""}</p>
+              <p className="text-xs">
+                {props.clientData?.drop_off_location?.address ?? ""}
+              </p>
             </div>
             <div className="flex items-center gap-2">
               <svg
@@ -159,7 +194,9 @@ const TransferSummaryCard = memo(function (props:TransferSummaryCardProps) {
                 d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"
               />
             </svg>
-            <p className="text-xs">{`${props.clientData?.passengerCount ?? 0} people`}</p>
+            <p className="text-xs">{`${
+              props.clientData?.passenger_count ?? 0
+            } people`}</p>
             {/* Destination Icon iconify */}
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -215,7 +252,7 @@ const TransferSummaryCard = memo(function (props:TransferSummaryCardProps) {
                 ></animateTransform>
               </rect>
             </svg>
-            <p className="text-xs">{props.flightDuration}</p>
+            <p className="text-xs">{props.drivingDuration}</p>
           </div>
           <hr className=" text-gray w-full"></hr>
           {/* Return Journey Container*/}
@@ -230,9 +267,11 @@ const TransferSummaryCard = memo(function (props:TransferSummaryCardProps) {
                   {props.clientData?.pickup_location?.address ?? ""}
                 </p>
                 <h3 className="font-bold">
-                  {props.clientData?.drop_off_location?.address ?? ""}
+                  {props.clientData?.drop_off_location?.name ?? ""}
                 </h3>
-                <p className="text-xs">{props.clientData?.drop_off_location?.address ?? ""}</p>
+                <p className="text-xs">
+                  {props.clientData?.drop_off_location?.address ?? ""}
+                </p>
               </div>
               <div className="flex items-center gap-2 mb-2">
                 <svg
@@ -340,10 +379,19 @@ const TransferSummaryCard = memo(function (props:TransferSummaryCardProps) {
                       ></animateTransform>
                     </rect>
                   </svg>
-                  <p className="text-xs"> {` ${props.flightDuration}`} </p>
+                  <p className="text-xs"> {` ${props.drivingDuration}`} </p>
                 </div>
                 <hr className=" text-gray w-full"></hr>
               </div>
+              <button
+                onClick={cancelReturn}
+                type="submit"
+                id="return-cancel-btn"
+                aria-label="confirm return trip button"
+                className="btn btn-primary w-fit mt-2 hover:bg-white hover:text-primary"
+              >
+                CANCEL RETURN
+              </button>
             </div>
           )}
           {showReturnTrip == false && (

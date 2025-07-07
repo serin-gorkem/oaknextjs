@@ -55,6 +55,8 @@ export function ReturnTripForm({
           </legend>
           <input
             type="number"
+            aria-label="input-passenger-count"
+            name="passenger-count"
             className="input validator focus-within:outline-0 w-full"
             placeholder="Passengers (1-10)"
             min="1"
@@ -78,11 +80,13 @@ export function ReturnTripForm({
         <button
           onClick={confirmReturn}
           type="submit"
+          id="return-btn"
           aria-label="confirm return trip button"
-          className="btn btn-primary w-1/2 lg:w- hover:bg-white hover:text-primary"
+          className="btn btn-primary w-1/2  hover:bg-white hover:text-primary"
         >
           CONFIRM
         </button>
+
       </form>
       <h1
         className={`text-base-100 z-10 text-lg transition-all ${

@@ -3,28 +3,41 @@
 //You need to delete the data from the database after the page is loaded.
 
 import { NextRequest, NextResponse } from "next/server";
-import { query } from '../../lib/db';
-
+import { query } from "../../lib/db";
 
 export async function POST(request: Request) {
   const body = await request.json();
-  const { pickupLocation, dropOffLocation, pickupDate, pickupHour, passengerCount, uuid } = body;
+  const {
+    pickup_location,
+    drop_off_location,
+    pickup_date,
+    pickup_hour,
+    passenger_count,
+    uuid,
+    return_date,
+    return_hour,
+    return_count,
+  } = body;
+
   try {
     await query(
-  `INSERT INTO bookings (
+      `INSERT INTO bookings (
     pickup_location, drop_off_location, pickup_date,
-    pickup_hour, passenger_count, uuid
-  ) VALUES ($1, $2, $3, $4, $5, $6)`,
-  [
-    JSON.stringify(pickupLocation),
-    JSON.stringify(dropOffLocation),
-    pickupDate,
-    pickupHour,
-    passengerCount,
-    uuid
-  ]
-);
-    return NextResponse.json({status: 200});
+    pickup_hour, passenger_count, uuid, return_date, return_hour, return_count
+  ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
+      [
+        JSON.stringify(pickup_location),
+        JSON.stringify(drop_off_location),
+        pickup_date,
+        pickup_hour,
+        passenger_count,
+        uuid,
+        return_date,
+        return_hour,
+        return_count,
+      ]
+    );
+    return NextResponse.json({ status: 200 });
   } catch (error) {
     console.error(error);
     return NextResponse.json({ error: "DB error" }, { status: 500 });
@@ -55,16 +68,42 @@ export async function GET(req: NextRequest) {
   }
 }
 
-export async function DELETE(req: NextRequest){
-    const uuid = req.nextUrl.searchParams.get("uuid");
-    if (!uuid) {
-      return NextResponse.json({ error: "UUID eksik" }, { status: 400 });
-    }
-    try {
-      await query("DELETE FROM bookings WHERE uuid = $1", [uuid]);
-      return NextResponse.json({ status: 200 });
-    } catch (error) {
-      console.error("DELETE Error:", error);
-      return NextResponse.json({ error: "Veri silme hatası" }, { status: 500 });
-    }
+export async function DELETE(req: NextRequest) {
+  const uuid = req.nextUrl.searchParams.get("uuid");
+  if (!uuid) {
+    return NextResponse.json({ error: "UUID eksik" }, { status: 400 });
+  }
+  try {
+    await query("DELETE FROM bookings WHERE uuid = $1", [uuid]);
+    return NextResponse.json({ status: 200 });
+  } catch (error) {
+    console.error("DELETE Error:", error);
+    return NextResponse.json({ error: "Veri silme hatası" }, { status: 500 });
+  }
+}
+
+export async function PUT(request: Request) {
+  const body = await request.json();
+  const { uuid, return_date, return_hour, return_count } = body;
+
+  if (!uuid) {
+    return NextResponse.json({ error: "UUID missing" }, { status: 400 });
+  }
+
+  try {
+    await query(
+      `
+      UPDATE bookings
+      SET return_date = $1, return_hour = $2, return_count = $3
+      WHERE uuid = $4
+    `,
+      [return_date, return_hour, return_count, uuid]
+    );
+
+    return NextResponse.json({ success: true }, { status: 200 });
+  } catch (error) {
+    console.error("Update error:", error);
+    return NextResponse.json({ error: "DB error" }, { status: 500 });
+  }
+
 }
