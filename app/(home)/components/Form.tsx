@@ -10,7 +10,7 @@ import LoadGoogleMaps from "@/components/LoadGoogleMaps";
 
 export default function Form() {
   const [clientData, setClientData] = useState({});
-  const [pickup_location, setPickupLocation] = useState<any>("");
+  const [pickupLocation, setPickupLocation] = useState<any>("");
   const [dropOffLocation, setDropOffLocation] = useState<any>("");
   const [passengerCount, setPassengerCount] = useState(1);
   const [pickupDate, setPickupDate] = useState<Date | undefined>(undefined);
@@ -21,7 +21,7 @@ export default function Form() {
   const [message, setMessage] = useState("");
   const validateForm = () => {
     if (
-      !pickup_location ||
+      !pickupLocation ||
       !dropOffLocation ||
       !pickupDate ||
       !pickupHour ||
@@ -30,11 +30,11 @@ export default function Form() {
       setMessage("Please fill in all fields.");
       return false;
     }
-    if (pickup_location === "" || dropOffLocation === "") {
+    if (pickupLocation === "" || dropOffLocation === "") {
       setMessage("Please fill in location fields.");
       return false;
     }
-    if (pickup_location === dropOffLocation) {
+    if (pickupLocation === dropOffLocation) {
       setMessage("Pickup and drop-off locations cannot be the same.");
       return false;
     }
@@ -49,9 +49,9 @@ export default function Form() {
     e.preventDefault();
     if (validateForm()) {
       const data = {
-        pickup_location: pickup_location,
+        pickup_location: pickupLocation,
         drop_off_location: dropOffLocation,
-        pickup_date: pickupDate,
+        pickup_date: pickupDate?.toDateString(),
         pickup_hour: pickupHour,
         passenger_count: passengerCount,
         uuid: uuid,
@@ -123,9 +123,9 @@ export default function Form() {
               />
             </svg>
             <AutocompleteInput
-              value={pickup_location?.address || ""}
+              value={pickupLocation?.name || ""}
               onChange={(val) =>
-                setPickupLocation((prev: any) => ({ ...prev!, address: val }))
+                setPickupLocation((prev: any) => ({ ...prev!, name: val }))
               }
               onPlaceSelected={setPickupLocation}
               placeholder="Havalimanı seçin"
@@ -158,9 +158,9 @@ export default function Form() {
               />
             </svg>
             <AutocompleteInput
-              value={dropOffLocation?.address || ""}
+              value={dropOffLocation?.name || ""}
               onChange={(val) =>
-                setDropOffLocation((prev: any) => ({ ...prev!, address: val }))
+                setDropOffLocation((prev: any) => ({ ...prev!, name: val }))
               }
               onPlaceSelected={setDropOffLocation}
               placeholder="Otel seçin"
