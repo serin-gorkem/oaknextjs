@@ -28,7 +28,7 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "app/(booking)/booking/page.jsx",
-    "app/extras/page.jsx",
+    "app/extras/page.jsx", "app/(home)/Vehicles.jsx", "app/(admin)/admin/dashboard", "middleware.js",
   ],
   "exclude": ["node_modules"]
 }
