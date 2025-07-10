@@ -18,6 +18,7 @@
         "name": "next"
       }
     ],
+    "typeRoots": ["./node_modules/@types", "./types"],
     "paths": {
       "@/*": ["./*"]
     }
@@ -28,7 +29,11 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "app/(booking)/booking/page.jsx",
-    "app/extras/page.jsx", "app/(home)/Vehicles.jsx", "app/(admin)/admin/dashboard", "middleware.js",
+    "app/extras/page.jsx",
+    "app/(home)/Vehicles.jsx",
+    "app/(admin)/admin/dashboard",
+    "middleware.js",
+    "app/(client)/(home)/Vehicles.tsx"
   ],
   "exclude": ["node_modules"]
 }
