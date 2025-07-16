@@ -7,6 +7,7 @@ import { query } from "../../lib/db";
 
 export async function POST(request: Request) {
   const body = await request.json();
+  
   const {
     pickup_location,
     drop_off_location,
@@ -92,6 +93,7 @@ export async function PUT(request: Request) {
     booking,
     extras,
     details,
+    price_id,
   } = body;
 
   if (!uuid) {
@@ -102,14 +104,15 @@ export async function PUT(request: Request) {
     await query(
       `
       UPDATE bookings
-      SET return_data = $1, booking=$2, extras = $3, details = $4
-      WHERE uuid = $5
+      SET return_data = $1, booking=$2, extras = $3, details = $4 , price_id = $5
+      WHERE uuid = $6
     `,
       [
         return_data ?? null,
         booking ?? {},
         extras ?? null, 
         details ?? {},
+        price_id ?? 0,
         uuid,
       ]
     );

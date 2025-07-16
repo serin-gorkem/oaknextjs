@@ -56,7 +56,6 @@ const TransferSummaryCard = memo(function (props: TransferSummaryCardProps) {
     setReturnPassengerCount(count);
   }
 
-  console.log(showReturnTrip);
   
   useEffect(() => {
     setShowReturnTrip(

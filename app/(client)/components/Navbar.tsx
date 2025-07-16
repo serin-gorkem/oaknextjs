@@ -1,70 +1,43 @@
 "use client";
-import {  useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
-
+import CurrencyDropdown from "./CurrencyDropdown";
+import Image from "next/image";
 
 function Navbar() {
-  const [selectedCurrency, setSelectedCurrency] = useState(currencyList[0]);
   const pathname = usePathname();
   const isBookingPage = pathname !== "/";
-  const renderCurrencyList = currencyList.map((currency) => (
-    <li
-      key={currency.id}
-      className="w-full"
-      onClick={() => setSelectedCurrency(currency)}
-    >
-      <a className="p-2 px-1 w-full">
-        {currency.svg}
-        <p>{currency.name}</p>
-      </a>
-    </li>
-  ));
-
   return (
-    <div className="my-5 absolute z-100 top-0 w-full">
-      <PageNav
-        currencySvg={selectedCurrency.svg}
-        renderCurrencyList={renderCurrencyList}
-      />
+    <div className="mb-5 absolute z-100 top-0 w-full">
+      <PageNav />
       {isBookingPage ? (
-        <BookingNav
-          currencySvg={selectedCurrency.svgBook}
-          renderCurrencyList={renderCurrencyList}
-        />
+        <BookingNav />
       ) : (
         <>
-          <MobileNav
-            currencySvg={selectedCurrency.svg}
-            renderCurrencyList={renderCurrencyList}
-          />
-          <DesktopNav
-            currencySvg={selectedCurrency.svg}
-            renderCurrencyList={renderCurrencyList}
-          />
+          <MobileNav />
+          <DesktopNav />
         </>
       )}
     </div>
   );
 }
-type NavProps = {
-  currencySvg: React.ReactNode;
-  renderCurrencyList: React.ReactNode;
-};
 
-function PageNav(props: NavProps) {
-  const [lastScrollY, setLastScrollY] = useState<number>(typeof window !== "undefined" ? window.pageYOffset : 0);
-  const [showNav, setShowNav] = useState<string>("opacity-0 pointer-events-none");
+function PageNav() {
+  const [lastScrollY, setLastScrollY] = useState<number>(
+    typeof window !== "undefined" ? window.pageYOffset : 0
+  );
+  const [showNav, setShowNav] = useState<string>(
+    "opacity-0 pointer-events-none"
+  );
 
   const handleNavBehavior = () => {
-   const currentScrollY = window.scrollY;
+    const currentScrollY = window.scrollY;
 
     if (currentScrollY < 1000) {
       setShowNav("opacity-0 pointer-events-none");
     } else if (currentScrollY < lastScrollY) {
-      
       setShowNav("opacity-100 pointer-events-all z-20");
     } else {
-      
       setShowNav("opacity-0 pointer-events-none");
     }
 
@@ -77,16 +50,15 @@ function PageNav(props: NavProps) {
   }, [lastScrollY]);
   return (
     <nav
-      className={`px-2 p-8  ${showNav} duration-200 opacity-0 fixed w-full flex bg-black/10 backdrop-blur-md top-0 -z-10 `}
+      className={`px-2 p-8  ${showNav} duration-200  opacity-0 fixed w-full flex bg-black/10 backdrop-blur-md top-0 -z-10 `}
     >
       <ul className="flex flex-col md:flex-row md:justify-between gap-3 lg:p-0 lg:max-w-9/12 mx-auto w-full  ">
         <li className=" cursor-pointer">
           <h1 className="text-primary text-3xl hover:text-warning transition-all ">
-            OAK TRAVEL
+            Airport to Hotels
           </h1>
         </li>
         <li className="flex items-center gap-4 w-fit cursor-pointer">
-
           <button
             aria-label="Book button"
             className="btn btn-primary w-30 lg:w-36 hover:bg-white hover:text-primary"
@@ -94,30 +66,22 @@ function PageNav(props: NavProps) {
             Book Now
           </button>
           <button
-            onClick={() => typeof window.scrollTo({ top: 0, behavior: "smooth" })}
+            onClick={() =>
+              typeof window.scrollTo({ top: 0, behavior: "smooth" })
+            }
             aria-label="Go back to top button"
             className="btn w-30 lg:w-36 btn-primary hover:bg-white hover:text-primary"
           >
             Back To top
           </button>
-          <div className="dropdown">
-            <div tabIndex={0} role="button" className=" m-1">
-              {props.currencySvg}
-            </div>
-            <ul
-              tabIndex={0}
-              className="menu dropdown-content mt-2 bg-base-300 right-1/2 left-1/2 -translate-x-1/2 rounded-box w-32 flex justify-center items-center shadow-sm"
-            >
-              {props.renderCurrencyList}
-            </ul>
-          </div>
+          {/* <CurrencyDropdown /> */}
         </li>
       </ul>
     </nav>
   );
 }
 
-function MobileNav(props: NavProps) {
+function MobileNav() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   function toggleMenu(bool: boolean) {
@@ -127,12 +91,12 @@ function MobileNav(props: NavProps) {
   return (
     <nav className="flex flex-col gap-2 z-20 ">
       {isMenuOpen ? (
-        <div className="h-96 bg-base-100 flex flex-col sm:hidden">
+        <div className="h-[25rem] bg-base-100 flex flex-col sm:hidden">
           <ul className=" p-2 flex justify-between items-center">
             <li>
               <a href="/">
                 <h1 className="text-base-100 text-3xl hover:text-warning transition-all ">
-                  OAK TRAVEL
+                  Airport to Hotels
                 </h1>
               </a>
             </li>
@@ -194,27 +158,25 @@ function MobileNav(props: NavProps) {
               {menuItem("Contact", "#Contact")}
             </ul>
           </div>
+            <Image
+            src="/images/logos/ToursOfYou.webp"
+            width={100}
+            height={100}
+            alt="Tours of you logo"
+            aria-label="Book now button"
+            className="w-36 p-2  hover:shadow-none hover:text-base-100"
+          >
+          </Image>
         </div>
       ) : (
-        <div className=" sm:hidden ">
-          <ul className="p-2 flex justify-between items-center">
+        <div className="sm:hidden ">
+          <ul className="p-2  flex justify-between items-center">
             <li>
               <a href="#">
-                <p className=" font-heading text-white text-xl">OAK TRAVEL</p>
+                <p className=" font-heading text-white text-xl">Airport to Hotels</p>
               </a>
             </li>
             <li className="flex items-center gap-4">
-              <div className="dropdown">
-                <div tabIndex={0} role="button" className=" m-1">
-                  {props.currencySvg}
-                </div>
-                <ul
-                  tabIndex={0}
-                  className="menu dropdown-content mt-2 bg-base-300 right-1/2 left-1/2 -translate-x-1/2 rounded-box w-32 flex justify-center items-center shadow-sm"
-                >
-                  {props.renderCurrencyList}
-                </ul>
-              </div>
               {/* Whatsapp Icon */}
               <a
                 href="https://api.whatsapp.com/send?phone=905540161923"
@@ -268,28 +230,18 @@ function MobileNav(props: NavProps) {
   );
 }
 
-function BookingNav(props: NavProps) {
+function BookingNav() {
   return (
     <nav className="flex flex-col gap-2 z-20  lg:px-0 sm:px-4 xl:max-w-9/12 lg:max-w-11/12 mx-auto ">
       <div className="">
         <ul className="p-2 flex justify-between items-center">
           <li>
             <a href="#">
-              <p className=" font-heading text-primary text-2xl">OAK TRAVEL</p>
+              <p className=" font-heading text-primary text-2xl">Airport to Hotels</p>
             </a>
           </li>
           <li className="flex cursor-pointer items-center gap-4">
-            <div className="dropdown">
-              <div tabIndex={0} role="button" className="m-1">
-                {props.currencySvg}
-              </div>
-              <ul
-                tabIndex={0}
-                className="menu dropdown-content mt-2 bg-base-300 right-1/2 left-1/2 -translate-x-1/2 rounded-box w-32 flex justify-center items-center shadow-sm"
-              >
-                {props.renderCurrencyList}
-              </ul>
-            </div>
+            <CurrencyDropdown />
             {/* Whatsapp Icon */}
             <a
               href="https://api.whatsapp.com/send?phone=905540161923"
@@ -324,29 +276,27 @@ function BookingNav(props: NavProps) {
     </nav>
   );
 }
-function DesktopNav(props: NavProps) {
+function DesktopNav() {
   return (
-    <nav className="hidden sm:flex sm:flex-col items-center z-20 gap-6 w-full lg:px-0 sm:px-4 xl:max-w-9/12 lg:max-w-11/12 mx-auto ">
-      <ul className="flex justify-between w-full">
+    <nav className="hidden sm:flex sm:flex-col pt-5 items-center z-20 gap-6 w-full lg:px-0 sm:px-4 xl:max-w-9/12 lg:max-w-11/12 mx-auto ">
+      <ul className="flex justify-between items-center w-full">
         <li>
           <a href="/OakTravel">
             <h1 className="text-base-100 text-3xl hover:text-warning transition-all ">
-              OAK TRAVEL
+              Airport to Hotels
             </h1>
           </a>
         </li>
         <li className="flex items-center gap-4 w-fit cursor-pointer">
-          <div className="dropdown">
-            <div tabIndex={0} role="button" className=" m-1">
-              {props.currencySvg}
-            </div>
-            <ul
-              tabIndex={0}
-              className="menu dropdown-content mt-2 bg-base-300 right-1/2 left-1/2 -translate-x-1/2 rounded-box w-32 flex justify-center items-center shadow-sm"
-            >
-              {props.renderCurrencyList}
-            </ul>
-          </div>
+          <Image
+            src="/images/logos/ToursOfYou.webp"
+            width={100}
+            height={100}
+            alt="Tours of you logo"
+            aria-label="Book now button"
+            className="w-36  hover:shadow-none hover:text-base-100"
+          >
+          </Image>
           <button
             aria-label="Book now button"
             className="btn w-36 hover:bg-primary hover:border-primary hover:shadow-none hover:text-base-100"
@@ -354,6 +304,7 @@ function DesktopNav(props: NavProps) {
             Book Now
           </button>
         </li>
+
       </ul>
       <div className="flex flex-col items-center w-full gap-3">
         <hr className="w-full text-base-100"></hr>
@@ -380,126 +331,5 @@ function menuItem(text: string, link: string) {
     </li>
   );
 }
-const currencyList = [
-  {
-    id: "0",
-    name: "TRY",
-    svg: (
-      <svg
-        fill="#1E272E"
-        version="1.1"
-        id="Layer_1"
-        xmlns="http://www.w3.org/2000/svg"
-        xmlnsXlink="http://www.w3.org/1999/xlink"
-        viewBox="0 0 440 440"
-        xmlSpace="preserve"
-        stroke="#1E272E"
-        className="size-10 aspect-square p-2 bg-white rounded-full"
-      >
-        <g id="SVGRepo_bgCarrier" strokeWidth="0"></g>
-        <g
-          id="SVGRepo_tracerCarrier"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        ></g>
-        <g id="SVGRepo_iconCarrier">
-          <path d="M344.33,212.5c0,103.857-80.577,189.248-182.5,196.936V197.361l151.76-55.236l-10.26-28.191l-141.5,51.502V121.38 l151.76-55.236l-10.26-28.191l-141.5,51.502V0h-30v100.374l-66.16,24.08l10.261,28.191L131.83,132.3v44.055l-66.16,24.08 l10.261,28.191l55.899-20.346V440h15c60.813,0,117.957-23.651,160.902-66.597c42.946-42.946,66.598-100.089,66.598-160.903H344.33z"></path>{" "}
-        </g>
-      </svg>
-    ),
-    svgBook: (
-      <svg
-        fill="#ffffff"
-        version="1.1"
-        id="Layer_1"
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 440 440"
-        className="size-10 sm:h-10 aspect-square p-2 bg-primary text-base-300 rounded-full"
-        stroke="#ffffff"
-      >
-        <g id="SVGRepo_bgCarrier" strokeWidth="0"></g>
-        <g
-          id="SVGRepo_tracerCarrier"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        ></g>
-        <g id="SVGRepo_iconCarrier">
-          <path d="M344.33,212.5c0,103.857-80.577,189.248-182.5,196.936V197.361l151.76-55.236l-10.26-28.191l-141.5,51.502V121.38 l151.76-55.236l-10.26-28.191l-141.5,51.502V0h-30v100.374l-66.16,24.08l10.261,28.191L131.83,132.3v44.055l-66.16,24.08 l10.261,28.191l55.899-20.346V440h15c60.813,0,117.957-23.651,160.902-66.597c42.946-42.946,66.598-100.089,66.598-160.903H344.33z"></path>{" "}
-        </g>
-      </svg>
-    ),
-  },
-  {
-    id: "1",
-    name: "EUR",
-    svg: (
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-        viewBox="0 0 24 24"
-        strokeWidth={1.5}
-        stroke="currentColor"
-        className="size-10 aspect-square p-1 bg-white rounded-full"
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          d="M14.121 7.629A3 3 0 0 0 9.017 9.43c-.023.212-.002.425.028.636l.506 3.541a4.5 4.5 0 0 1-.43 2.65L9 16.5l1.539-.513a2.25 2.25 0 0 1 1.422 0l.655.218a2.25 2.25 0 0 0 1.718-.122L15 15.75M8.25 12H12m9 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-        />
-      </svg>
-    ),
-    svgBook: (
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-        viewBox="0 0 24 24"
-        strokeWidth={1.5}
-        stroke="currentColor"
-        className="size-10 aspect-square p-1 bg-primary text-base-300 rounded-full"
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          d="M14.121 7.629A3 3 0 0 0 9.017 9.43c-.023.212-.002.425.028.636l.506 3.541a4.5 4.5 0 0 1-.43 2.65L9 16.5l1.539-.513a2.25 2.25 0 0 1 1.422 0l.655.218a2.25 2.25 0 0 0 1.718-.122L15 15.75M8.25 12H12m9 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-        />
-      </svg>
-    ),
-  },
-  {
-    id: "2",
-    name: "USD",
-    svg: (
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-        viewBox="0 0 24 24"
-        strokeWidth={1.5}
-        stroke="currentColor"
-        className="size-10 aspect-square p-1 bg-white rounded-full"
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          d="M12 6v12m-3-2.818.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-        />
-      </svg>
-    ),
-    svgBook: (
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-        viewBox="0 0 24 24"
-        strokeWidth={1.5}
-        stroke="currentColor"
-        className="size-10 aspect-square p-1 bg-primary text-base-300 rounded-full"
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          d="M12 6v12m-3-2.818.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-        />
-      </svg>
-    ),
-  },
-];
+
 export default Navbar;

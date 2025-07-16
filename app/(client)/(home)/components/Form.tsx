@@ -11,7 +11,9 @@ import LoadGoogleMaps from "@/components/LoadGoogleMaps";
 export default function Form() {
   const [clientData, setClientData] = useState({});
   const [pickupLocation, setPickupLocation] = useState<any>("");
+  const [isPickupLocationValid, setIsPickupLocationValid] = useState(false);
   const [dropOffLocation, setDropOffLocation] = useState<any>("");
+  const [isDropOffLocationValid, setIsDropOffLocationValid] = useState(false);
   const [passengerCount, setPassengerCount] = useState(1);
   const [pickupDate, setPickupDate] = useState<Date | undefined>(undefined);
   const [pickupHour, setPickupHour] = useState("00:00");
@@ -28,6 +30,14 @@ export default function Form() {
       !passengerCount
     ) {
       setMessage("Please fill in all fields.");
+      return false;
+    }
+    if(!isPickupLocationValid){
+      setMessage("Please select a valid pickup location.");
+      return false;
+    }
+    if(!isDropOffLocationValid){
+      setMessage("Please select a valid drop-off location.");
       return false;
     }
     if (pickupLocation === "" || dropOffLocation === "") {
@@ -124,9 +134,15 @@ export default function Form() {
             <AutocompleteInput
               value={pickupLocation?.name || ""}
               onChange={(val) =>
+              {
                 setPickupLocation((prev: any) => ({ ...prev!, name: val }))
+                setIsPickupLocationValid(false);
               }
-              onPlaceSelected={setPickupLocation}
+              }
+              onPlaceSelected={(place) => {
+                setPickupLocation(place);
+                setIsPickupLocationValid(true);
+              }}
               placeholder="Select an airport."
               locationType="airport"
             />
@@ -159,10 +175,16 @@ export default function Form() {
             <AutocompleteInput
               value={dropOffLocation?.name || ""}
               onChange={(val) =>
+              {
                 setDropOffLocation((prev: any) => ({ ...prev!, name: val }))
+                setIsDropOffLocationValid(false);
               }
-              onPlaceSelected={setDropOffLocation}
-              placeholder="Select a hotel."
+              }
+              onPlaceSelected={(place) => {
+                setDropOffLocation(place);
+                setIsDropOffLocationValid(true);
+              }}
+              placeholder="Select a hotel"
               locationType="lodging"
             />
           </label>

@@ -29,7 +29,6 @@ const Extras = memo(function () {
   const [airportAssistance, setAirportAssistance] = useState(false);
   const [wait, setWait] = useState(false);
 
-  console.log(clientData);
 
   useEffect(() => {
     if (clientData !== null) {

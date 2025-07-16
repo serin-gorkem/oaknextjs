@@ -59,7 +59,7 @@ const reviewInfo = [
     name: "Sarah L.",
     business: "Business Traveler",
     review:
-      "I had an amazing experience with Oak Travel! The booking process was simple, and the driver arrived on time. The vehicle was clean, comfortable, and spacious. I felt safe throughout the ride, and the driver was very professional. Highly recommend Oak Travel for anyone needing reliable airport transfers!",
+      "I had an amazing experience with Airport to Hotels! The booking process was simple, and the driver arrived on time. The vehicle was clean, comfortable, and spacious. I felt safe throughout the ride, and the driver was very professional. Highly recommend Airport to Hotels for anyone needing reliable airport transfers!",
   },
   {
     id: 1,
@@ -67,7 +67,7 @@ const reviewInfo = [
     name: "John D.",
     business: "Frequent Traveler",
     review:
-      "Oak Travel made my airport transfer seamless and stress-free. The booking process was quick, the driver was punctual, and the ride was incredibly comfortable. I’ll definitely use this service again!",
+      "Airport to Hotels made my airport transfer seamless and stress-free. The booking process was quick, the driver was punctual, and the ride was incredibly comfortable. I’ll definitely use this service again!",
   },
   {
     id: 2,
@@ -83,7 +83,7 @@ const reviewInfo = [
     name: "Sarah L.",
     business: "Business Traveler",
     review:
-      "I had an amazing experience with Oak Travel! The booking process was simple, and the driver arrived on time. The vehicle was clean, comfortable, and spacious. I felt safe throughout the ride, and the driver was very professional. Highly recommend Oak Travel for anyone needing reliable airport transfers!",
+      "I had an amazing experience with Airport to Hotels! The booking process was simple, and the driver arrived on time. The vehicle was clean, comfortable, and spacious. I felt safe throughout the ride, and the driver was very professional. Highly recommend Airport to Hotels for anyone needing reliable airport transfers!",
   },
   {
     id: 4,
@@ -91,7 +91,7 @@ const reviewInfo = [
     name: "John D.",
     business: "Frequent Traveler",
     review:
-      "Oak Travel made my airport transfer seamless and stress-free. The booking process was quick, the driver was punctual, and the ride was incredibly comfortable. I’ll definitely use this service again!",
+      "Airport to Hotels made my airport transfer seamless and stress-free. The booking process was quick, the driver was punctual, and the ride was incredibly comfortable. I’ll definitely use this service again!",
   },
 ];
 

@@ -5,7 +5,7 @@ const Footer = memo(function () {
     <footer className="bg-info-content py-12 relative ">
       <div className="footer sm:footer-horizontal xl:max-w-9/12 lg:max-w-11/12 lg:px-0 sm:px-4 px-2  mx-auto text-neutral-content">
         <div>
-          <h1 className="text-2xl text-base-300 font-bold">Oak Travel</h1>
+          <h1 className="text-2xl text-base-300 font-bold">Airport to Hotels</h1>
           <p className="w-10/12 text-sm">
             Located in Turkey/Kusadasi; we provide reliable and comfortable
             airport transfers, with transparent pricing and professional

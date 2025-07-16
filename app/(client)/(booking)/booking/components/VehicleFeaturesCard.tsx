@@ -8,9 +8,9 @@ interface VehicleFeaturesCardProps {
   person: number;
   bags: number;
   price: string | number;
+  currency: string;
   loadExtrasPage: () => void;
 }
-
 const VehicleFeaturesCard = memo(function (props: VehicleFeaturesCardProps) {
   const featuresList = (props.features ?? []).map((feature, index) => (
     <li key={index} className="flex gap-1">
@@ -103,7 +103,7 @@ const VehicleFeaturesCard = memo(function (props: VehicleFeaturesCardProps) {
       <hr className="w-full"></hr>
       <div className="flex flex-col gap-2">
         <p>Total one-way price</p>
-        <h2 className="text-2xl lg:text-4xl font-bold">{props.price}</h2>
+        <h2 className="text-2xl lg:text-4xl font-bold">{props.price} { props.currency}</h2>
         <div className="flex bg-[#C2E6D2] text-success-content rounded-box p-1 font-bold w-fit gap-2">
           <svg
             xmlns="http://www.w3.org/2000/svg"

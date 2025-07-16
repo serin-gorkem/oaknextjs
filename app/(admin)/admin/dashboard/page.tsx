@@ -42,6 +42,8 @@ export default function AdminDashboard() {
   const [status, setStatus] = useState("");
   const [vehicles, setVehicles] = useState([]);
 
+  
+
   useEffect(() => {
     getPrices(setPrices);
     getVehicles(setVehicles);

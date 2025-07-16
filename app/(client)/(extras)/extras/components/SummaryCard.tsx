@@ -116,7 +116,7 @@ const SummaryCard = memo(function ({clientData}:any) {
             <div className="flex justify-between">
               <h2 className="title text-2xl mb-1">TOTAL</h2>
               <p className="section-text text-xl font-bold">
-                {clientData?.booking.price_at_booking}
+                {clientData?.booking.price_at_booking} {clientData?.booking.currency_symbol}
               </p>
             </div>
           </>

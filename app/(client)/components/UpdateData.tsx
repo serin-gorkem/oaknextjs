@@ -1,5 +1,4 @@
 export async function UpdateData({ clientData }: { clientData: any }) {
-  console.log(clientData);
   
   try {
     const res = await fetch("/api/form-data", {
@@ -11,6 +10,7 @@ export async function UpdateData({ clientData }: { clientData: any }) {
         booking: clientData.booking,
         extras: clientData.extras,
         details: clientData.details,
+        price_id: clientData.price_id,
       }),
     });
 
