@@ -7,10 +7,12 @@ import PageDivider from "./components/PageDivider";
 import Reviews from "./Reviews";
 import Steps from "../components/Steps";
 import Vehicles from "./Vehicles";
+import { Suspense } from "react";
 
 export default function Landing() {
   return (
     <>
+    <Suspense fallback={<div>Loading...</div>}>
       <Home />
       <PageDivider />
       <ChooseUs />
@@ -27,6 +29,7 @@ export default function Landing() {
       <PageDivider />
       <Contact />
       <PageDivider />
+    </Suspense>
     </>
   );
 }

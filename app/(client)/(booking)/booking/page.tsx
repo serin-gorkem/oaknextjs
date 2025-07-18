@@ -172,7 +172,7 @@ export default function Booking() {
               />
             </div>
             {/*Price from the database should be passed here.*/}
-            {vehicles.map((vehicle: any) => (
+            {vehicles?.map((vehicle: any) => (
               <VehicleFeaturesCard
                 key={`${vehicle.id}-${currencyIndex}`}
                 img={vehicle.image_url}
