@@ -5,8 +5,8 @@ const VehicleCard = lazy(() => import("./components/VehicleCard"));
 
 import "@splidejs/react-splide/css";
 import { Splide, SplideSlide } from "@splidejs/react-splide";
-import { useCurrency } from "../context/CurrencyContext";
-import { useVehicle } from "../context/VehicleContext";
+import { useCurrency } from "./context/CurrencyContext";
+import { useVehicle } from "./context/VehicleContext";
 
 
 const Vehicles = memo(function () {

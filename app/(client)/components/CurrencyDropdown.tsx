@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { useCurrency } from "../context/CurrencyContext";
+import { useCurrency } from "../(home)/context/CurrencyContext";
 
 const CurrencyDropdown = () => {
   const {currencyIndex, setCurrencyIndex} = useCurrency();

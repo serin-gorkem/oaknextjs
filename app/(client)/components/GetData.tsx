@@ -19,5 +19,5 @@ export function useGetData() {
       .catch(console.error);
   }, [uuid]);
 
-  return { clientData, setClientData };
+  return  { clientData, setClientData };
 }
