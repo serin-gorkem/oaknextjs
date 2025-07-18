@@ -3,9 +3,11 @@ import { memo, useState } from "react";
 const VehicleCard = memo(function (props: {
   img: string;
   text: string;
-  personCount: string;
-  bagsCount: string;
+  personCount: number;
+  bagsCount: number;
   specs: string[];
+  price: any;
+  currency: string;
 }) {
   const [details, setDetails] = useState(false);
 
@@ -22,7 +24,8 @@ const VehicleCard = memo(function (props: {
           text={props.text}
           personCount={props.personCount}
           bagsCount={props.bagsCount}
-          price="$26.08"
+          price={props.price}
+          currency={props.currency}
         />
       ) : (
         <BackFace
@@ -32,7 +35,8 @@ const VehicleCard = memo(function (props: {
           personCount={props.personCount}
           bagsCount={props.bagsCount}
           specs={props.specs}
-          price="$26.08"
+          price={props.price}
+          currency={props.currency}
         />
       )}
     </article>
@@ -43,10 +47,11 @@ type BackFaceProps = {
   showDetails: () => void;
   img: string;
   text: string;
-  personCount: string;
-  bagsCount: string;
+  personCount: number;
+  bagsCount: number;
   specs: string[];
   price: string;
+  currency: string;
 };
 
 function BackFace(props: BackFaceProps) {
@@ -118,7 +123,7 @@ function BackFace(props: BackFaceProps) {
         {specsList}
       </div>
       <p>
-        <span className="text-warning font-black pr-2">{props.price}</span>
+        <span className="text-warning font-black pr-2">{props.price} {props.currency}</span>
         with prices starting
       </p>
       <hr></hr>
@@ -129,18 +134,20 @@ function BackFace(props: BackFaceProps) {
   );
 }
 
+
 type FrontFaceProps = {
   showDetails: () => void;
   img: string;
   text: string;
-  personCount: string;
-  bagsCount: string;
+  personCount: number;
+  bagsCount: number;
   price: string;
+  currency: string;
 };
 
 function FrontFace(props: FrontFaceProps) {
   return (
-    <figure className="flex relative flex-col justify-center gap-2">
+    <figure className="flex relative h-96 flex-col justify-center gap-2">
       <figcaption
         onClick={props.showDetails}
         className="cursor-pointer text-xs absolute text-warning -top-2 right-0 font-bold"
@@ -187,7 +194,7 @@ function FrontFace(props: FrontFaceProps) {
         <p>{props.bagsCount}</p>
       </div>
       <p>
-        <span className="text-warning font-black pr-2">{props.price}</span>
+        <span className="text-warning font-black pr-2">{props.price} {props.currency}</span>
         with prices starting
       </p>
       <hr></hr>

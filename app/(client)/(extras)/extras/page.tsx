@@ -12,8 +12,9 @@ const SummaryCard = lazy(() => import("./components/SummaryCard"));
   /* API Keys and images import */
 }
 import ExtrasCard from "./components/ExtrasCard";
-import { GetData } from "../../components/GetData";
+import { useGetData } from "../../components/GetData";
 import { UpdateData } from "../../components/UpdateData";
+import { useRouter } from "next/navigation";
 
 {
   /* On Form.jsx, there is a submit button and it will push form information to this jsx file and it will be used in Transfer Card  */
@@ -21,14 +22,16 @@ import { UpdateData } from "../../components/UpdateData";
 
 const Extras = memo(function () {
   //Get local variables
-  const [clientData, setClientData] = useState<any>(null);
-  GetData({ clientData, setClientData });
+  const { clientData, setClientData } = useGetData();
+  
 
   const [childSeatNumber, setChildSeatNumber] = useState(0);
   const [flowersNumber, setFlowersNumber] = useState(0);
   const [airportAssistance, setAirportAssistance] = useState(false);
   const [wait, setWait] = useState(false);
 
+  console.log(clientData);
+  
 
   useEffect(() => {
     if (clientData !== null) {
@@ -42,6 +45,7 @@ const Extras = memo(function () {
     }
   }, [wait]);
 
+  
   function updateClientData(changes: Partial<typeof clientData> = {}) {
     setClientData((prev: any) => {
       const base = prev || {};
@@ -53,6 +57,7 @@ const Extras = memo(function () {
         },
       };
     });
+    UpdateData({ clientData });
   }
 
   function handleAirportAssistance() {
@@ -61,6 +66,14 @@ const Extras = memo(function () {
 
   function handleWait() {
     setWait((prev) => !prev);
+  }
+
+  const router = useRouter();
+  function handleNavigateBooking(){
+    router.push(`/booking?uuid=${clientData.uuid}`);
+  }
+  function handleNavigateToDetails(){
+    router.push(`/details?uuid=${clientData.uuid}`);
   }
 
   function increase(type: string) {
@@ -96,6 +109,7 @@ const Extras = memo(function () {
     }
   }
 
+
   return (
     <>
       <div className="flex relative flex-col mt-30 justify-between lg:block xl:max-w-9/12 lg:max-w-11/12 mx-auto">
@@ -119,7 +133,7 @@ const Extras = memo(function () {
             <SummaryCard clientData={clientData} />
             {/* Navigation Buttons */}
             <div className="flex md:flex-wrap gap-2 justify-between w-full">
-              <button className="btn w-5/12 px-0 md:w-full btn-gray">
+              <button onClick={handleNavigateBooking} className="btn w-5/12 px-0 md:w-full btn-gray">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
@@ -134,9 +148,9 @@ const Extras = memo(function () {
                     d="M6.75 15.75 3 12m0 0 3.75-3.75M3 12h18"
                   />
                 </svg>
-                Vehicle Features
+                Booking
               </button>
-              <button className="btn w-5/12 px-0 md:w-full btn-warning text-base-100">
+              <button onClick={handleNavigateToDetails} className="btn w-5/12 px-0 md:w-full btn-warning text-base-100">
                 Personal Details
                 <svg
                   xmlns="http://www.w3.org/2000/svg"

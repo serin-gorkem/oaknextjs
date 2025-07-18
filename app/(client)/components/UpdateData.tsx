@@ -1,4 +1,5 @@
 export async function UpdateData({ clientData }: { clientData: any }) {
+  console.log("Updating booking with data:", clientData);
   
   try {
     const res = await fetch("/api/form-data", {
@@ -17,6 +18,7 @@ export async function UpdateData({ clientData }: { clientData: any }) {
     const result = await res.json();
     if (!res.ok) throw new Error(result.error || "Unknown error");
     console.log("Booking updated successfully");
+    
   } catch (err) {
     console.error("Booking update failed:", err);
   }

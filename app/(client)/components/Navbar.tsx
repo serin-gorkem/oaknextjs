@@ -59,6 +59,7 @@ function PageNav() {
           </h1>
         </li>
         <li className="flex items-center gap-4 w-fit cursor-pointer">
+          <CurrencyDropdown/>
           <button
             aria-label="Book button"
             className="btn btn-primary w-30 lg:w-36 hover:bg-white hover:text-primary"
@@ -158,22 +159,23 @@ function MobileNav() {
               {menuItem("Contact", "#Contact")}
             </ul>
           </div>
-            <Image
+          <Image
             src="/images/logos/ToursOfYou.webp"
             width={100}
             height={100}
             alt="Tours of you logo"
             aria-label="Book now button"
             className="w-36 p-2  hover:shadow-none hover:text-base-100"
-          >
-          </Image>
+          ></Image>
         </div>
       ) : (
         <div className="sm:hidden ">
           <ul className="p-2  flex justify-between items-center">
             <li>
               <a href="#">
-                <p className=" font-heading text-white text-xl">Airport to Hotels</p>
+                <p className=" font-heading text-white text-xl">
+                  Airport to Hotels
+                </p>
               </a>
             </li>
             <li className="flex items-center gap-4">
@@ -237,7 +239,9 @@ function BookingNav() {
         <ul className="p-2 flex justify-between items-center">
           <li>
             <a href="#">
-              <p className=" font-heading text-primary text-2xl">Airport to Hotels</p>
+              <p className=" font-heading text-primary text-2xl">
+                Airport to Hotels
+              </p>
             </a>
           </li>
           <li className="flex cursor-pointer items-center gap-4">
@@ -295,8 +299,7 @@ function DesktopNav() {
             alt="Tours of you logo"
             aria-label="Book now button"
             className="w-36  hover:shadow-none hover:text-base-100"
-          >
-          </Image>
+          ></Image>
           <button
             aria-label="Book now button"
             className="btn w-36 hover:bg-primary hover:border-primary hover:shadow-none hover:text-base-100"
@@ -304,7 +307,6 @@ function DesktopNav() {
             Book Now
           </button>
         </li>
-
       </ul>
       <div className="flex flex-col items-center w-full gap-3">
         <hr className="w-full text-base-100"></hr>

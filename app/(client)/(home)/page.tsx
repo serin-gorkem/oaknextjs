@@ -12,21 +12,21 @@ export default function Landing() {
   return (
     <>
       <Home />
-      <PageDivider/>
-      <ChooseUs/>
-      <PageDivider/>
-      <About/>
-      <PageDivider/>
-      <Vehicles/>
-      <PageDivider/>
-      <Reviews/>
-      <PageDivider/>
-      <Steps/>
-      <PageDivider/>
-      <FAQ/>
-      <PageDivider/>
-      <Contact/>
-      <PageDivider/>
+      <PageDivider />
+      <ChooseUs />
+      <PageDivider />
+      <About />
+      <PageDivider />
+      <Vehicles />
+      <PageDivider />
+      <Reviews />
+      <PageDivider />
+      <Steps />
+      <PageDivider />
+      <FAQ />
+      <PageDivider />
+      <Contact />
+      <PageDivider />
     </>
   );
 }

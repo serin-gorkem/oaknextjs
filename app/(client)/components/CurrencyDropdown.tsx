@@ -1,39 +1,26 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { UpdateData } from "./UpdateData";
-import { GetData } from "./GetData";
+import { useCurrency } from "../context/CurrencyContext";
 
 const CurrencyDropdown = () => {
-  const [selectedCurrency, setSelectedCurrency] = useState(currencyList[0]);
-  const [clientData, setClientData] = useState<any>(null);
-  console.log(clientData);
+  const {currencyIndex, setCurrencyIndex} = useCurrency();
+  const [selectedCurrency, setSelectedCurrency] = useState(currencyList[currencyIndex]);
   
   
-async function updateCurrency(currency: any) {
+  
+async function updateCurrency(currency: any, id:number) {
   setSelectedCurrency(currency);
-
-  if (!clientData || !clientData.uuid) return;
-
-  const updatedData = {
-    ...clientData,
-    price_id: currency.id,
-  };
-
-  setClientData(updatedData);
-
-  await UpdateData({ clientData: updatedData });
+  setCurrencyIndex(id);
 }
 
   const renderCurrencyList = currencyList.map((currency) => (
-    <li key={currency.id} className="w-full" onClick={() =>updateCurrency(currency)} >
+    <li key={currency.id} className="w-full" onClick={() => updateCurrency(currency, currency.id)} >
       <a className="p-2 px-1 w-full">
         {currency.svg}
         <p>{currency.name}</p>
       </a>
     </li>
   ));
-
-  GetData({ clientData, setClientData });
 
 
   return (
@@ -52,7 +39,7 @@ async function updateCurrency(currency: any) {
 };
 const currencyList = [
   {
-    id: "0",
+    id: 0,
     name: "USD",
     svg: (
       <svg
@@ -72,7 +59,7 @@ const currencyList = [
     ),
   },
   {
-    id: "1",
+    id: 1,
     name: "EUR",
     svg: (
       <svg
@@ -92,7 +79,7 @@ const currencyList = [
     ),
   },
   {
-    id: "2",
+    id: 2,
     name: "GBP",
     svg: (
       <svg
@@ -112,7 +99,7 @@ const currencyList = [
     ),
   },
   {
-    id: "3",
+    id: 3,
     name: "TRY",
     svg: (
       <svg

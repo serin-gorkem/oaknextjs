@@ -3,28 +3,48 @@ import { lazy, memo, useEffect, useState } from "react";
 
 const VehicleCard = lazy(() => import("./components/VehicleCard"));
 
-import '@splidejs/react-splide/css';
-import { Splide, SplideSlide } from '@splidejs/react-splide';
+import "@splidejs/react-splide/css";
+import { Splide, SplideSlide } from "@splidejs/react-splide";
+import { useCurrency } from "../context/CurrencyContext";
+import { useVehicle } from "../context/VehicleContext";
+
 
 const Vehicles = memo(function () {
-  const [ perPage, setPerPage ] = useState( 2 );
-  const [ carouselHeight, setCarouselHeight ] = useState( '25rem' );
+  const [perPage, setPerPage] = useState(2);
+  const [carouselHeight, setCarouselHeight] = useState("25rem");
+  type Vehicle = {
+    id: number;
+    name: string;
+    image_url: string;
+    capacity_person: number;
+    capacity_bags: number;
+    features: string[];
+    prices: {
+      [key: string]: {
+        amount: number;
+        currency_symbol: string;
+      };
+    };
+  };
+  const {vehicles} = useVehicle();
 
+  const {currencyIndex} = useCurrency();
+  console.log("currencyIndex:", currencyIndex);
+  
   useEffect(() => {
     const updatePerPage = () => {
       const width = window.innerWidth;
       if (width < 640) {
         setPerPage(1); // mobile: <640px
-        setCarouselHeight( '28rem' );
+        setCarouselHeight("28rem");
       } else if (width < 1024) {
         setPerPage(2); // tablet: 640px–1023px
-        setCarouselHeight( '30rem' );
+        setCarouselHeight("30rem");
       } else {
         setPerPage(3); // desktop: >=1024px
-        setCarouselHeight( '27rem' );
+        setCarouselHeight("30rem");
       }
     };
-
     updatePerPage(); // Run once on mount
     window.addEventListener("resize", updatePerPage);
 
@@ -32,74 +52,7 @@ const Vehicles = memo(function () {
       window.removeEventListener("resize", updatePerPage);
     };
   }, []);
-  const vehicleList = [
-    {
-      img: "/images/vito.webp",
-      text: "Mercedes Vito",
-      personCount: "7 Person",
-      bagsCount: "6 bags",
-      specs: [
-        "Airport Service",
-        "Flight Tracker",
-        "Disinfection",
-        "Door To Door",
-        "No Hidden Costs",
-      ],
-    },
-    {
-      img: "/images/vito.webp",
-      text: "Mercedes Vito",
-      personCount: "7 Person",
-      bagsCount: "6 bags",
-      specs: [
-        "Airport Service",
-        "Flight Tracker",
-        "Disinfection",
-        "Door To Door",
-        "No Hidden Costs",
-      ],
-    },
-    {
-      img: "/images/vito.webp",
-      text: "Mercedes Vito",
-      personCount: "7 Person",
-      bagsCount: "6 bags",
-      specs: [
-        "Airport Service",
-        "Flight Tracker",
-        "Disinfection",
-        "Door To Door",
-        "No Hidden Costs",
-      ],
-    },
-    {
-      img: "/images/vito.webp",
-      text: "Mercedes Vito",
-      personCount: "7 Person",
-      bagsCount: "6 bags",
-      specs: [
-        "Airport Service",
-        "Flight Tracker",
-        "Disinfection",
-        "Door To Door",
-        "No Hidden Costs",
-      ],
-    },
-    {
-      img: "/images/vito.webp",
-      text: "Mercedes Vito",
-      personCount: "7 Person",
-      bagsCount: "6 bags",
-      specs: [
-        "Airport Service",
-        "Flight Tracker",
-        "Disinfection",
-        "Door To Door",
-        "No Hidden Costs",
-      ],
-    },
-  ];
-  
+
 
   return (
     <>
@@ -130,20 +83,27 @@ const Vehicles = memo(function () {
             resetProgress: false,
             perPage,
             speed: 800,
-            rewind      : true,
+            rewind: true,
             rewindByDrag: true,
             rewindSpeed: 1000,
             height: carouselHeight,
           }}
         >
-          {vehicleList.map((vehicle, index) => (
+          {vehicles?.map((vehicle, index) => (
             <SplideSlide key={index}>
               <VehicleCard
-                img={vehicle.img}
-                text={vehicle.text}
-                personCount={vehicle.personCount}
-                bagsCount={vehicle.bagsCount}
-                specs={vehicle.specs}
+                img={vehicle.image_url}
+                text={vehicle.name}
+                personCount={vehicle.capacity_person}
+                bagsCount={vehicle.capacity_bags}
+                specs={vehicle.features}
+                price={
+                  vehicles[vehicle.id]?.prices[currencyIndex]?.amount
+                }
+                currency={
+                  vehicles[vehicle.id]?.prices[currencyIndex]
+                    ?.currency_symbol
+                }
               />
             </SplideSlide>
           ))}
@@ -152,6 +112,5 @@ const Vehicles = memo(function () {
     </>
   );
 });
-
 
 export default Vehicles;

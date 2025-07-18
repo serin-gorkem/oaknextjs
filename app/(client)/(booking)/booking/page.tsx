@@ -1,12 +1,12 @@
 "use client";
-import { MapProvider } from "../../providers/map-provider";
 import { lazy, useEffect, useState } from "react";
 import VehicleFeaturesCard from "./components/VehicleFeaturesCard";
-import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
 import DirectionsMap from "./components/DirectionsMap";
-import { GetData } from "../../components/GetData";
+import { useGetData } from "../../components/GetData";
 import { UpdateData } from "../../components/UpdateData";
+import { useCurrency } from "../../context/CurrencyContext";
+import { useVehicle } from "../../context/VehicleContext";
 // #region lazy imports
 const PageIndicator = lazy(() => import("../../components/PageIndicator"));
 const TransferSummaryCard = lazy(
@@ -15,49 +15,17 @@ const TransferSummaryCard = lazy(
 const Steps = lazy(() => import("../../components/Steps"));
 // #endregion
 
-
-async function getVehicleData(setVehicleData:any){
-  const res = await fetch(`/api/get-vehicle-data`, {
-    method: "GET",
-  });
-  if (res.ok) {
-    const data = await res.json();
-    setVehicleData(data);
-  } else {
-    const error = await res.json();
-    console.error("Veri çekme hatası:", error);
-  }
-}
-async function getVehiclePrices(setVehiclePrices:any){
-  const res = await fetch(`/api/vehicle-prices`, {
-    method: "GET",
-  });
-  if (res.ok) {
-    const data = await res.json();
-    setVehiclePrices(data);
-  } else {
-    const error = await res.json();
-    console.error("Veri çekme hatası:", error);
-  }
-}
-
 export default function Booking() {
-  const [clientData, setClientData] = useState<any>(null);
-  GetData({ clientData, setClientData });
-  const [vehicles, setVehicles] = useState([]);
-    const [route_info, setRouteInfo] = useState<{
+  const { clientData, setClientData } = useGetData();
+  const {currencyIndex} = useCurrency();
+  const {vehicles} = useVehicle();
+  
+  const [route_info, setRouteInfo] = useState<{
     distanceKm: number;
     distanceMi: number;
     durationHours: number;
     durationMinutes: number;
   } | null>(null);
-  const [vehiclePrices, setVehiclePrices] = useState<any>([]);
-
-
-  useEffect(() => {
-    getVehicleData(setVehicles);
-    getVehiclePrices(setVehiclePrices);
-  }, []);
 
   useEffect(() => {
     if (!clientData || !clientData.uuid) return;
@@ -65,11 +33,16 @@ export default function Booking() {
   }, [clientData]);
 
   const router = useRouter();
-  
-  function loadExtrasPage(vehicleName: string, price: number,currency_symbol:string, imageURL: string) {
+
+  function loadExtrasPage(
+    vehicleName: string,
+    price: number,
+    currency_symbol: string,
+    imageURL: string
+  ) {
     if (!clientData) return;
-    if(clientData.return_data === null){
-      setClientData((prev:any)=>{
+    if (clientData.return_data === null) {
+      setClientData((prev: any) => {
         return {
           ...prev,
           return_data: {
@@ -77,11 +50,11 @@ export default function Booking() {
             return_hour: null,
             return_count: null,
             return_trip: false,
-          }
-        }
-      })
+          },
+        };
+      });
     }
-    setClientData((prev:any) =>{
+    setClientData((prev: any) => {
       return {
         ...prev,
         booking: {
@@ -91,13 +64,13 @@ export default function Booking() {
           currency_symbol: currency_symbol,
           image_url: imageURL,
         },
-      }
-    })
+      };
+    });
     router.push(`/extras?uuid=${clientData.uuid}`);
   }
   return (
     <main className="flex relative flex-col mt-30 justify-between lg:block xl:max-w-9/12 lg:max-w-11/12 mx-auto ">
-      <section className="p-4 md:px-4 flex justify-between flex-col mt-36 lg:flex-row-reverse gap-4 w-full lg:px-0 ">
+      <section className="p-4 md:px-4 flex justify-between flex-col lg:flex-row-reverse gap-4 w-full lg:px-0 ">
         <div className="lg:hidden block">
           <PageIndicator />
         </div>
@@ -107,7 +80,10 @@ export default function Booking() {
             updateClientData={(data: any) => setClientData(data)}
             totalDistanceKM={route_info?.distanceKm.toFixed(0)}
             drivingDuration={
-              route_info?.durationHours + "h " + route_info?.durationMinutes + "m"
+              route_info?.durationHours +
+              "h " +
+              route_info?.durationMinutes +
+              "m"
             }
           />
           <div className="hidden lg:block rounded-box bg-base-300 p-2">
@@ -187,7 +163,7 @@ export default function Booking() {
           <div className="hidden lg:block">
             <PageIndicator />
           </div>
-          <div className="w-full z-0 h-96 mb-10 hidden md:block">
+          <div className="w-full z-0 h-96 mb-10">
             <DirectionsMap
               origin={clientData?.pickup_location}
               destination={clientData?.drop_off_location}
@@ -195,19 +171,30 @@ export default function Booking() {
             />
           </div>
           {/*Price from the database should be passed here.*/}
-              {vehicles.map((vehicle: any) => (
-                <VehicleFeaturesCard
-                  key={`${vehicle.id}-${clientData?.price_id}`}
-                  img={vehicle.image_url}
-                  vehicleName={vehicle.name}
-                  person={vehicle.capacity_person}
-                  bags={vehicle.capacity_bags}
-                  features={vehicle.features}
-                  price={vehiclePrices[vehicle.id]?.prices[clientData?.price_id]?.amount}
-                  currency={vehiclePrices[vehicle.id]?.prices[clientData?.price_id]?.currency_symbol}
-                  loadExtrasPage={() => loadExtrasPage(vehicle.name, vehiclePrices[vehicle.id]?.prices[clientData?.price_id]?.amount, vehiclePrices[vehicle.id]?.prices[clientData?.price_id]?.currency_symbol ,vehicle.image_url)}
-                />
-              ))}
+          {vehicles.map((vehicle: any) => (
+            <VehicleFeaturesCard
+              key={`${vehicle.id}-${currencyIndex}`}
+              img={vehicle.image_url}
+              vehicleName={vehicle.name}
+              person={vehicle.capacity_person}
+              bags={vehicle.capacity_bags}
+              features={vehicle.features}
+              price={vehicles[vehicle.id]?.prices[currencyIndex]?.amount}
+              currency={
+                vehicles[vehicle.id]?.prices[currencyIndex]
+                  ?.currency_symbol
+              }
+              loadExtrasPage={() =>
+                loadExtrasPage(
+                  vehicle.name,
+                  vehicles[vehicle.id]?.prices[currencyIndex]?.amount,
+                  vehicles[vehicle.id]?.prices[currencyIndex]
+                    ?.currency_symbol,
+                  vehicle.image_url
+                )
+              }
+            />
+          ))}
           <div className="w-full h-fit flex items-center bg-[#C2E6D2] text-success-content rounded-box p-1 font-bold gap-2">
             <svg
               xmlns="http://www.w3.org/2000/svg"

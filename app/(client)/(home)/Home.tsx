@@ -1,7 +1,7 @@
 
-import Navbar from "../components/Navbar";
 import Stars from "./components/Stars";
 import Form from "./components/Form";
+import CurrencyWrapper from "../components/CurrencyWrapper";
 
 export default function Home() {
   return (
@@ -20,7 +20,7 @@ export default function Home() {
       >
         <div className="flex flex-col w-fit  gap-4">
           <h1 className="font-heading font-bold tracking-tight leading-snug text-2xl sm:w-full lg:leading-tight md:w-full lg:w-fit xl:w-9/12 sm:text-4xl xl:text-5xl text-base-100">
-            Reliable <span className=" text-warning ">Airport Transport. </span>
+            Reliable <span className=" text-warning ">Airport Travels.</span>
             Travel with Confidence and Luxury at Great Prices.
           </h1>
           <h2 className="font-paragraph xl:pb-8 text-xs font-light text-white opacity-80 sm:w-full md:w-full sm:text-sm  xl:text-xl xl:w-8/12 w-fit leading-relaxed tracking-tighter">
@@ -34,7 +34,9 @@ export default function Home() {
           </button>
         </div>
         <div className="relative sm:max-w-96 h-fit w-full">
-          <Form/>
+          <CurrencyWrapper>
+            <Form/>
+          </CurrencyWrapper>
           <div className="absolute bg-base-300 rounded-box shadow-xl h-16 w-10/12 left-1/2 -translate-x-1/2 -bottom-13 pt-2 px-2 -z-10 flex justify-between items-center">
             <img
               src="/images/Tripadvisor-Logo.webp"

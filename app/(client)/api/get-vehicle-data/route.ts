@@ -11,10 +11,18 @@ export async function GET() {
         v.capacity_person,
         v.capacity_bags,
         v.features,
-        json_agg(json_build_object('currency', p.currency, 'amount', p.amount)) AS prices
+       json_agg(
+          json_build_object(
+            'currency', p.currency,
+            'amount', p.amount,
+            'price_id', p.id,
+            'currency_symbol', p.currency_symbol
+          ) ORDER BY p.id
+        ) AS prices
       FROM vehicles v
       LEFT JOIN prices p ON v.id = p.vehicle_id
       GROUP BY v.id
+      ORDER BY v.id
     `);
 
     return NextResponse.json(result.rows); // array of vehicle objects
