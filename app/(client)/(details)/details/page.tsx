@@ -2,7 +2,7 @@
 {
   /* React imports */
 }
-import { lazy, memo, useEffect, useState } from "react";
+import { lazy, memo, Suspense, useEffect, useState } from "react";
 import { useGetData } from "../../components/GetData";
 import { UpdateData } from "../../components/UpdateData";
 import { useRouter } from "next/navigation";
@@ -75,23 +75,26 @@ const Details = memo(function () {
   // Controlled form input states
   const [firstName, setFirstName] = useState(clientData?.details?.name || "");
   const [lastName, setLastName] = useState(clientData?.details?.lastName || "");
-  const [phoneNumber, setPhoneNumber] = useState(clientData?.details?.phone || "");
-  const [flightNumber, setFlightNumber] = useState(clientData?.details?.flightNumber || "");
+  const [phoneNumber, setPhoneNumber] = useState(
+    clientData?.details?.phone || ""
+  );
+  const [flightNumber, setFlightNumber] = useState(
+    clientData?.details?.flightNumber || ""
+  );
   const [email, setEmail] = useState(clientData?.details?.email || "");
   const [message, setMessage] = useState("");
   const [isFormValid, setIsFormValid] = useState<any>("");
 
   const router = useRouter();
-  function handleNavigateToExtras(){
-    setClientData((prev:any)=>{
+  function handleNavigateToExtras() {
+    setClientData((prev: any) => {
       return {
         ...prev,
-        extras:null
-      }
-    })
+        extras: null,
+      };
+    });
     router.push(`/extras?uuid=${clientData.uuid}`);
   }
-
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -138,14 +141,17 @@ const Details = memo(function () {
   }, [clientData]);
 
   return (
-    <>
+    <Suspense fallback={<div>Loading...</div>}>
       <div className="flex relative flex-col mt-20 sm:mt-24 justify-between lg:block xl:max-w-9/12 lg:max-w-11/12 mx-auto">
         <section className="p-4 md:px-4 flex justify-between flex-col-reverse lg:flex-row-reverse gap-4 w-full lg:px-0 ">
           <aside className="flex flex-col gap-3 xl:w-4/12 lg:w-5/12">
             <SummaryCard clientData={clientData} />
             {/* Navigation Buttons */}
             <div className="flex md:flex-wrap gap-2 justify-between w-full">
-              <button onClick={handleNavigateToExtras} className="btn w-5/12 px-0 md:w-full btn-gray">
+              <button
+                onClick={handleNavigateToExtras}
+                className="btn w-5/12 px-0 md:w-full btn-gray"
+              >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
@@ -277,7 +283,7 @@ const Details = memo(function () {
           <Steps />
         </div>
       </div>
-    </>
+    </Suspense>
   );
 });
 

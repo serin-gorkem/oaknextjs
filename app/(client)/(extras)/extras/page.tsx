@@ -1,5 +1,5 @@
 "use client";
-import { lazy, memo, useEffect, useState } from "react";
+import { lazy, memo, Suspense, useEffect, useState } from "react";
 
 {
   /* Lazy Loadings */
@@ -111,7 +111,7 @@ const Extras = memo(function () {
 
 
   return (
-    <>
+    <Suspense fallback={<div>Loading...</div>}>    
       <div className="flex relative flex-col mt-30 justify-between lg:block xl:max-w-9/12 lg:max-w-11/12 mx-auto">
         <section className="p-4 md:px-4 flex justify-between flex-col lg:flex-row-reverse gap-4 w-full lg:px-0 ">
           <div className="lg:hidden block">
@@ -191,7 +191,7 @@ const Extras = memo(function () {
           <Steps />
         </div>
       </div>
-    </>
+    </Suspense>
   );
 });
 
