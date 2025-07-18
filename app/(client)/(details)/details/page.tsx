@@ -24,7 +24,7 @@ type FormData = {
   email: string;
 };
 
-export function validateForm(data: FormData) {
+function validateForm(data: FormData) {
   const errors: Partial<Record<keyof FormData, string>> = {};
 
   const nameRegex = /^[a-zA-ZçÇğĞıİöÖşŞüÜ\s]{2,}$/;
@@ -92,9 +92,6 @@ const Details = memo(function () {
     router.push(`/extras?uuid=${clientData.uuid}`);
   }
 
-  function handleNavigateToSummary(){
-    router.push(`/summary?uuid=${clientData.uuid}`);
-  }
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
