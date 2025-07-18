@@ -1,7 +1,11 @@
-import BookingClient from './components/BookingClient';
+"use client";
+import { Suspense } from "react";
+import BookingContent from "./components/BookingContent";
 
-export default function BookingPage() {
+export default function Booking() {
   return (
-    <BookingClient />
+    <Suspense fallback={<div>Loading...</div>}>
+      <BookingContent />
+    </Suspense>
   );
 }

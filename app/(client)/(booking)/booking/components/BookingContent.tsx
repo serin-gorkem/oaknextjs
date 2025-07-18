@@ -1,12 +1,12 @@
 "use client";
-import { lazy, Suspense, useEffect, useState } from "react";
+import { lazy, useEffect, useState } from "react";
 import VehicleFeaturesCard from "./VehicleFeaturesCard";
 import { useRouter } from "next/navigation";
 import DirectionsMap from "./DirectionsMap";
 import { useGetData } from "../../../components/GetData";
 import { UpdateData } from "../../../components/UpdateData";
-import { useCurrency } from "../../../(home)/context/CurrencyContext";
-import { useVehicle } from "../../../(home)/context/VehicleContext";
+import { useCurrency } from "../../../context/CurrencyContext";
+import { useVehicle } from "../../../context/VehicleContext";
 // #region lazy imports
 const PageIndicator = lazy(() => import("../../../components/PageIndicator"));
 const TransferSummaryCard = lazy(
@@ -15,7 +15,7 @@ const TransferSummaryCard = lazy(
 const Steps = lazy(() => import("../../../components/Steps"));
 // #endregion
 
-export default function Booking() {
+export default function BookingContent() {
   const { clientData, setClientData } = useGetData();
   const { currencyIndex } = useCurrency();
   const { vehicles } = useVehicle();
@@ -69,7 +69,6 @@ export default function Booking() {
     router.push(`/extras?uuid=${clientData.uuid}`);
   }
   return (
-    <Suspense fallback={<div>Loading...</div>}>
       <main className="flex relative flex-col mt-30 justify-between lg:block xl:max-w-9/12 lg:max-w-11/12 mx-auto ">
         <section className="p-4 md:px-4 flex justify-between flex-col lg:flex-row-reverse gap-4 w-full lg:px-0 ">
           <div className="lg:hidden block">
@@ -224,6 +223,5 @@ export default function Booking() {
           <Steps />
         </div>
       </main>
-    </Suspense>
   );
 }
