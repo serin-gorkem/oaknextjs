@@ -13,7 +13,7 @@ import { useRouter } from "next/navigation";
 const Steps = lazy(() => import("../../../components/Steps"));
 const PageIndicator = lazy(() => import("../../../components/PageIndicator"));
 const SummaryCard = lazy(
-  () => import("../../../(extras)/extras/components/SummaryCard")
+  () => import("../../../components/SummaryCard")
 );
 
 type FormData = {
@@ -115,6 +115,7 @@ const Details = memo(function () {
         phone: phoneNumber,
         flightNumber,
         email,
+        message: message,
       });
       router.push(`/summary?uuid=${clientData.uuid}`);
     }

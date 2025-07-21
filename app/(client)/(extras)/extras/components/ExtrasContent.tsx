@@ -6,7 +6,7 @@ import { lazy, memo, Suspense, useEffect, useState } from "react";
 }
 const Steps = lazy(() => import("../../../components/Steps"));
 const PageIndicator = lazy(() => import("../../../components/PageIndicator"));
-const SummaryCard = lazy(() => import("./SummaryCard"));
+const SummaryCard = lazy(() => import("../../../components/SummaryCard"));
 
 {
   /* API Keys and images import */

@@ -7,16 +7,17 @@ export function useGetData() {
   const searchParams = useSearchParams();
   const uuid = searchParams.get("uuid");
 
+  async function getClientData() {
+    const res = await fetch(`/api/form-data?uuid=${uuid}`);
+    const json = await res.json();
+    if (!json.error) setClientData(json);
+    else console.error(json.error);
+  }
+
   useEffect(() => {
     if (!uuid) return;
 
-    fetch(`/api/form-data?uuid=${uuid}`)
-      .then((res) => res.json())
-      .then((json) => {
-        if (!json.error) setClientData(json);
-        else console.error(json.error);
-      })
-      .catch(console.error);
+  getClientData()
   }, [uuid]);
 
   return  { clientData, setClientData };

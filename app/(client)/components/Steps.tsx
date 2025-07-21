@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { memo } from "react";
 
 const Steps = memo(function () {
@@ -31,7 +32,7 @@ type StepProps = {
 function Step(props: StepProps) {
   return (
     <div className={`w-full flex flex-col md:flex-row ${props.direction} justify-between gap-8 xl:gap-32`}>
-      <img src={props.svg} loading="lazy" alt="Fill out the Form" className="h-64 lg:h-64 xl:h-96" />
+      <Image width={500} height={500} src={props.svg} loading="lazy" alt="Fill out the Form" className="h-64 lg:h-64 xl:h-96" />
       <div className="flex flex-col gap-4">
         <h2 className="font-bold text-2xl xl:text-3xl">{props.title}</h2>
         <p className="text-xl lg:text-2xl">{props.text}</p>

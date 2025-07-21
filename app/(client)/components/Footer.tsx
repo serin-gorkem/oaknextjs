@@ -1,11 +1,14 @@
+import Image from "next/image";
 import { memo } from "react";
 
 const Footer = memo(function () {
   return (
     <footer className="bg-info-content py-12 relative ">
-      <div className="footer sm:footer-horizontal xl:max-w-9/12 lg:max-w-11/12 lg:px-0 sm:px-4 px-2  mx-auto text-neutral-content">
+      <div className="footer sm:footer-horizontal xl:max-w-9/12 lg:max-w-11/12 lg:px-0 sm:px-4 px-2 mx-auto text-neutral-content">
         <div>
-          <h1 className="text-2xl text-base-300 font-bold">Airport to Hotels</h1>
+          <h1 className="text-2xl text-base-300 font-bold">
+            Airport to Hotels
+          </h1>
           <p className="w-10/12 text-sm">
             Located in Turkey/Kusadasi; we provide reliable and comfortable
             airport transfers, with transparent pricing and professional
@@ -113,6 +116,23 @@ const Footer = memo(function () {
             </li>
           </ul>
         </nav>
+      </div>
+      <div className="flex sm:flex-row flex-col sm:items-center gap-2 sm:gap-0 mt-4 sm:justify-between bottom-4 xl:max-w-9/12 lg:max-w-11/12 lg:px-0 sm:px-4 px-2 mx-auto text-neutral-content">
+        <div className="flex items-center gap-2">
+          <p>Airport to Hotels is a company of </p>
+          <Image
+            src="/images/logos/Logo-oak.webp"
+            alt="OAK Travel Group Logo"
+            width={50}
+            height={50}
+          ></Image>
+        </div>
+        <a className="text-sm" href="https://gorkemserin.com/">
+          Website Designed by <br /> Crehera Web Agency - Görkem Serin{" "}
+        </a>
+      </div>
+      <div className="flex sm:flex-row flex-col sm:items-center gap-2 sm:gap-0 mt-4 sm:justify-between bottom-4 xl:max-w-9/12 lg:max-w-11/12 lg:px-0 sm:px-4 px-2 mx-auto text-neutral-content">
+          <p>© 2020-{new Date().getFullYear()} All rights reserved to OAK Travel Group</p>
       </div>
     </footer>
   );

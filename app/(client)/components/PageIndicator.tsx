@@ -3,19 +3,19 @@ import { memo } from "react";
 const PageIndicator = memo(function () {
   return (
     <ul className="flex w-full items-center justify-between rounded-box bg-base-300 mb-3 px-2 py-4 md:px-4">
-      <a href="/vehicle-features">
-        <Step page="Vehicle" active={"border-warning [&>div]:bg-warning"} />
+      <a href="/">
+        <Step page="Booking" active={"border-warning [&>div]:bg-warning"} />
       </a>
       <span className="md:grow-1 grow-0 border-gray border-b-2 m-1 mb-7"></span>
-      <a href="/Extras">
+      <a href="/extras">
         <Step page="Extras"/>
       </a>
       <span className="md:grow-1 grow-0 border-gray border-b-2 m-1 mb-7"></span>
-      <a href="/Details">
+      <a href="/details">
         <Step page="Details"/>
       </a>
       <span className="md:grow-1 grow-0 border-gray border-b-2 m-1  mb-7"></span>
-      <a href="/Summary">
+      <a href="/summary">
         <Step page="Summary"/>
       </a>
     </ul>

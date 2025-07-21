@@ -1,5 +1,5 @@
 import { memo } from "react";
-import { useCurrency } from "../../../context/CurrencyContext";
+import { useCurrency } from "../context/CurrencyContext";
 import { useVehicle } from "@/app/(client)/context/VehicleContext";
 
 const SummaryCard = memo(function ({ clientData }: any) {

@@ -3,13 +3,20 @@ import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import CurrencyDropdown from "./CurrencyDropdown";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
+
 
 function Navbar() {
   const pathname = usePathname();
   const isBookingPage = pathname !== "/";
+  const router = useRouter();
+
+  function handleNavigateToHome() {
+    router.push("/");
+  }
   return (
     <div className="mb-5 absolute z-100 top-0 w-full">
-      <PageNav />
+      <PageNav handleNavigateToHome={handleNavigateToHome} />
       {isBookingPage ? (
         <BookingNav />
       ) : (
@@ -22,7 +29,7 @@ function Navbar() {
   );
 }
 
-function PageNav() {
+function PageNav({ handleNavigateToHome }: { handleNavigateToHome: () => void }) {
   const [lastScrollY, setLastScrollY] = useState<number>(
     typeof window !== "undefined" ? window.pageYOffset : 0
   );
@@ -53,7 +60,7 @@ function PageNav() {
       className={`px-2 p-8  ${showNav} duration-200  opacity-0 fixed w-full flex bg-black/10 backdrop-blur-md top-0 -z-10 `}
     >
       <ul className="flex flex-col md:flex-row md:justify-between gap-3 lg:p-0 lg:max-w-9/12 mx-auto w-full  ">
-        <li className=" cursor-pointer">
+        <li onClick={handleNavigateToHome} className=" cursor-pointer">
           <h1 className="text-primary text-3xl hover:text-warning transition-all ">
             Airport to Hotels
           </h1>
@@ -159,14 +166,16 @@ function MobileNav() {
               {menuItem("Contact", "#Contact")}
             </ul>
           </div>
-          <Image
-            src="/images/logos/ToursOfYou.webp"
-            width={100}
-            height={100}
-            alt="Tours of you logo"
-            aria-label="Book now button"
-            className="w-36 p-2  hover:shadow-none hover:text-base-100"
-          ></Image>
+          <a href="https://www.toursofyou.com/">
+            <Image
+              src="/images/logos/ToursOfYou.webp"
+              width={100}
+              height={100}
+              alt="Tours of you logo"
+              aria-label="Book now button"
+              className="w-36 p-2  hover:shadow-none hover:text-base-100"
+              ></Image>
+            </a>
         </div>
       ) : (
         <div className="sm:hidden ">
@@ -285,21 +294,23 @@ function DesktopNav() {
     <nav className="hidden sm:flex sm:flex-col pt-5 items-center z-20 gap-6 w-full lg:px-0 sm:px-4 xl:max-w-9/12 lg:max-w-11/12 mx-auto ">
       <ul className="flex justify-between items-center w-full">
         <li>
-          <a href="/OakTravel">
+          <a href="/">
             <h1 className="text-base-100 text-3xl hover:text-warning transition-all ">
               Airport to Hotels
             </h1>
           </a>
         </li>
         <li className="flex items-center gap-4 w-fit cursor-pointer">
-          <Image
-            src="/images/logos/ToursOfYou.webp"
-            width={100}
-            height={100}
-            alt="Tours of you logo"
-            aria-label="Book now button"
-            className="w-36  hover:shadow-none hover:text-base-100"
-          ></Image>
+          <a href="https://www.toursofyou.com/">
+            <Image
+              src="/images/logos/ToursOfYou.webp"
+              width={100}
+              height={100}
+              alt="Tours of you logo"
+              aria-label="Book now button"
+              className="w-36 p-2  hover:shadow-none hover:text-base-100"
+              ></Image>
+            </a>
           <button
             aria-label="Book now button"
             className="btn w-36 hover:bg-primary hover:border-primary hover:shadow-none hover:text-base-100"
