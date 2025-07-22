@@ -19,8 +19,7 @@ const RideDetails = memo(function ({
       <div className="relative">
         <div className="right-0 top-5 absolute flex flex-col gap-2">
           <button onClick={navigateToDetails} className="btn w-24 btn-primary">
-            {" "}
-            Edit{" "}
+            Edit
           </button>
         </div>
         <h1 className="text-xl md:text-4xl my-3"> Transfer Details </h1>
@@ -116,7 +115,7 @@ const RideDetails = memo(function ({
         <div className="flex justify-between">
           <h2 className="title text-2xl mb-1">TOTAL PRICE</h2>
           <p className="section-text text-xl font-bold">
-            {vehicles?.[currencyIndex]?.prices[currencyIndex]?.amount}{" "}
+            {vehicles?.[currencyIndex]?.prices[currencyIndex]?.amount}
             {vehicles?.[currencyIndex]?.prices[currencyIndex]?.currency_symbol}
           </p>
         </div>

@@ -5,6 +5,14 @@ import { useVehicle } from "@/app/(client)/context/VehicleContext";
 const SummaryCard = memo(function ({ clientData }: any) {
   const { currencyIndex } = useCurrency();
   const { vehicles } = useVehicle();
+  console.log(clientData);
+  console.log(vehicles);
+  console.log(currencyIndex);
+  
+  console.log(vehicles?.[currencyIndex]?.prices[currencyIndex]?.amount);
+  
+  
+  
   return (
     <article className="bg-base-300 rounded-box shadow-md flex gap-4 flex-col px-3 py-4 ">
       <img src={clientData?.booking?.image_url} className="w-full"></img>
@@ -14,7 +22,7 @@ const SummaryCard = memo(function ({ clientData }: any) {
           <div className="flex flex-col">
             <h2 className="title mb-1">TRANSFER TYPE</h2>
             <p className="section-text font-bold">
-              {clientData?.booking.transfer_type}
+              {clientData?.return_data?.return_trip ? "Round Trip" : "One Way"}
             </p>
           </div>
           <div className="divider my-1"></div>

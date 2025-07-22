@@ -3,7 +3,7 @@ import { memo } from "react";
 
 const Footer = memo(function () {
   return (
-    <footer className="bg-info-content py-12 relative ">
+    <footer className="bg-info-content pt-12 pb-2 relative ">
       <div className="footer sm:footer-horizontal xl:max-w-9/12 lg:max-w-11/12 lg:px-0 sm:px-4 px-2 mx-auto text-neutral-content">
         <div>
           <h1 className="text-2xl text-base-300 font-bold">
@@ -47,7 +47,7 @@ const Footer = memo(function () {
           </h1>
           <ul className="text-base-100 w-full flex flex-col gap-2">
             <li className="link-hover">
-              <div className="flex gap-2 ">
+              <div className="flex items-center gap-2 ">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
@@ -68,7 +68,7 @@ const Footer = memo(function () {
               </div>
             </li>
             <li>
-              <div className="flex gap-2 ">
+              <div className="flex items-center gap-2 ">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
@@ -89,7 +89,7 @@ const Footer = memo(function () {
               </div>
             </li>
             <li>
-              <div className="flex gap-2 ">
+              <div className="flex items-center gap-2 ">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
@@ -119,7 +119,7 @@ const Footer = memo(function () {
       </div>
       <div className="flex sm:flex-row flex-col sm:items-center gap-2 sm:gap-0 mt-4 sm:justify-between bottom-4 xl:max-w-9/12 lg:max-w-11/12 lg:px-0 sm:px-4 px-2 mx-auto text-neutral-content">
         <div className="flex items-center gap-2">
-          <p>Airport to Hotels is a company of </p>
+          <p className="text-sm">Airport to Hotels is a company of </p>
           <Image
             src="/images/logos/Logo-oak.webp"
             alt="OAK Travel Group Logo"
@@ -127,12 +127,12 @@ const Footer = memo(function () {
             height={50}
           ></Image>
         </div>
-        <a className="text-sm" href="https://gorkemserin.com/">
-          Website Designed by <br /> Crehera Web Agency - Görkem Serin{" "}
-        </a>
+          <p className="text-sm">© 2020-{new Date().getFullYear()} All rights reserved to OAK Travel Group</p>
       </div>
       <div className="flex sm:flex-row flex-col sm:items-center gap-2 sm:gap-0 mt-4 sm:justify-between bottom-4 xl:max-w-9/12 lg:max-w-11/12 lg:px-0 sm:px-4 px-2 mx-auto text-neutral-content">
-          <p>© 2020-{new Date().getFullYear()} All rights reserved to OAK Travel Group</p>
+        <a className="text-sm" href="https://gorkemserin.com/">
+          Website Designed by Crehera Web Agency - Görkem Serin
+        </a>
       </div>
     </footer>
   );

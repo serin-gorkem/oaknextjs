@@ -28,7 +28,6 @@ function validateForm(data: FormData) {
   const errors: Partial<Record<keyof FormData, string>> = {};
 
   const nameRegex = /^[a-zA-ZçÇğĞıİöÖşŞüÜ\s]{2,}$/;
-  const flightRegex = /^[A-Z]{1,2}[-\s]?\d{1,5}[A-Z]?$/i;
   const phoneRegex = /^(\+?\d{10,15})$/;
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -52,11 +51,6 @@ function validateForm(data: FormData) {
   } else if (!phoneRegex.test(sanitizedPhone)) {
     errors.phone = "Invalid phone number format.";
   }
-
-  if (data.flightNumber && !flightRegex.test(data.flightNumber.trim())) {
-    errors.flightNumber = "Flight number format is invalid.";
-  }
-
   if (!data.email.trim()) {
     errors.email = "Email is required.";
   } else if (!emailRegex.test(data.email.trim())) {
@@ -141,6 +135,17 @@ const Details = memo(function () {
     console.log("clientData updated:", clientData);
   }, [clientData]);
 
+  useEffect(() => {
+    if (clientData !== null) {
+      setFirstName(clientData.details.name);
+      setLastName(clientData.details.lastName);
+      setPhoneNumber(clientData.details.phone);
+      setFlightNumber(clientData.details.flightNumber);
+      setEmail(clientData.details.email);
+      setMessage(clientData.details.message);
+    }
+  }, [clientData]);
+
   return (
     <Suspense fallback={<div>Loading...</div>}>
       <div className="flex relative flex-col mt-20 sm:mt-24 justify-between lg:block xl:max-w-9/12 lg:max-w-11/12 mx-auto">
@@ -174,7 +179,7 @@ const Details = memo(function () {
           <div className="lg:w-full flex flex-col gap-4">
             <div className=" lg:flex lg:flex-col lg:gap-4">
               {/*For page indicator active functionality, later.*/}
-              <PageIndicator />
+              <PageIndicator activeStep="details"  />
               <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
                 <div className="md:flex md:justify-between gap-2 ">
                   <fieldset className="fieldset w-full flex focus-within:outline-0">

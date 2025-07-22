@@ -181,7 +181,7 @@ function MobileNav() {
         <div className="sm:hidden ">
           <ul className="p-2  flex justify-between items-center">
             <li>
-              <a href="#">
+              <a href="/">
                 <p className=" font-heading text-white text-xl">
                   Airport to Hotels
                 </p>
@@ -247,7 +247,7 @@ function BookingNav() {
       <div className="">
         <ul className="p-2 flex justify-between items-center">
           <li>
-            <a href="#">
+            <a href="/">
               <p className=" font-heading text-primary text-2xl">
                 Airport to Hotels
               </p>

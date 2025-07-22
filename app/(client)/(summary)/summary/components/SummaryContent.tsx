@@ -71,7 +71,7 @@ const Summary = memo(function () {
           <div className="lg:w-full flex flex-col gap-4">
             <div className=" lg:flex lg:flex-col lg:gap-4">
               {/*For page indicator active functionality, later.*/}
-              <PageIndicator/>
+              <PageIndicator activeStep="summary" />
               <ContactSummaryCard clientData={clientData} navigateToDetails={navigateToDetails}/>
               <RideDetails clientData={clientData} navigateToDetails={navigateToBooking}/>
             </div>

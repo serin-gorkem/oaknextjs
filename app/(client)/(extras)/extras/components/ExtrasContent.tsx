@@ -47,6 +47,13 @@ const Extras = memo(function () {
 
   
   function updateClientData(changes: Partial<typeof clientData> = {}) {
+    if (clientData === null) {
+      setChildSeatNumber(0);
+      setFlowersNumber(0);
+      setAirportAssistance(false);
+      setWait(false);
+      return;
+    }
     setClientData((prev: any) => {
       const base = prev || {};
       return {
@@ -116,7 +123,7 @@ const Extras = memo(function () {
         <section className="p-4 md:px-4 flex justify-between flex-col lg:flex-row-reverse gap-4 w-full lg:px-0 ">
           <div className="lg:hidden block">
             {/* Use switch case to change the page indicator */}
-            <PageIndicator />
+            <PageIndicator activeStep="extras" />
             <ExtrasCard
               increase={increase}
               decrease={decrease}
@@ -172,7 +179,7 @@ const Extras = memo(function () {
           <div className="lg:w-full flex flex-col gap-4">
             <div className="hidden lg:flex lg:flex-col lg:gap-4">
               {/*For page indicator active functionality, later.*/}
-              <PageIndicator />
+              <PageIndicator activeStep="extras"  />
               <ExtrasCard
                 increase={increase}
                 decrease={decrease}

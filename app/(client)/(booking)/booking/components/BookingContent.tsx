@@ -72,7 +72,7 @@ export default function BookingContent() {
       <main className="flex relative flex-col mt-30 justify-between lg:block xl:max-w-9/12 lg:max-w-11/12 mx-auto ">
         <section className="p-4 md:px-4 flex justify-between flex-col lg:flex-row-reverse gap-4 w-full lg:px-0 ">
           <div className="lg:hidden block">
-            <PageIndicator />
+            <PageIndicator activeStep="booking"  />
           </div>
           <aside className="flex flex-col gap-3 xl:w-3/12 lg:w-5/12">
             <TransferSummaryCard
@@ -161,7 +161,7 @@ export default function BookingContent() {
           </aside>
           <div className="lg:w-full flex flex-col gap-4">
             <div className="hidden lg:block">
-              <PageIndicator />
+              <PageIndicator activeStep="booking"  />
             </div>
             <div className="w-full z-0 h-96 mb-10">
               <DirectionsMap
