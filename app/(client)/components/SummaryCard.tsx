@@ -5,13 +5,6 @@ import { useVehicle } from "@/app/(client)/context/VehicleContext";
 const SummaryCard = memo(function ({ clientData }: any) {
   const { currencyIndex } = useCurrency();
   const { vehicles } = useVehicle();
-  console.log(clientData);
-  console.log(vehicles);
-  console.log(currencyIndex);
-  
-  console.log(vehicles?.[currencyIndex]?.prices[currencyIndex]?.amount);
-  
-  
   
   return (
     <article className="bg-base-300 rounded-box shadow-md flex gap-4 flex-col px-3 py-4 ">

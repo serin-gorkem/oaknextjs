@@ -29,7 +29,6 @@ const Vehicles = memo(function () {
   const {vehicles} = useVehicle();
 
   const {currencyIndex} = useCurrency();
-  console.log("currencyIndex:", currencyIndex);
   
   useEffect(() => {
     const updatePerPage = () => {

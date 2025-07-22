@@ -100,7 +100,6 @@ const Details = memo(function () {
       email,
     });
 
-    console.log(validation);
 
     if (validation.isValid) {
       updateClientData({

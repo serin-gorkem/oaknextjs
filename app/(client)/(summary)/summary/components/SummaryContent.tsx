@@ -24,8 +24,6 @@ const Summary = memo(function () {
   const {clientData} = useGetData();
   const router = useRouter();
 
-  console.log(clientData);
-  
   function navigateToDetails() {
     router.push(`/details?uuid=${clientData.uuid}`);
   }

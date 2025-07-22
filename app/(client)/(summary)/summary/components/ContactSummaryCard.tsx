@@ -4,9 +4,6 @@ type ContactSummaryCardProps = {
   navigateToDetails: () => void;
 };
 const ContactSummaryCard = memo(function ({ clientData, navigateToDetails }: ContactSummaryCardProps) {
-
-  console.log(clientData);
-  
   return (
     <article className="flex flex-col relative gap-4 p-6 mb-8 rounded-box bg-base-300 w-full md:flex-1/2 lg:flex-1/4 card-xl shadow-xl">
       <h1>Contact & Billing Info</h1>
