@@ -5,7 +5,6 @@ import CurrencyDropdown from "./CurrencyDropdown";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 
-
 function Navbar() {
   const pathname = usePathname();
   const isBookingPage = pathname !== "/";
@@ -29,7 +28,11 @@ function Navbar() {
   );
 }
 
-function PageNav({ handleNavigateToHome }: { handleNavigateToHome: () => void }) {
+function PageNav({
+  handleNavigateToHome,
+}: {
+  handleNavigateToHome: () => void;
+}) {
   const [lastScrollY, setLastScrollY] = useState<number>(
     typeof window !== "undefined" ? window.pageYOffset : 0
   );
@@ -61,12 +64,18 @@ function PageNav({ handleNavigateToHome }: { handleNavigateToHome: () => void })
     >
       <ul className="flex flex-col md:flex-row md:justify-between gap-3 lg:p-0 lg:max-w-9/12 mx-auto w-full  ">
         <li onClick={handleNavigateToHome} className=" cursor-pointer">
-          <h1 className="text-primary text-3xl hover:text-warning transition-all ">
-            Airport to Hotels
-          </h1>
+          <a href="/">
+            <Image
+              src="/images/logos/Logo.png"
+              width={100}
+              height={100}
+              alt="Website Logo"
+              aria-label="Book now button"
+              className="w-36 p-2 hover:shadow-none hover:text-base-100"
+            ></Image>
+          </a>
         </li>
         <li className="flex items-center gap-4 w-fit cursor-pointer">
-          <CurrencyDropdown/>
           <button
             aria-label="Book button"
             className="btn btn-primary w-30 lg:w-36 hover:bg-white hover:text-primary"
@@ -82,7 +91,7 @@ function PageNav({ handleNavigateToHome }: { handleNavigateToHome: () => void })
           >
             Back To top
           </button>
-          {/* <CurrencyDropdown /> */}
+          <CurrencyDropdown />
         </li>
       </ul>
     </nav>
@@ -103,9 +112,14 @@ function MobileNav() {
           <ul className=" p-2 flex justify-between items-center">
             <li>
               <a href="/">
-                <h1 className="text-base-100 text-3xl hover:text-warning transition-all ">
-                  Airport to Hotels
-                </h1>
+                <Image
+                  src="/images/logos/Logo.png"
+                  width={100}
+                  height={100}
+                  alt="Website Logo"
+                  aria-label="Book now button"
+                  className="w-36 p-2 hover:shadow-none hover:text-base-100"
+                ></Image>
               </a>
             </li>
             <li className="flex items-center gap-4">
@@ -171,20 +185,25 @@ function MobileNav() {
               src="/images/logos/ToursOfYou.webp"
               width={100}
               height={100}
-              alt="Tours of you logo"
+              alt="Website Logo"
               aria-label="Book now button"
               className="w-36 p-2  hover:shadow-none hover:text-base-100"
-              ></Image>
-            </a>
+            ></Image>
+          </a>
         </div>
       ) : (
         <div className="sm:hidden ">
           <ul className="p-2  flex justify-between items-center">
             <li>
               <a href="/">
-                <p className=" font-heading text-white text-xl">
-                  Airport to Hotels
-                </p>
+                <Image
+                  src="/images/logos/Logo.png"
+                  width={100}
+                  height={100}
+                  alt="Website Logo"
+                  aria-label="Book now button"
+                  className="w-36 p-2 hover:shadow-none hover:text-base-100"
+                ></Image>
               </a>
             </li>
             <li className="flex items-center gap-4">
@@ -243,14 +262,19 @@ function MobileNav() {
 
 function BookingNav() {
   return (
-    <nav className="flex flex-col gap-2 z-20  lg:px-0 sm:px-4 xl:max-w-9/12 lg:max-w-11/12 mx-auto ">
-      <div className="">
-        <ul className="p-2 flex justify-between items-center">
+    <nav className="flex flex-col z-20 lg:px-0 sm:px-4 xl:max-w-9/12 lg:max-w-11/12 mx-auto ">
+      <div>
+        <ul className="p-2 sm:px-0 flex justify-between items-center">
           <li>
             <a href="/">
-              <p className=" font-heading text-primary text-2xl">
-                Airport to Hotels
-              </p>
+              <Image
+                src="/images/logos/Logo.png"
+                width={100}
+                height={100}
+                alt="Website Logo"
+                aria-label="Book now button"
+                className="w-36 p-2 hover:shadow-none hover:text-base-100"
+              ></Image>
             </a>
           </li>
           <li className="flex cursor-pointer items-center gap-4">
@@ -295,9 +319,14 @@ function DesktopNav() {
       <ul className="flex justify-between items-center w-full">
         <li>
           <a href="/">
-            <h1 className="text-base-100 text-3xl hover:text-warning transition-all ">
-              Airport to Hotels
-            </h1>
+            <Image
+              src="/images/logos/Logo.png"
+              width={100}
+              height={100}
+              alt="Website Logo"
+              aria-label="Book now button"
+              className="w-36 p-2 hover:shadow-none hover:text-base-100"
+            ></Image>
           </a>
         </li>
         <li className="flex items-center gap-4 w-fit cursor-pointer">
@@ -306,11 +335,11 @@ function DesktopNav() {
               src="/images/logos/ToursOfYou.webp"
               width={100}
               height={100}
-              alt="Tours of you logo"
+              alt="Website Logo"
               aria-label="Book now button"
               className="w-36 p-2  hover:shadow-none hover:text-base-100"
-              ></Image>
-            </a>
+            ></Image>
+          </a>
           <button
             aria-label="Book now button"
             className="btn w-36 hover:bg-primary hover:border-primary hover:shadow-none hover:text-base-100"

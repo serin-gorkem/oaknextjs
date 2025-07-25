@@ -43,7 +43,7 @@ const Summary = memo(function () {
             />
             {/* Navigation Buttons */}
             {/* Navigation Buttons */}
-            <div className="w-full md:w-1/3 lg:w-full">
+            <div className="flex flex-col">
               <button
                 onClick={navigateToDetails}
                 className="btn px-2 md:w-full btn-gray"
@@ -63,6 +63,12 @@ const Summary = memo(function () {
                   />
                 </svg>
                 Personal Details
+              </button>
+              <button
+                onClick={navigateToDetails}
+                className="btn btn-primary hover:text-white mt-2  hover:btn-warning px-2 md:w-full btn-gray"
+              >
+                Book your trip now !
               </button>
             </div>
           </aside>

@@ -15,7 +15,7 @@ const SummaryCard = memo(function ({ clientData }: any) {
           <div className="flex flex-col">
             <h2 className="title mb-1">TRANSFER TYPE</h2>
             <p className="section-text font-bold">
-              {clientData?.return_data?.return_trip ? "Round Trip" : "One Way"}
+              {clientData?.return_data?.return_trip ? "Return Trip" : "One Way"}
             </p>
           </div>
           <div className="divider my-1"></div>

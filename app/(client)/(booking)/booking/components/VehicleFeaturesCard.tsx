@@ -38,8 +38,7 @@ const VehicleFeaturesCard = memo(function (props: VehicleFeaturesCardProps) {
       <img src={props.img} className="lg:w-1/3 w-1/2"></img>
       <div className="flex gap-6 items-center lg:gap-10">
         <h1 className="text-2xl md:text-4xl">{props.vehicleName}</h1>
-        <div className="border-2 border-warning flex items-center rounded-box p-1 text-warning">
-          {/* Fire Logo */}
+        {/* <div className="border-2 border-warning flex items-center rounded-box p-1 text-warning">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
@@ -60,7 +59,7 @@ const VehicleFeaturesCard = memo(function (props: VehicleFeaturesCardProps) {
             />
           </svg>
           <p className="md:text-lg text-xs"> Most Popular</p>
-        </div>
+        </div> */}
       </div>
       <div className="flex lg:gap-10 gap-5">
         <div className="flex  items-center">

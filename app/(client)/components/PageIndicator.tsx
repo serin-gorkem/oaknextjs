@@ -82,7 +82,7 @@ function Step({ page, status }: StepProps) {
 
 function Line() {
   return (
-    <span className="md:grow-1 grow-0 border-gray border-b-2 m-1 mb-7"></span>
+    <span className="md:grow-1 hidden lg:block w-[%33] grow-0 border-gray border-b-2 m-1 mb-7"></span>
   );
 }
 

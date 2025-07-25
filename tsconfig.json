@@ -34,6 +34,6 @@
     "app/(admin)/admin/dashboard",
     "middleware.js",
     "app/(client)/(home)/Vehicles.tsx"
-  ],
+, "app/(client)/(extras)/extras/components/PriceCalculator"  ],
   "exclude": ["node_modules"]
 }

@@ -6,10 +6,10 @@ const Stars = memo(function (props: StarsProps) {
   const star = (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      fill="oklch(59.27% 0.2264 26.75)"
+      fill="oklch(0.6648 0.2256 36.2)"
       viewBox="0 0 24 24"
       strokeWidth={1.5}
-      stroke="oklch(59.27% 0.2264 26.75)"
+      stroke="oklch(0.6648 0.2256 36.2)"
       className="size-6"
     >
       <path

@@ -3,25 +3,28 @@ import React, { useEffect, useState } from "react";
 import { useCurrency } from "../context/CurrencyContext";
 
 const CurrencyDropdown = () => {
-  const {currencyIndex, setCurrencyIndex} = useCurrency();
-  const [selectedCurrency, setSelectedCurrency] = useState(currencyList[currencyIndex]);
-  
-  
-  
-async function updateCurrency(currency: any, id:number) {
-  setSelectedCurrency(currency);
-  setCurrencyIndex(id);
-}
+  const { currencyIndex, setCurrencyIndex } = useCurrency();
+  const [selectedCurrency, setSelectedCurrency] = useState(
+    currencyList[currencyIndex]
+  );
+
+  async function updateCurrency(currency: any, id: number) {
+    setSelectedCurrency(currency);
+    setCurrencyIndex(id);
+  }
 
   const renderCurrencyList = currencyList.map((currency) => (
-    <li key={currency.id} className="w-full" onClick={() => updateCurrency(currency, currency.id)} >
+    <li
+      key={currency.id}
+      className="w-full"
+      onClick={() => updateCurrency(currency, currency.id)}
+    >
       <a className="p-2 px-1 w-full">
         {currency.svg}
         <p>{currency.name}</p>
       </a>
     </li>
   ));
-
 
   return (
     <div className="dropdown">
@@ -44,17 +47,16 @@ const currencyList = [
     svg: (
       <svg
         xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-        viewBox="0 0 24 24"
-        strokeWidth={1.5}
-        stroke="currentColor"
-        className="size-10 aspect-square p-1 bg-white rounded-full"
+        viewBox="0 0 64 64"
+        className="size-10 aspect-square p-1 rounded-full"
       >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          d="M12 6v12m-3-2.818.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-        />
+        <g id="Outline">
+          <g id="Outline-2" data-name="Outline">
+            <path d="M39 36.852a6.8 6.8 0 0 0-6.793-6.793h-.319a3.716 3.716 0 1 1 3.712-3.715 1 1 0 0 0 2 0 5.725 5.725 0 0 0-4.561-5.6V18.09a1 1 0 0 0-2 0v2.61a5.712 5.712 0 0 0 .846 11.361h.319a4.793 4.793 0 1 1-4.793 4.793 1 1 0 0 0-2 0 6.8 6.8 0 0 0 6.04 6.746v2.947a1 1 0 0 0 2 0v-3.021A6.8 6.8 0 0 0 39 36.852"></path>
+            <path d="M32 2a30 30 0 1 0 30 30A30.034 30.034 0 0 0 32 2m0 58a28 28 0 1 1 28-28 28.03 28.03 0 0 1-28 28"></path>
+            <path d="M49.655 16.793a3.172 3.172 0 1 0-3.172 3.172 3.1 3.1 0 0 0 1.263-.266 19.994 19.994 0 0 1-25.054 30.008 1 1 0 0 0-.933 1.769 21.986 21.986 0 0 0 27.47-33.124 3.14 3.14 0 0 0 .426-1.559m-4.344 0a1.172 1.172 0 1 1 1.172 1.172 1.17 1.17 0 0 1-1.172-1.172M16.793 44.035a3.2 3.2 0 0 0-.692.081A19.78 19.78 0 0 1 12 32a20.023 20.023 0 0 1 20-20 19.8 19.8 0 0 1 8.463 1.874 1 1 0 0 0 .848-1.812A21.989 21.989 0 0 0 14.39 45.16a3.14 3.14 0 0 0-.769 2.047 3.172 3.172 0 1 0 3.172-3.172m0 4.344a1.172 1.172 0 1 1 1.172-1.172 1.17 1.17 0 0 1-1.172 1.172"></path>
+          </g>
+        </g>
       </svg>
     ),
   },
@@ -64,17 +66,16 @@ const currencyList = [
     svg: (
       <svg
         xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-        viewBox="0 0 24 24"
-        strokeWidth={1.5}
-        stroke="currentColor"
+        viewBox="0 0 64 64"
         className="size-10 aspect-square p-1 rounded-full"
       >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          d="M14.25 7.756a4.5 4.5 0 1 0 0 8.488M7.5 10.5h5.25m-5.25 3h5.25M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-        />
+        <g id="Outline">
+          <g id="Outline-2" data-name="Outline">
+            <path d="M21.818 29H19.75a1 1 0 0 0 0 2h1.743c-.026.331-.051.662-.051 1s.025.669.051 1H19.75a1 1 0 0 0 0 2h2.068a12.592 12.592 0 0 0 21.139 5.912 1 1 0 0 0-1.414-1.412A10.6 10.6 0 0 1 23.881 35h5.869a1 1 0 0 0 0-2h-6.257c-.031-.33-.051-.662-.051-1s.02-.67.051-1h6.257a1 1 0 0 0 0-2h-5.869a10.6 10.6 0 0 1 17.662-4.5 1 1 0 1 0 1.414-1.414A12.592 12.592 0 0 0 21.818 29"></path>
+            <path d="M32 2a30 30 0 1 0 30 30A30.034 30.034 0 0 0 32 2m0 58a28 28 0 1 1 28-28 28.03 28.03 0 0 1-28 28"></path>
+            <path d="M49.655 16.793a3.172 3.172 0 1 0-3.173 3.172 3.1 3.1 0 0 0 1.264-.266 19.994 19.994 0 0 1-25.055 30.008 1 1 0 1 0-.931 1.769 21.986 21.986 0 0 0 27.469-33.125 3.1 3.1 0 0 0 .426-1.558m-4.344 0a1.172 1.172 0 1 1 1.171 1.172 1.17 1.17 0 0 1-1.171-1.172M16.793 44.035a3.2 3.2 0 0 0-.692.081A19.78 19.78 0 0 1 12 32a20.023 20.023 0 0 1 20-20 19.8 19.8 0 0 1 8.463 1.874 1 1 0 0 0 .848-1.812A21.989 21.989 0 0 0 14.39 45.16a3.14 3.14 0 0 0-.769 2.047 3.173 3.173 0 1 0 3.172-3.172m0 4.344a1.172 1.172 0 1 1 1.173-1.172 1.17 1.17 0 0 1-1.173 1.172"></path>
+          </g>
+        </g>
       </svg>
     ),
   },
@@ -84,17 +85,16 @@ const currencyList = [
     svg: (
       <svg
         xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-        viewBox="0 0 24 24"
-        strokeWidth={1.5}
-        stroke="currentColor"
         className="size-10 aspect-square p-1 rounded-full"
+        viewBox="0 0 64 64"
       >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          d="M14.121 7.629A3 3 0 0 0 9.017 9.43c-.023.212-.002.425.028.636l.506 3.541a4.5 4.5 0 0 1-.43 2.65L9 16.5l1.539-.513a2.25 2.25 0 0 1 1.422 0l.655.218a2.25 2.25 0 0 0 1.718-.122L15 15.75M8.25 12H12m9 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-        />
+        <g id="Outline">
+          <g id="Outline-2" data-name="Outline">
+            <path d="M34.042 22a5.006 5.006 0 0 1 5 5 1 1 0 0 0 2 0 7 7 0 0 0-14 0v6h-3.084a1 1 0 0 0 0 2h3.084v6h-3.084a1 1 0 0 0 0 2h16.084a1 1 0 0 0 1-1v-4a1 1 0 0 0-2 0v3h-10v-6h6.916a1 1 0 0 0 0-2h-6.916v-6a5.006 5.006 0 0 1 5-5"></path>
+            <path d="M32 2a30 30 0 1 0 30 30A30.034 30.034 0 0 0 32 2m0 58a28 28 0 1 1 28-28 28.03 28.03 0 0 1-28 28"></path>
+            <path d="M49.655 16.793a3.172 3.172 0 1 0-3.172 3.172 3.1 3.1 0 0 0 1.263-.266 19.994 19.994 0 0 1-25.054 30.008 1 1 0 0 0-.933 1.769 21.986 21.986 0 0 0 27.47-33.124 3.14 3.14 0 0 0 .426-1.559m-4.344 0a1.172 1.172 0 1 1 1.172 1.172 1.17 1.17 0 0 1-1.172-1.172M16.793 44.035a3.2 3.2 0 0 0-.692.081A19.78 19.78 0 0 1 12 32a20.023 20.023 0 0 1 20-20 19.8 19.8 0 0 1 8.463 1.874 1 1 0 0 0 .848-1.812A21.989 21.989 0 0 0 14.39 45.16a3.14 3.14 0 0 0-.769 2.047 3.172 3.172 0 1 0 3.172-3.172m0 4.344a1.172 1.172 0 1 1 1.172-1.172 1.17 1.17 0 0 1-1.172 1.172"></path>
+          </g>
+        </g>
       </svg>
     ),
   },
@@ -103,24 +103,16 @@ const currencyList = [
     name: "TRY",
     svg: (
       <svg
-        fill="#1E272E"
-        version="1.1"
-        id="Layer_1"
         xmlns="http://www.w3.org/2000/svg"
-        xmlnsXlink="http://www.w3.org/1999/xlink"
-        viewBox="0 0 440 440"
-        xmlSpace="preserve"
-        stroke="#1E272E"
-        className="size-[1.75rem] aspect-square mx-[0.40rem]  p-1 border-2 bg-white rounded-full"
+        viewBox="0 0 64 64"
+        className="size-10 aspect-square p-1 rounded-full"
       >
-        <g id="SVGRepo_bgCarrier" strokeWidth="0"></g>
-        <g
-          id="SVGRepo_tracerCarrier"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        ></g>
-        <g id="SVGRepo_iconCarrier">
-          <path d="M344.33,212.5c0,103.857-80.577,189.248-182.5,196.936V197.361l151.76-55.236l-10.26-28.191l-141.5,51.502V121.38 l151.76-55.236l-10.26-28.191l-141.5,51.502V0h-30v100.374l-66.16,24.08l10.261,28.191L131.83,132.3v44.055l-66.16,24.08 l10.261,28.191l55.899-20.346V440h15c60.813,0,117.957-23.651,160.902-66.597c42.946-42.946,66.598-100.089,66.598-160.903H344.33z"></path>{" "}
+        <g id="Outline">
+          <g id="Outline-2" data-name="Outline">
+            <path d="M29.084 45h.416A11.513 11.513 0 0 0 41 33.5a1 1 0 0 0-2 0 9.51 9.51 0 0 1-8.916 9.482v-9.81l5.7-5.382a1 1 0 0 0-1.373-1.455l-4.331 4.087V27.4l5.285-4.987A1 1 0 1 0 34 20.955l-3.912 3.691V21.18a1 1 0 0 0-2 0v5.354l-3.469 3.273a1 1 0 0 0 1.373 1.455l2.1-1.978v3.025l-3.05 2.878a1 1 0 0 0 1.373 1.455l1.677-1.583V44a1 1 0 0 0 .992 1"></path>
+            <path d="M32 2a30 30 0 1 0 30 30A30.034 30.034 0 0 0 32 2m0 58a28 28 0 1 1 28-28 28.03 28.03 0 0 1-28 28"></path>
+            <path d="M49.655 16.793a3.172 3.172 0 1 0-3.173 3.172 3.1 3.1 0 0 0 1.264-.266 19.994 19.994 0 0 1-25.055 30.008 1 1 0 1 0-.931 1.769 21.986 21.986 0 0 0 27.469-33.125 3.1 3.1 0 0 0 .426-1.558m-4.344 0a1.172 1.172 0 1 1 1.171 1.172 1.17 1.17 0 0 1-1.171-1.172M16.793 44.035a3.2 3.2 0 0 0-.692.081A19.78 19.78 0 0 1 12 32a20.023 20.023 0 0 1 20-20 19.8 19.8 0 0 1 8.463 1.874 1 1 0 0 0 .848-1.812A21.989 21.989 0 0 0 14.39 45.16a3.14 3.14 0 0 0-.769 2.047 3.173 3.173 0 1 0 3.172-3.172m0 4.344a1.172 1.172 0 1 1 1.173-1.172 1.17 1.17 0 0 1-1.173 1.172"></path>
+          </g>
         </g>
       </svg>
     ),

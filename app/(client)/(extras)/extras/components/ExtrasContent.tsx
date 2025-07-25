@@ -15,22 +15,48 @@ import ExtrasCard from "./ExtrasCard";
 import { useGetData } from "../../../components/GetData";
 import { UpdateData } from "../../../components/UpdateData";
 import { useRouter } from "next/navigation";
+import { useCurrency } from "../../../context/CurrencyContext";
+import SessionExpiredFallback from "@/app/(client)/components/SessionExpiredFallback";
 
 {
   /* On Form.jsx, there is a submit button and it will push form information to this jsx file and it will be used in Transfer Card  */
 }
-
+async function getExtras(setExtras: any) {
+  const res = await fetch(`/api/get-extras-data`, {
+    method: "GET",
+  });
+  if (res.ok) {
+    const data = await res.json();
+    setExtras(data);
+  } else {
+    const error = await res.json();
+    console.error("Veri çekme hatası:", error);
+  }
+}
 const Extras = memo(function () {
   //Get local variables
-  const { clientData, setClientData } = useGetData();
-  
+  const { clientData, setClientData, error } = useGetData();
+  type Price = {
+    amount: number;
+    currency_symbol: string;
+  };
 
+  type Extra = {
+    display_name: string;
+    prices: Price[];
+    // add other properties if needed
+  };
+
+  const [extras, setExtras] = useState<Extra[]>([]);
+  const { currencyIndex } = useCurrency();
   const [childSeatNumber, setChildSeatNumber] = useState(0);
   const [flowersNumber, setFlowersNumber] = useState(0);
   const [airportAssistance, setAirportAssistance] = useState(false);
   const [wait, setWait] = useState(false);
 
-  
+  useEffect(() => {
+    getExtras(setExtras);
+  }, []);
 
   useEffect(() => {
     if (clientData !== null) {
@@ -44,7 +70,6 @@ const Extras = memo(function () {
     }
   }, [wait]);
 
-  
   function updateClientData(changes: Partial<typeof clientData> = {}) {
     if (clientData === null) {
       setChildSeatNumber(0);
@@ -63,7 +88,7 @@ const Extras = memo(function () {
         },
       };
     });
-    UpdateData({ clientData });
+    //UpdateData({ clientData });
   }
 
   function handleAirportAssistance() {
@@ -75,10 +100,10 @@ const Extras = memo(function () {
   }
 
   const router = useRouter();
-  function handleNavigateBooking(){
+  function handleNavigateBooking() {
     router.push(`/booking?uuid=${clientData.uuid}`);
   }
-  function handleNavigateToDetails(){
+  function handleNavigateToDetails() {
     router.push(`/details?uuid=${clientData.uuid}`);
   }
 
@@ -114,10 +139,18 @@ const Extras = memo(function () {
         break;
     }
   }
-
-
+  if (error || !clientData) {
+    return <SessionExpiredFallback error={error} clientData={clientData} />;
+  }
+    if (!clientData) {
+    return (
+      <div className="h-screen flex items-center justify-center">
+        <p className="text-center mt-20">Loading Data...</p>
+      </div>
+    );
+  }
   return (
-    <Suspense fallback={<div>Loading...</div>}>    
+    <Suspense fallback={<div>Loading...</div>}>
       <div className="flex relative flex-col mt-30 justify-between lg:block xl:max-w-9/12 lg:max-w-11/12 mx-auto">
         <section className="p-4 md:px-4 flex justify-between flex-col lg:flex-row-reverse gap-4 w-full lg:px-0 ">
           <div className="lg:hidden block">
@@ -131,6 +164,8 @@ const Extras = memo(function () {
               flowersNumber={flowersNumber}
               airportAssistance={airportAssistance}
               wait={wait}
+              extras={extras}
+              currencyIndex={currencyIndex}
               handleAirportAssistance={handleAirportAssistance}
               handleWait={handleWait}
             />
@@ -139,7 +174,10 @@ const Extras = memo(function () {
             <SummaryCard clientData={clientData} />
             {/* Navigation Buttons */}
             <div className="flex md:flex-wrap gap-2 justify-between w-full">
-              <button onClick={handleNavigateBooking} className="btn w-5/12 px-0 md:w-full btn-gray">
+              <button
+                onClick={handleNavigateBooking}
+                className="btn w-5/12 px-0 md:w-full btn-gray"
+              >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
@@ -156,7 +194,10 @@ const Extras = memo(function () {
                 </svg>
                 Booking
               </button>
-              <button onClick={handleNavigateToDetails} className="btn w-5/12 px-0 md:w-full btn-warning text-base-100">
+              <button
+                onClick={handleNavigateToDetails}
+                className="btn w-5/12 px-0 md:w-full btn-warning text-base-100"
+              >
                 Personal Details
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -178,7 +219,7 @@ const Extras = memo(function () {
           <div className="lg:w-full flex flex-col gap-4">
             <div className="hidden lg:flex lg:flex-col lg:gap-4">
               {/*For page indicator active functionality, later.*/}
-              <PageIndicator activeStep="extras"  />
+              <PageIndicator activeStep="extras" />
               <ExtrasCard
                 increase={increase}
                 decrease={decrease}
@@ -187,6 +228,8 @@ const Extras = memo(function () {
                 flowersNumber={flowersNumber}
                 airportAssistance={airportAssistance}
                 wait={wait}
+                extras={extras}
+                currencyIndex={currencyIndex}
                 handleAirportAssistance={handleAirportAssistance}
                 handleWait={handleWait}
               />

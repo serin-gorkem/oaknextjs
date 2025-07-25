@@ -6,6 +6,7 @@ import { lazy, memo, Suspense, useEffect, useState } from "react";
 import { useGetData } from "../../../components/GetData";
 import { UpdateData } from "../../../components/UpdateData";
 import { useRouter } from "next/navigation";
+import SessionExpiredFallback from "@/app/(client)/components/SessionExpiredFallback";
 
 {
   /* Lazy Loadings */
@@ -64,7 +65,7 @@ function validateForm(data: FormData) {
 }
 
 const Details = memo(function () {
-  const { clientData, setClientData } = useGetData();
+  const { clientData, setClientData, error } = useGetData();
 
   // Controlled form input states
   const [firstName, setFirstName] = useState(clientData?.details?.name || "");
@@ -78,6 +79,9 @@ const Details = memo(function () {
   const [email, setEmail] = useState(clientData?.details?.email || "");
   const [message, setMessage] = useState("");
   const [isFormValid, setIsFormValid] = useState<any>("");
+
+  console.log(clientData);
+  
 
   const router = useRouter();
   function handleNavigateToExtras() {
@@ -144,7 +148,17 @@ const Details = memo(function () {
       setMessage(clientData.details.message);
     }
   }, [clientData]);
-
+  
+  if (error || !clientData) {
+    return <SessionExpiredFallback error={error} clientData={clientData} />;
+  }
+    if (!clientData) {
+    return (
+      <div className="h-screen flex items-center justify-center">
+        <p className="text-center mt-20">Loading Data...</p>
+      </div>
+    );
+  }
   return (
     <Suspense fallback={<div>Loading...</div>}>
       <div className="flex relative flex-col mt-20 sm:mt-24 justify-between lg:block xl:max-w-9/12 lg:max-w-11/12 mx-auto">

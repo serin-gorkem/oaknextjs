@@ -31,6 +31,13 @@ const RideDetails = memo(function ({
         </div>
         <div className="divider my-1"></div>
         <div className="flex flex-col">
+          <h2 className="title mb-1">TYPE</h2>
+          <p className="section-text font-bold">
+            {clientData?.return_data?.return_trip ? "Return Trip" : "One Way"}
+          </p>
+        </div>
+        <div className="divider my-1"></div>
+        <div className="flex flex-col">
           <h2 className="title mb-1">PICKUP LOCATION</h2>
           <p className="section-text font-bold">
             {clientData?.pickup_location?.name ?? ""}
@@ -58,10 +65,10 @@ const RideDetails = memo(function ({
             </p>
           </div>
         </div>
-        <div className="divider my-1"></div>
         <div className="flex flex-col">
           {clientData?.extras && Object.keys(clientData?.extras).length > 0 ? (
             <>
+            <div className="divider my-1"></div>
               <div className="flex flex-col">
                 <h2 className="title mb-1">Extras</h2>
                 <div className="flex flex-wrap gap-2">
@@ -106,8 +113,7 @@ const RideDetails = memo(function ({
           <div className="flex w-1/2 flex-col">
             <h2 className="title mb-1">TOTAL TIME</h2>
             <p className="section-text font-bold">
-              {clientData?.booking.route_info.durationHours} h
-              {clientData?.booking.route_info.durationMinutes} min
+              {clientData?.booking.route_info.durationHours} h {clientData?.booking.route_info.durationMinutes} min
             </p>
             <div className="divider my-1"></div>
           </div>
