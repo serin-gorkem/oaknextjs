@@ -14,7 +14,7 @@ export default function Home() {
         src="/images/Background.jpg"
         width={2048}
         height={1556}
-        className="object-center object-cover absolute w-full h-full brightness-40"
+        className="object-center object-cover absolute w-full h-full brightness-20"
         alt="backgroundImage"
       />
       <article
