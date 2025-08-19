@@ -110,7 +110,7 @@ const Contact = memo(function () {
                 />
               </svg>
               <a href="0090 256 999 16 19" className="text-xs lg:text-base">
-                0090 256 999 16 19
+                {process.env.NEXT_PUBLIC_WHATSAPP_PHONE_NUMBER}
               </a>
             </div>
           </div>

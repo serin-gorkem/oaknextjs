@@ -8,11 +8,20 @@ import { v4 as uuidv4 } from "uuid";
 import AutocompleteInput from "./AutocompleteInput";
 import LoadGoogleMaps from "@/components/LoadGoogleMaps";
 
+interface Location {
+  lat: number;
+  lng: number;
+  address: string;
+  name: string;
+  placeId: string;
+}
+
 export default function Form() {
   const [clientData, setClientData] = useState({});
   const [pickupLocation, setPickupLocation] = useState<any>("");
   const [isPickupLocationValid, setIsPickupLocationValid] = useState(false);
   const [dropOffLocation, setDropOffLocation] = useState<any>("");
+  const [dropOffInput, setDropOffInput] = useState("");
   const [isDropOffLocationValid, setIsDropOffLocationValid] = useState(false);
   const [passengerCount, setPassengerCount] = useState(1);
   const [pickupDate, setPickupDate] = useState<Date | undefined>(undefined);
@@ -20,8 +29,57 @@ export default function Form() {
   const [isPickupOpen, setIsPickupOpen] = useState(false);
   const uuid = uuidv4();
 
+  console.log("Pickup Location: ",pickupLocation);
+  console.log("Drop Off Location: ",dropOffLocation);
+
+  const airports = [
+    { name: "Istanbul Airport", query: "Istanbul Airport, Turkey" },
+    {
+      name: "Sabiha Gökçen International Airport",
+      query: "Sabiha Gökçen International Airport, Turkey",
+    },
+    {
+      name: "Izmir Adnan Menderes Airport",
+      query: "Izmir Adnan Menderes Airport, Turkey",
+    },
+    { name: "Milas–Bodrum Airport", query: "Milas–Bodrum Airport, Turkey" },
+    { name: "Dalaman Airport", query: "Dalaman Airport, Turkey" },
+    { name: "Antalya Airport", query: "Antalya Airport, Turkey" },
+    {
+      name: "Kayseri Erkilet Airport",
+      query: "Kayseri Erkilet Airport, Turkey",
+    },
+    {
+      name: "Nevşehir Kapadokya Airport",
+      query: "Nevşehir Kapadokya Airport, Turkey",
+    },
+    {
+      name: "Esenboğa International Airport",
+      query: "Esenboğa International Airport, Ankara, Turkey",
+    },
+    {
+      name: "Adana Şakirpaşa Airport",
+      query: "Adana Şakirpaşa Airport, Turkey",
+    },
+    { name: "Şanlıurfa GAP Airport", query: "Şanlıurfa GAP Airport, Turkey" },
+    { name: "Trabzon Airport", query: "Trabzon Airport, Turkey" },
+  ];
+const airportRadiusKm: Record<string, number> = {
+  "Istanbul Airport": 70,
+  "Sabiha Gökçen International Airport": 50,
+  "Izmir Adnan Menderes Airport": 120,
+  "Milas–Bodrum Airport": 50,
+  "Dalaman Airport": 50,
+  "Antalya Airport": 50,
+  "Kayseri Erkilet Airport": 30,
+  "Nevşehir Kapadokya Airport": 30,
+  "Esenboğa International Airport": 50,
+  "Adana Şakirpaşa Airport": 40,
+  "Şanlıurfa GAP Airport": 30,
+  "Trabzon Airport": 40,
+};
   const [message, setMessage] = useState("");
-  const validateForm = () => {
+  function validateForm() {
     if (
       !pickupLocation ||
       !dropOffLocation ||
@@ -32,11 +90,11 @@ export default function Form() {
       setMessage("Please fill in all fields.");
       return false;
     }
-    if(!isPickupLocationValid){
+    if (!isPickupLocationValid) {
       setMessage("Please select a valid pickup location.");
       return false;
     }
-    if(!isDropOffLocationValid){
+    if (!isDropOffLocationValid) {
       setMessage("Please select a valid drop-off location.");
       return false;
     }
@@ -49,7 +107,95 @@ export default function Form() {
       return false;
     }
     return true;
-  };
+  }
+  function getDistanceKm(
+    lat1: number,
+    lon1: number,
+    lat2: number,
+    lon2: number
+  ) {
+    const toRad = (deg: number) => (deg * Math.PI) / 180;
+    const R = 6371; // km
+    const dLat = toRad(lat2 - lat1);
+    const dLon = toRad(lon2 - lon1);
+    const lat1Rad = toRad(lat1);
+    const lat2Rad = toRad(lat2);
+
+    const a =
+      Math.sin(dLat / 2) ** 2 +
+      Math.cos(lat1Rad) * Math.cos(lat2Rad) * Math.sin(dLon / 2) ** 2;
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c;
+  }
+  async function getFreshPlaceId(query: string): Promise<string | null> {
+    return new Promise((resolve) => {
+      const service = new google.maps.places.PlacesService(
+        document.createElement("div")
+      );
+
+      service.findPlaceFromQuery(
+        {
+          query,
+          fields: ["place_id"],
+        },
+        (results, status) => {
+          if (
+            status === google.maps.places.PlacesServiceStatus.OK &&
+            results &&
+            results.length > 0
+          ) {
+            resolve(results[0].place_id!);
+          } else {
+            resolve(null);
+          }
+        }
+      );
+    });
+  }
+
+  async function fetchPlaceDetails(
+    placeId: string,
+    query: string
+  ): Promise<Location | null> {
+    return new Promise((resolve) => {
+      const service = new google.maps.places.PlacesService(
+        document.createElement("div")
+      );
+
+      service.getDetails(
+        { placeId, fields: ["geometry", "formatted_address", "name"] },
+        async (place, status) => {
+          if (
+            status === google.maps.places.PlacesServiceStatus.OK &&
+            place &&
+            place.geometry?.location
+          ) {
+            resolve({
+              lat: place.geometry.location.lat(),
+              lng: place.geometry.location.lng(),
+              address: place.formatted_address || "",
+              name: place.name || "",
+              placeId,
+            });
+          } else if (
+            status === google.maps.places.PlacesServiceStatus.INVALID_REQUEST
+          ) {
+            // Fallback → yeni Place ID bul
+            const newPlaceId = await getFreshPlaceId(query);
+            if (newPlaceId) {
+              const refreshed = await fetchPlaceDetails(newPlaceId, query);
+              resolve(refreshed);
+            } else {
+              resolve(null);
+            }
+          } else {
+            resolve(null);
+          }
+        }
+      );
+    });
+  }
+
   async function cleanupData() {
     await fetch("/api/cleanup");
   }
@@ -68,7 +214,6 @@ export default function Form() {
       };
       setClientData(data);
       setMessage("Form submitted successfully!");
-      
 
       const response = await fetch("api/form-data", {
         method: "POST",
@@ -108,51 +253,54 @@ export default function Form() {
         <p className="font-semibold text-red-500">{message}</p>
 
         <fieldset className="fieldset">
+          <select
+            className="p-4 bg-base-100 border-r-16 border-transparent text-black"
+            onChange={async (e) => {
+              const sel = airports.find((a) => a.query === e.target.value);
+              if (!sel) return setPickupLocation(null);
+              // Eğer pickup değiştiyse drop-off'u sıfırla
+              setDropOffLocation(null);
+              setIsDropOffLocationValid(false);
+
+              // önce placeId resolve et
+              const freshPlaceId = await getFreshPlaceId(sel.query);
+              if (!freshPlaceId) {
+                setMessage("Could not resolve Place ID for " + sel.name);
+                return;
+              }
+
+              // sonra detaylarını çek
+              const info = await fetchPlaceDetails(freshPlaceId, sel.query);
+              if (info) {
+                setPickupLocation(info);
+                setIsPickupLocationValid(true);
+                setMessage("");
+              } else {
+                setMessage("Invalid airport selection.");
+                setIsPickupLocationValid(false);
+              }
+            }}
+            value={pickupLocation?.query} // value artık query olacak
+          >
+            <option value="">Select airport</option>
+            {airports.map((a) => (
+              <option key={a.query} value={a.query}>
+                {a.name}
+              </option>
+            ))}
+          </select>
           <legend className="font-semibold text-sm">
             From (We only operate on Turkey.)
           </legend>
-          <label htmlFor="pickup_location" className="input  focus-within:outline-0 w-full ">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth="1.5"
-              stroke="currentColor"
-              className="w-6 opacity-80"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
-              />
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"
-              />
-            </svg>
-            <AutocompleteInput
-              value={pickupLocation?.name || ""}
-              onChange={(val) =>
-              {
-                setPickupLocation((prev: any) => ({ ...prev!, name: val }))
-                setIsPickupLocationValid(false);
-              }
-              }
-              onPlaceSelected={(place) => {
-                setPickupLocation(place);
-                setIsPickupLocationValid(true);
-              }}
-              placeholder="Select an airport."
-              locationType="airport"
-            />
-          </label>
         </fieldset>
         <fieldset className="fieldset ">
           <legend className="font-semibold text-sm">
             To (We only operate on Turkey.)
           </legend>
-          <label htmlFor="drop_off_location" className="input focus-within:outline-0 w-full">
+          <label
+            htmlFor="drop_off_location"
+            className="input focus-within:outline-0 w-full"
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -173,19 +321,60 @@ export default function Form() {
               />
             </svg>
             <AutocompleteInput
-              value={dropOffLocation?.name || ""}
-              onChange={(val) =>
-              {
-                setDropOffLocation((prev: any) => ({ ...prev!, name: val }))
-                setIsDropOffLocationValid(false);
-              }
-              }
+              value={dropOffInput}
+              onChange={(val) => {
+                setDropOffInput(val); // sadece yazdığın input görünümü
+                setIsDropOffLocationValid(false); // henüz geçerli seçim yok
+              }}
               onPlaceSelected={(place) => {
-                setDropOffLocation(place);
-                setIsDropOffLocationValid(true);
+                if (!pickupLocation) {
+                  setMessage("Please select a pickup location first.");
+                  setDropOffLocation(null);
+                  setIsDropOffLocationValid(false);
+                  setDropOffInput("");
+                  return;
+                }
+
+                const dist = getDistanceKm(
+                  pickupLocation.lat,
+                  pickupLocation.lng,
+                  place.lat,
+                  place.lng
+                );
+                const maxRadius = airportRadiusKm[pickupLocation.name] || 50;
+
+                if (dist > maxRadius) {
+                  setMessage(
+                    `Selected drop-off (${place.name}) is ${dist.toFixed(
+                      1
+                    )}km away. Max allowed is ${maxRadius}km from ${
+                      pickupLocation.name
+                    }.`
+                  );
+                  setDropOffLocation(null);
+                  setIsDropOffLocationValid(false);
+                  setDropOffInput("");
+                } else {
+                  setDropOffLocation(place);
+                  setIsDropOffLocationValid(true);
+                  setDropOffInput(place.name ?? ""); // seçilen yeri input’a yaz
+                  setMessage("");
+                }
               }}
               placeholder="Select a hotel"
               locationType="lodging"
+              bounds={
+                pickupLocation
+                  ? new google.maps.Circle({
+                      center: new google.maps.LatLng(
+                        pickupLocation.lat,
+                        pickupLocation.lng
+                      ),
+                      radius:
+                        (airportRadiusKm[pickupLocation.name] || 50) * 1000, // metre
+                    }).getBounds() || undefined
+                  : undefined
+              }
             />
           </label>
         </fieldset>

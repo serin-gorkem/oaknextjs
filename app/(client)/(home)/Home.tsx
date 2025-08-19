@@ -2,6 +2,7 @@
 import Stars from "./components/Stars";
 import Form from "./components/Form";
 import CurrencyWrapper from "../components/CurrencyWrapper";
+import Image from "next/image";
 
 export default function Home() {
   return (
@@ -9,9 +10,11 @@ export default function Home() {
       id="home"
       className="h-fit flex flex-col relative sm:gap-5 lg:gap-10"
     >
-      <img
-        src="/images/Home_bg.webp" 
-        className="object-center object-cover absolute w-full brightness-50 h-full"
+      <Image
+        src="/images/Background.jpg"
+        width={2048}
+        height={1556}
+        className="object-center object-cover absolute w-full h-full brightness-40"
         alt="backgroundImage"
       />
       <article

@@ -15,8 +15,8 @@ interface AutocompleteInputProps {
   onPlaceSelected: (location: LocationInfo) => void;
   placeholder?: string;
   locationType?: "airport" | "lodging";
+  bounds?: google.maps.LatLngBounds;
 }
-
 
 export default function AutocompleteInput({
   value,
@@ -24,26 +24,25 @@ export default function AutocompleteInput({
   onPlaceSelected,
   placeholder = "Bir yer yazın...",
   locationType,
+  bounds,
 }: AutocompleteInputProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
 
   useEffect(() => {
-    if (
-      typeof window === "undefined" ||
-      !window.google ||
-      !inputRef.current ||
-      autocompleteRef.current
-    ) {
-      return;
-    }
+    if (!inputRef.current || !window.google) return;
 
     const options: google.maps.places.AutocompleteOptions = {
       componentRestrictions: { country: "tr" },
-      fields: ["geometry", "formatted_address", "name"], // 💥 'name' alanı eklendi
+      fields: ["geometry", "formatted_address", "name"],
+      bounds: bounds,
+      strictBounds: !!bounds,
     };
 
-    const autocomplete = new google.maps.places.Autocomplete(inputRef.current, options);
+    const autocomplete = new google.maps.places.Autocomplete(
+      inputRef.current,
+      options
+    );
 
     if (locationType === "airport") {
       autocomplete.setTypes(["airport"]);
@@ -53,29 +52,19 @@ export default function AutocompleteInput({
 
     autocomplete.addListener("place_changed", () => {
       const place = autocomplete.getPlace();
-
-      if (
-        place &&
-        place.geometry &&
-        place.geometry.location &&
-        typeof place.geometry.location.lat === "function" &&
-        typeof place.geometry.location.lng === "function"
-      ) {
+      if (place?.geometry?.location) {
         const lat = place.geometry.location.lat();
         const lng = place.geometry.location.lng();
         const address = place.formatted_address || "";
         const name = place.name || "";
 
-        // 👇 input'a sadece name yaz
         onChange(name);
-
-        // 👇 bilgiyi dışarı aktar
         onPlaceSelected({ lat, lng, address, name });
       }
     });
 
     autocompleteRef.current = autocomplete;
-  }, [locationType, onChange, onPlaceSelected]);
+  }, [locationType, bounds, onChange, onPlaceSelected]);
 
   return (
     <input

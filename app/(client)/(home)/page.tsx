@@ -12,7 +12,7 @@ import { Suspense } from "react";
 export default function Landing() {
   return (
     <>
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={<div className="h-screen">Loading...</div>}>
       <Home />
       <PageDivider />
       <ChooseUs />

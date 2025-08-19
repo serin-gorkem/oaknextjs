@@ -9,7 +9,7 @@ const Footer = memo(function () {
           <h1 className="text-2xl text-base-300 font-bold">
             Airport to Hotels
           </h1>
-          <p className="w-10/12 text-sm">
+          <p className="w-10/12 text-sm sm:text-base">
             Located in Turkey/Kusadasi; we provide reliable and comfortable
             airport transfers, with transparent pricing and professional
             drivers, we ensure a smooth and stress-free journey all around the
@@ -36,8 +36,7 @@ const Footer = memo(function () {
             {menuItem("Booking and Cancelation Policy", "/policy")}
             {menuItem("Privacy Policy", "/privacy")}
             {menuItem("Our Vehicles", "#vehicles")}
-            {menuItem("Price List", "/prices")}
-            {menuItem("Our Turkey Tours", "https://www.toursofyou.com/")}
+            {menuItem("Tours of You", "https://www.toursofyou.com/")}
             {menuItem("TURSAB Digital Verification System", "/")}
           </ul>
         </nav>
@@ -62,8 +61,8 @@ const Footer = memo(function () {
                     d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 0 0 2.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 0 1-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 0 0-1.091-.852H4.5A2.25 2.25 0 0 0 2.25 4.5v2.25Z"
                   />
                 </svg>
-                <a href="0090 256 999 16 19" className=" text-xs lg:text-base">
-                  0090 256 999 16 19
+                <a className=" text-xs lg:text-base">
+                 {process.env.NEXT_PUBLIC_WHATSAPP_PHONE_NUMBER}
                 </a>
               </div>
             </li>
@@ -84,7 +83,7 @@ const Footer = memo(function () {
                   />
                 </svg>
                 <p className=" text-xs lg:text-base">
-                  You can email us from the contact form
+                  info@airporttohotels.com
                 </p>
               </div>
             </li>
@@ -127,7 +126,7 @@ const Footer = memo(function () {
             height={50}
           ></Image>
         </div>
-          <p className="text-sm">© 2020-{new Date().getFullYear()} All rights reserved to OAK Travel Group</p>
+          <p className="text-sm">© {new Date().getFullYear()} All rights reserved to OAK Travel Group</p>
       </div>
       <div className="flex sm:flex-row flex-col sm:items-center gap-2 sm:gap-0 mt-4 sm:justify-between bottom-4 xl:max-w-9/12 lg:max-w-11/12 lg:px-0 sm:px-4 px-2 mx-auto text-neutral-content">
         <a className="text-sm" href="https://gorkemserin.com/">
