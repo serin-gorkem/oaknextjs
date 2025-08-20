@@ -197,7 +197,7 @@ function MobileNav() {
             <li>
               <a href="/">
                 <Image
-                  src="/images/logos/Logo.png"
+                  src="/images/logos/Logo_W.png"
                   width={100}
                   height={100}
                   alt="Website Logo"
@@ -320,7 +320,7 @@ function DesktopNav() {
         <li>
           <a href="/">
             <Image
-              src="/images/logos/Logo.png"
+              src="/images/logos/Logo_W.png"
               width={100}
               height={100}
               alt="Website Logo"
