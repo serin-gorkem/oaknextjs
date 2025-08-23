@@ -1,230 +1,196 @@
 "use client";
 
-import { get } from "http";
-import Image from "next/image";
 import { useEffect, useState } from "react";
 
-interface PriceEntry {
-  id: number;
-  currency: string;
-  amount: number | null;
+interface AirportRate {
+  airportid: string;
+  airport_name: string;
+  vehicleid: number;
+  vehicle_name: string;
+  baseprice: number;
+  kmrate: number;
 }
 
-async function getPrices(setPrices: any) {
-  fetch("/api/get-prices")
-    .then((res) => res.json())
-    .then((data) => setPrices(data))
-    .catch((err) => console.error("Veri alınamadı:", err));
+interface AirportGrouped {
+  airport_name: string;
+  rates: AirportRate[];
 }
 
-async function getVehicles(setVehicles: any) {
-  fetch("/api/get-vehicles")
-    .then((res) => res.json())
-    .then((data) => setVehicles(data))
-    .catch((err) => console.error("Veri alınamadı:", err));
-}
-async function getExtras(setExtras: any) {
-  fetch("/api/get-extras")
-    .then((res) => res.json())
-    .then((data) => setExtras(data))
-    .catch((err) => console.error("Veri alınamadı:", err));
-}
-
-const handleLogout = async () => {
-  await fetch("/api/admin/logout", { method: "POST" });
-  window.location.href = "/admin";
-};
-function getCurrencySymbol(currency: string): string {
-  switch (currency) {
-    case "EUR":
-      return "€";
-    case "USD":
-      return "$";
-    case "GBP":
-      return "£";
-    case "TRY":
-      return "₺";
-    default:
-      return "";
-  }
-}
-
-export default function AdminDashboard() {
-  const [prices, setPrices] = useState<PriceEntry[]>([]);
-  const [status, setStatus] = useState("");
-  const [vehicles, setVehicles] = useState([]);
-  const [extras, setExtras] = useState([]);
-
-  console.log(extras);
+export default function AirportRatesUI() {
+  const [data, setData] = useState<AirportGrouped[]>([]);
+  const [openAirport, setOpenAirport] = useState<string | null>(null);
+  const [savingAirport, setSavingAirport] = useState<string | null>(null);
+  const [messages, setMessages] = useState<Record<string, string>>({});
 
   useEffect(() => {
-    getPrices(setPrices);
-    getVehicles(setVehicles);
-    getExtras(setExtras);
+    fetch("/api/airport-rates")
+      .then((res) => res.json())
+      .then((rows: AirportRate[]) => {
+        const grouped: Record<string, AirportRate[]> = {};
+        rows.forEach((r) => {
+          if (!grouped[r.airport_name]) grouped[r.airport_name] = [];
+          grouped[r.airport_name].push(r);
+        });
+        const formatted = Object.keys(grouped).map((k) => ({
+          airport_name: k,
+          rates: grouped[k],
+        }));
+        setData(formatted);
+      });
   }, []);
 
-  const handleAmountChange = (index: number, newAmount: number) => {
-    const updated = prices.map((price, i) =>
-      i === index ? { ...price, amount: newAmount } : price
-    );
-    setPrices(updated);
+  const toggleAccordion = (name: string) => {
+    setOpenAirport((prev) => (prev === name ? null : name));
   };
 
-  const handleUpdate = async (price: PriceEntry) => {
-    setStatus("Güncelleniyor...");
+  const handleChange = (
+    airportName: string,
+    vehicleId: number,
+    field: "baseprice" | "kmrate",
+    value: number
+  ) => {
+    setData((prev) =>
+      prev.map((airport) =>
+        airport.airport_name === airportName
+          ? {
+              ...airport,
+              rates: airport.rates.map((rate) =>
+                rate.vehicleid === vehicleId
+                  ? { ...rate, [field]: value }
+                  : rate
+              ),
+            }
+          : airport
+      )
+    );
+  };
+
+  const handleSubmit = async (airportName: string) => {
+    const airportData = data.find((a) => a.airport_name === airportName);
+
+    if (!airportData) return;
+
+    setSavingAirport(airportName);
+    setMessages((prev) => ({ ...prev, [airportName]: "" }));
+    console.log(airportName);
 
     try {
-      const res = await fetch("/api/update-price", {
+      const updates = airportData.rates.map((rate) => ({
+        airportId: rate.airportid,
+        vehicleId: rate.vehicleid,
+        baseprice: rate.baseprice,
+        kmrate: rate.kmrate,
+      }));
+
+      const res = await fetch("/api/update-airport-rates", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id: price.id, amount: price.amount }),
+        body: JSON.stringify({ updates }),
       });
 
+      const json = await res.json();
       if (res.ok) {
-        setStatus(`✔ ${price.currency} güncellendi`);
-        getPrices(setPrices);
+        setMessages((prev) => ({
+          ...prev,
+          [airportName]: "Changes saved successfully!",
+        }));
       } else {
-        setStatus(`❌ ${price.currency} güncellenemedi`);
+        setMessages((prev) => ({
+          ...prev,
+          [airportName]: "Error saving changes: " + json.error,
+        }));
       }
     } catch (err) {
-      setStatus("Sunucu hatası.");
+      console.error(err);
+      setMessages((prev) => ({ ...prev, [airportName]: "Unexpected error" }));
     }
-  };
 
+    setSavingAirport(null);
+  };
+  const handleLogout = async () => {
+    await fetch("/api/admin/logout", { method: "POST" });
+    window.location.href = "/admin";
+  };
   return (
-    <main className="p-10 space-y-6">
-      <h1 className="text-2xl font-bold">Admin Paneline Hoş Geldiniz.</h1>
+    <div className="w-full max-w-3xl mx-auto mt-8">
       <button
         onClick={handleLogout}
         className="btn btn-primary absolute right-10 top-10 hover:btn-warning text-base-100"
       >
         Çıkış Yap.
       </button>
-      <h2 className="text-2xl font-bold">Araç Fiyatları</h2>
-      <article className="flex gap-4 flex-col justify-between w-full flex-wrap sm:flex-row">
-        {vehicles.map((vehicle: any) => (
-          <figure
-            key={vehicle.id}
-            className="bg-base-300 rounded-box shadow-md lg:w-fit flex flex-col gap-4 p-2 py-4"
+      {data.map((airport) => (
+        <div key={airport.airport_name} className="mb-4 rounded-lg shadow-sm">
+          <button
+            className="w-full flex justify-between items-center p-4 bg-gray-100 hover:bg-gray-200"
+            onClick={() => toggleAccordion(airport.airport_name)}
           >
-            <h2 className="text-xl font-bold"> {vehicle.name} </h2>
-            <Image
-              src={vehicle.image_url}
-              width={300}
-              height={300}
-              alt="Mercedes Vito"
-            ></Image>
-            <h3 className="text-lg font-semibold">Güncel Fiyatlar</h3>
+            <span className="font-semibold">{airport.airport_name}</span>
+            <span>{openAirport === airport.airport_name ? "-" : "+"}</span>
+          </button>
 
-            {prices.map((price: any) => {
-              if (price.vehicle_id === vehicle.id) {
-                return (
-                  <div
-                    key={price.id}
-                    className="flex bg-base-100 py-3 px-2 items-center justify-between "
-                  >
-                    <span>{price.currency}</span>
-                    <span className="flex items-center gap-2">
-                      <p>{price.amount}</p>
-                      <p>{getCurrencySymbol(price.currency)} </p>
-                    </span>
-                  </div>
-                );
-              }
-            })}
-            <h3 className="text-lg font-semibold">Fiyatları Güncelle</h3>
-            {prices.map((price: any, i) => {
-              if (price.vehicle_id === vehicle.id) {
-                return (
-                  <div key={price.id} className="flex items-center gap-4">
-                    <span className="w-20">{price.currency}</span>
+          {openAirport === airport.airport_name && (
+            <div className="p-4 bg-white space-y-3">
+              {airport.rates.map((rate) => (
+                <div
+                  key={rate.vehicleid}
+                  className="flex justify-between border p-3 rounded-md shadow-sm items-center"
+                >
+                  <span className="font-medium">{rate.vehicle_name}</span>
+
+                  <div className="flex gap-2 items-center">
                     <input
                       type="number"
-                      value={
-                        price.amount !== undefined && price.amount !== null
-                          ? price.amount
-                          : ""
+                      className="input input-bordered w-24"
+                      value={rate.baseprice}
+                      onChange={(e) =>
+                        handleChange(
+                          airport.airport_name,
+                          rate.vehicleid,
+                          "baseprice",
+                          parseFloat(e.target.value)
+                        )
                       }
-                      className="input input-bordered"
-                      onChange={(e) => {
-                        const value = e.target.value;
-                        const parsed = parseFloat(value);
-                        handleAmountChange(i, !isNaN(parsed) ? parsed : 0);
-                      }}
                     />
-                    <button
-                      className="btn btn-sm btn-primary"
-                      onClick={() => handleUpdate(price)}
-                    >
-                      Güncelle
-                    </button>
+                    <span>₺ base</span>
+
+                    <input
+                      type="number"
+                      className="input input-bordered w-24"
+                      value={rate.kmrate}
+                      onChange={(e) =>
+                        handleChange(
+                          airport.airport_name,
+                          rate.vehicleid,
+                          "kmrate",
+                          parseFloat(e.target.value)
+                        )
+                      }
+                    />
+                    <span>₺/km</span>
                   </div>
-                );
-              }
-            })}
-          </figure>
-        ))}
-      </article>
-      <h2 className="text-2xl font-bold">Ekstralar Fiyatları</h2>
-      <article className="flex gap-4 flex-col justify-between w-full flex-wrap sm:flex-row mt-10">
-        {extras.map((extra: any) => (
-          <figure
-            key={extra.id}
-            className="bg-base-200 rounded-box shadow-md lg:w-fit flex flex-col gap-4 p-4 py-6"
-          >
-            <h2 className="text-xl font-bold"> {extra.display_name} </h2>
-
-            <h3 className="text-lg font-semibold">Güncel Fiyatlar</h3>
-            {prices
-              .filter((price: any) => price.extras_id === extra.id)
-              .map((price: any) => (
-                <div
-                  key={price.id}
-                  className="flex bg-base-100 py-3 px-2 items-center justify-between"
-                >
-                  <span>{price.currency}</span>
-                  <span className="flex items-center gap-2">
-                    <p>{price.amount}</p>
-                    <p>{getCurrencySymbol(price.currency)}</p>
-                  </span>
                 </div>
               ))}
 
-            <h3 className="text-lg font-semibold">Fiyatları Güncelle</h3>
-            {prices
-              .filter((price: any) => price.extras_id === extra.id)
-              .map((price: any, i: number) => (
-                <div key={price.id} className="flex items-center gap-4">
-                  <span className="w-20">{price.currency}</span>
-                  <input
-                    type="number"
-                    value={
-                      price.amount !== undefined && price.amount !== null
-                        ? price.amount
-                        : ""
-                    }
-                    className="input input-bordered"
-                    onChange={(e) => {
-                      const value = e.target.value;
-                      const parsed = parseFloat(value);
-                      handleAmountChange(
-                        prices.findIndex((p) => p.id === price.id),
-                        !isNaN(parsed) ? parsed : 0
-                      );
-                    }}
-                  />
-                  <button
-                    className="btn btn-sm btn-primary"
-                    onClick={() => handleUpdate(price)}
-                  >
-                    Güncelle
-                  </button>
-                </div>
-              ))}
-          </figure>
-        ))}
-      </article>
-      {status && <p className="text-info text-xl mt-4">{status}</p>}
-    </main>
+              <button
+                className="btn btn-primary w-full mt-2"
+                onClick={() => handleSubmit(airport.airport_name)}
+                disabled={savingAirport === airport.airport_name}
+              >
+                {savingAirport === airport.airport_name
+                  ? "Saving..."
+                  : "Save Changes"}
+              </button>
+
+              {messages[airport.airport_name] && (
+                <p className="mt-2 text-green-600">
+                  {messages[airport.airport_name]}
+                </p>
+              )}
+            </div>
+          )}
+        </div>
+      ))}
+    </div>
   );
 }
