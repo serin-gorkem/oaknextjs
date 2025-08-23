@@ -29,55 +29,69 @@ export default function Form() {
   const [isPickupOpen, setIsPickupOpen] = useState(false);
   const uuid = uuidv4();
 
-  console.log("Pickup Location: ",pickupLocation);
-  console.log("Drop Off Location: ",dropOffLocation);
+  console.log("Pickup Location: ", pickupLocation);
+  console.log("Drop Off Location: ", dropOffLocation);
 
   const airports = [
-    { name: "Istanbul Airport", query: "Istanbul Airport, Turkey" },
+    { id: "IST", name: "Istanbul Airport", query: "Istanbul Airport, Turkey" },
     {
+      id: "SAW",
       name: "Sabiha Gökçen International Airport",
       query: "Sabiha Gökçen International Airport, Turkey",
     },
     {
+      id: "ADB",
       name: "Izmir Adnan Menderes Airport",
       query: "Izmir Adnan Menderes Airport, Turkey",
     },
-    { name: "Milas–Bodrum Airport", query: "Milas–Bodrum Airport, Turkey" },
-    { name: "Dalaman Airport", query: "Dalaman Airport, Turkey" },
-    { name: "Antalya Airport", query: "Antalya Airport, Turkey" },
     {
+      id: "BJV",
+      name: "Milas–Bodrum Airport",
+      query: "Milas–Bodrum Airport, Turkey",
+    },
+    { id: "DLM", name: "Dalaman Airport", query: "Dalaman Airport, Turkey" },
+    { id: "AYT", name: "Antalya Airport", query: "Antalya Airport, Turkey" },
+    {
+      id: "ASR",
       name: "Kayseri Erkilet Airport",
       query: "Kayseri Erkilet Airport, Turkey",
     },
     {
+      id: "NAV",
       name: "Nevşehir Kapadokya Airport",
       query: "Nevşehir Kapadokya Airport, Turkey",
     },
     {
+      id: "ESB",
       name: "Esenboğa International Airport",
       query: "Esenboğa International Airport, Ankara, Turkey",
     },
     {
+      id: "ADA",
       name: "Adana Şakirpaşa Airport",
       query: "Adana Şakirpaşa Airport, Turkey",
     },
-    { name: "Şanlıurfa GAP Airport", query: "Şanlıurfa GAP Airport, Turkey" },
-    { name: "Trabzon Airport", query: "Trabzon Airport, Turkey" },
+    {
+      id: "GAP",
+      name: "Şanlıurfa GAP Airport",
+      query: "Şanlıurfa GAP Airport, Turkey",
+    },
+    { id: "TZX", name: "Trabzon Airport", query: "Trabzon Airport, Turkey" },
   ];
-const airportRadiusKm: Record<string, number> = {
-  "Istanbul Airport": 70,
-  "Sabiha Gökçen International Airport": 50,
-  "Izmir Adnan Menderes Airport": 120,
-  "Milas–Bodrum Airport": 50,
-  "Dalaman Airport": 50,
-  "Antalya Airport": 50,
-  "Kayseri Erkilet Airport": 30,
-  "Nevşehir Kapadokya Airport": 30,
-  "Esenboğa International Airport": 50,
-  "Adana Şakirpaşa Airport": 40,
-  "Şanlıurfa GAP Airport": 30,
-  "Trabzon Airport": 40,
-};
+  const airportRadiusKm: Record<string, number> = {
+    "Istanbul Airport": 70,
+    "Sabiha Gökçen International Airport": 50,
+    "Izmir Adnan Menderes Airport": 120,
+    "Milas–Bodrum Airport": 50,
+    "Dalaman Airport": 50,
+    "Antalya Airport": 50,
+    "Kayseri Erkilet Airport": 30,
+    "Nevşehir Kapadokya Airport": 30,
+    "Esenboğa International Airport": 50,
+    "Adana Şakirpaşa Airport": 40,
+    "Şanlıurfa GAP Airport": 30,
+    "Trabzon Airport": 40,
+  };
   const [message, setMessage] = useState("");
   function validateForm() {
     if (
@@ -256,23 +270,33 @@ const airportRadiusKm: Record<string, number> = {
           <select
             className="p-4 bg-base-100 border-r-16 border-transparent text-black"
             onChange={async (e) => {
-              const sel = airports.find((a) => a.query === e.target.value);
+              const selectedId = e.target.value;
+              const sel = airports.find((a) => a.id === selectedId);
               if (!sel) return setPickupLocation(null);
+
               // Eğer pickup değiştiyse drop-off'u sıfırla
               setDropOffLocation(null);
               setIsDropOffLocationValid(false);
 
-              // önce placeId resolve et
+              // placeId resolve et
               const freshPlaceId = await getFreshPlaceId(sel.query);
               if (!freshPlaceId) {
                 setMessage("Could not resolve Place ID for " + sel.name);
                 return;
               }
 
-              // sonra detaylarını çek
+              // detaylarını çek
               const info = await fetchPlaceDetails(freshPlaceId, sel.query);
               if (info) {
-                setPickupLocation(info);
+                setPickupLocation({
+                  id: sel.id,
+                  name: sel.name,
+                  query: sel.query,
+                  placeId: freshPlaceId,
+                  lat: info.lat,
+                  lng: info.lng,
+                  address: info.address,
+                });
                 setIsPickupLocationValid(true);
                 setMessage("");
               } else {
@@ -280,11 +304,11 @@ const airportRadiusKm: Record<string, number> = {
                 setIsPickupLocationValid(false);
               }
             }}
-            value={pickupLocation?.query} // value artık query olacak
+            value={pickupLocation?.id || ""} // artık ID kullanıyoruz
           >
             <option value="">Select airport</option>
             {airports.map((a) => (
-              <option key={a.query} value={a.query}>
+              <option key={a.id} value={a.id}>
                 {a.name}
               </option>
             ))}

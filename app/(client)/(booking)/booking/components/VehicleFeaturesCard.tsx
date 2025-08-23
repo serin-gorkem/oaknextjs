@@ -7,7 +7,7 @@ interface VehicleFeaturesCardProps {
   vehicleName: string;
   person: number;
   bags: number;
-  price: string | number;
+  totalPrice: string | number;
   currency: string;
   loadExtrasPage: () => void;
 }
@@ -38,28 +38,6 @@ const VehicleFeaturesCard = memo(function (props: VehicleFeaturesCardProps) {
       <img src={props.img} className="lg:w-1/3 w-1/2"></img>
       <div className="flex gap-6 items-center lg:gap-10">
         <h1 className="text-2xl md:text-4xl">{props.vehicleName}</h1>
-        {/* <div className="border-2 border-warning flex items-center rounded-box p-1 text-warning">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={1.5}
-            stroke="currentColor"
-            className="size-4 md:size-6"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M15.362 5.214A8.252 8.252 0 0 1 12 21 8.25 8.25 0 0 1 6.038 7.047 8.287 8.287 0 0 0 9 9.601a8.983 8.983 0 0 1 3.361-6.867 8.21 8.21 0 0 0 3 2.48Z"
-            />
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M12 18a3.75 3.75 0 0 0 .495-7.468 5.99 5.99 0 0 0-1.925 3.547 5.975 5.975 0 0 1-2.133-1.001A3.75 3.75 0 0 0 12 18Z"
-            />
-          </svg>
-          <p className="md:text-lg text-xs"> Most Popular</p>
-        </div> */}
       </div>
       <div className="flex lg:gap-10 gap-5">
         <div className="flex  items-center">
@@ -102,7 +80,7 @@ const VehicleFeaturesCard = memo(function (props: VehicleFeaturesCardProps) {
       <hr className="w-full"></hr>
       <div className="flex flex-col gap-2">
         <p>Total one-way price</p>
-        <h2 className="text-2xl lg:text-4xl font-bold">{props.price} { props.currency}</h2>
+        <h2 className="text-2xl lg:text-4xl font-bold">{props.totalPrice} { props.currency}</h2>
         <div className="flex bg-[#C2E6D2] text-success-content rounded-box p-1 font-bold w-fit gap-2">
           <svg
             xmlns="http://www.w3.org/2000/svg"

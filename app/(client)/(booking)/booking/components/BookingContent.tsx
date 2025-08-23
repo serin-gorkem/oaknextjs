@@ -1,5 +1,5 @@
 "use client";
-import { lazy, useEffect, useState } from "react";
+import { lazy, useEffect, useMemo, useState } from "react";
 import VehicleFeaturesCard from "./VehicleFeaturesCard";
 import { useRouter } from "next/navigation";
 import DirectionsMap from "./DirectionsMap";
@@ -13,11 +13,32 @@ const PageIndicator = lazy(() => import("../../../components/PageIndicator"));
 const TransferSummaryCard = lazy(() => import("./TransferSummaryCard"));
 const Steps = lazy(() => import("../../../components/Steps"));
 // #endregion
-
+interface VehiclePrice {
+  vehicle_id: number;
+  vehicle_name: string;
+  base_price: number;
+  km_rate: number;
+  total_price?: number;
+}
 export default function BookingContent() {
   const { clientData, setClientData, error } = useGetData();
   const { currencyIndex } = useCurrency();
   const { vehicles } = useVehicle();
+  const [vehiclePrices, setVehiclePrices] = useState<VehiclePrice[]>([]);
+const mergedVehicles = useMemo(() => {
+  return vehicles?.map((v: any) => {
+    const price = vehiclePrices?.find((p) => p.vehicle_id === v.id);
+    return {
+      ...v,
+      base_price: price?.base_price ?? 0,
+      km_rate: price?.km_rate ?? 0,
+      total_price: price?.total_price ?? 0,
+    };
+  });
+}, [vehicles, vehiclePrices]);
+
+  console.log(mergedVehicles);
+  
 
   const [route_info, setRouteInfo] = useState<{
     distanceKm: number;
@@ -25,6 +46,30 @@ export default function BookingContent() {
     durationHours: number;
     durationMinutes: number;
   } | null>(null);
+
+  useEffect(() => {
+    if (!clientData?.pickup_location?.id || !route_info?.distanceKm) return;
+
+    const fetchPrices = async () => {
+      try {
+        const res = await fetch(
+          `/api/airport-rates?airportId=${clientData.pickup_location.id}`
+        );
+        const rates: VehiclePrice[] = await res.json();
+
+        const calculated = rates.map((v) => ({
+          ...v,
+          total_price: v.base_price + (v.km_rate * route_info.distanceKm),
+        }));
+
+        setVehiclePrices(calculated);
+      } catch (err) {
+        console.error("Failed to fetch vehicle prices", err);
+      }
+    };
+
+    fetchPrices();
+  }, [clientData?.pickup_location?.id, route_info?.distanceKm]);
 
   useEffect(() => {
     if (!clientData || !clientData.uuid) return;
@@ -69,7 +114,6 @@ export default function BookingContent() {
   if (error || !clientData) {
     return <SessionExpiredFallback error={error} clientData={clientData} />;
   }
-
 
   return (
     <main className="flex relative flex-col mt-30 justify-between lg:block xl:max-w-9/12 lg:max-w-11/12 mx-auto ">
@@ -174,7 +218,7 @@ export default function BookingContent() {
             />
           </div>
           {/*Price from the database should be passed here.*/}
-          {vehicles?.map((vehicle: any) => (
+          {mergedVehicles?.map((vehicle: any) => (
             <VehicleFeaturesCard
               key={`${vehicle.id}-${currencyIndex}`}
               img={vehicle.image_url}
@@ -182,15 +226,13 @@ export default function BookingContent() {
               person={vehicle.capacity_person}
               bags={vehicle.capacity_bags}
               features={vehicle.features}
-              price={vehicles[vehicle.id]?.prices[currencyIndex]?.amount}
-              currency={
-                vehicles[vehicle.id]?.prices[currencyIndex]?.currency_symbol
-              }
+              totalPrice={vehicle.total_price}
+              currency="$"
               loadExtrasPage={() =>
                 loadExtrasPage(
                   vehicle.name,
-                  vehicles[vehicle.id]?.prices[currencyIndex]?.amount,
-                  vehicles[vehicle.id]?.prices[currencyIndex]?.currency_symbol,
+                  vehicle.total_price, // dikkat burada total_price olacak
+                  "$",
                   vehicle.image_url
                 )
               }
