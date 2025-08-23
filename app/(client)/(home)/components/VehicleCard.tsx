@@ -6,7 +6,7 @@ const VehicleCard = memo(function (props: {
   personCount: number;
   bagsCount: number;
   specs: string[];
-  basePrice: number;
+  base_price: number;
 }) {
   const [details, setDetails] = useState(false);
 
@@ -23,7 +23,7 @@ const VehicleCard = memo(function (props: {
           text={props.text}
           personCount={props.personCount}
           bagsCount={props.bagsCount}
-          basePrice={props.basePrice}
+          basePrice={props.base_price}
         />
       ) : (
         <BackFace
@@ -33,7 +33,7 @@ const VehicleCard = memo(function (props: {
           personCount={props.personCount}
           bagsCount={props.bagsCount}
           specs={props.specs}
-          basePrice={props.basePrice}
+          basePrice={props.base_price}
         />
       )}
     </article>
@@ -116,9 +116,7 @@ function BackFace(props: BackFaceProps) {
       <hr></hr>
       <div className="flex flex-col flex-wrap gap-2 ">{specsList}</div>
       <p>
-        <span className="text-warning font-black pr-2">
-          {props.basePrice}
-        </span>
+        <span className="text-warning font-black pr-2">{props.basePrice}</span>
         with prices starting
       </p>
       <hr></hr>
@@ -190,10 +188,8 @@ function FrontFace(props: FrontFaceProps) {
         <p>{props.bagsCount} bag</p>
       </div>
       <p>
-        Starting
-        <span className="text-warning font-black pr-2">
-          {props.basePrice}
-        </span>
+        Starting from
+        <span className="text-warning font-black pr-2"> {props.basePrice}</span>
       </p>
       <hr></hr>
     </figure>

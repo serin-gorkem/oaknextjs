@@ -10,8 +10,8 @@ export async function GET() {
         v.image_url,
         v.capacity_person,
         v.capacity_bags,
-        v.features
-        v.baseprice
+        v.features,
+        v.base_price
       FROM vehicles v
       ORDER BY v.id
     `);
