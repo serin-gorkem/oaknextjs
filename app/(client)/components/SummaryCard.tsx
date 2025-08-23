@@ -127,10 +127,10 @@ const SummaryCard = memo(function ({ clientData }: any) {
           </div>
           <div className="flex justify-between">
             <h2 className="title text-2xl mb-1">TOTAL</h2>
-            <p className="section-text text-xl font-bold">
+            {/* <p className="section-text text-xl font-bold">
               {vehicles?.[currencyIndex]?.prices[currencyIndex]?.amount}{" "}
               {vehicles?.[currencyIndex]?.prices[currencyIndex]?.currency_symbol}
-            </p>
+            </p> */}
           </div>
         </>
       </div>
