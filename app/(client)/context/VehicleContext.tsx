@@ -9,12 +9,6 @@ export type Vehicle = {
   capacity_person: number;
   capacity_bags: number;
   features: string[];
-  prices: {
-    [key: string]: {
-      amount: number;
-      currency_symbol: string;
-    };
-  };
 };
 
 export type VehicleContextProps = {

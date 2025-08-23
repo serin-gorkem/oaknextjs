@@ -19,12 +19,7 @@ const Vehicles = memo(function () {
     capacity_person: number;
     capacity_bags: number;
     features: string[];
-    prices: {
-      [key: string]: {
-        amount: number;
-        currency_symbol: string;
-      };
-    };
+    baseprice: number;
   };
   const {vehicles} = useVehicle();
 
@@ -96,13 +91,7 @@ const Vehicles = memo(function () {
                 personCount={vehicle.capacity_person}
                 bagsCount={vehicle.capacity_bags}
                 specs={vehicle.features}
-                price={
-                  vehicles[vehicle.id]?.prices[currencyIndex]?.amount
-                }
-                currency={
-                  vehicles[vehicle.id]?.prices[currencyIndex]
-                    ?.currency_symbol
-                }
+                basePrice = {vehicle.baseprice}
               />
             </SplideSlide>
           ))}

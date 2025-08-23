@@ -3,12 +3,12 @@
 import { useEffect, useState } from "react";
 
 interface AirportRate {
-  airportid: string;
+  airport_id: string;
   airport_name: string;
-  vehicleid: number;
+  vehicle_id: number;
   vehicle_name: string;
-  baseprice: number;
-  kmrate: number;
+  base_price: number;
+  km_rate: number;
 }
 
 interface AirportGrouped {
@@ -46,7 +46,7 @@ export default function AirportRatesUI() {
   const handleChange = (
     airportName: string,
     vehicleId: number,
-    field: "baseprice" | "kmrate",
+    field: "base_price" | "km_rate",
     value: number
   ) => {
     setData((prev) =>
@@ -55,7 +55,7 @@ export default function AirportRatesUI() {
           ? {
               ...airport,
               rates: airport.rates.map((rate) =>
-                rate.vehicleid === vehicleId
+                rate.vehicle_id === vehicleId
                   ? { ...rate, [field]: value }
                   : rate
               ),
@@ -76,10 +76,10 @@ export default function AirportRatesUI() {
 
     try {
       const updates = airportData.rates.map((rate) => ({
-        airportId: rate.airportid,
-        vehicleId: rate.vehicleid,
-        baseprice: rate.baseprice,
-        kmrate: rate.kmrate,
+        airportId: rate.airport_id,
+        vehicleId: rate.vehicle_id,
+        base_price: rate.base_price,
+        km_rate: rate.km_rate,
       }));
 
       const res = await fetch("/api/update-airport-rates", {
@@ -112,10 +112,10 @@ export default function AirportRatesUI() {
     window.location.href = "/admin";
   };
   return (
-    <div className="w-full max-w-3xl mx-auto mt-8">
+    <div className="w-full max-w-3xl mx-auto lg:mt-8 mt-32">
       <button
         onClick={handleLogout}
-        className="btn btn-primary absolute right-10 top-10 hover:btn-warning text-base-100"
+        className="btn btn-primary absolute right-5 top-10 hover:btn-warning text-base-100"
       >
         Çıkış Yap.
       </button>
@@ -133,7 +133,7 @@ export default function AirportRatesUI() {
             <div className="p-4 bg-white space-y-3">
               {airport.rates.map((rate) => (
                 <div
-                  key={rate.vehicleid}
+                  key={rate.vehicle_id}
                   className="flex justify-between border p-3 rounded-md shadow-sm items-center"
                 >
                   <span className="font-medium">{rate.vehicle_name}</span>
@@ -142,12 +142,12 @@ export default function AirportRatesUI() {
                     <input
                       type="number"
                       className="input input-bordered w-24"
-                      value={rate.baseprice}
+                      value={rate.base_price}
                       onChange={(e) =>
                         handleChange(
                           airport.airport_name,
-                          rate.vehicleid,
-                          "baseprice",
+                          rate.vehicle_id,
+                          "base_price",
                           parseFloat(e.target.value)
                         )
                       }
@@ -157,12 +157,12 @@ export default function AirportRatesUI() {
                     <input
                       type="number"
                       className="input input-bordered w-24"
-                      value={rate.kmrate}
+                      value={rate.km_rate}
                       onChange={(e) =>
                         handleChange(
                           airport.airport_name,
-                          rate.vehicleid,
-                          "kmrate",
+                          rate.vehicle_id,
+                          "km_rate",
                           parseFloat(e.target.value)
                         )
                       }

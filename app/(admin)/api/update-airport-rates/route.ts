@@ -2,10 +2,10 @@ import { query } from '../../../(client)/lib/db';
 import { NextResponse } from "next/server";
 
 interface UpdateRate {
-  airportId: string;
-  vehicleId: number;
-  baseprice: number;
-  kmrate: number;
+  airport_id: string;
+  vehicle_id: number;
+  base_price: number;
+  km_rate: number;
 }
 
 export async function POST(req: Request) {
@@ -18,12 +18,12 @@ export async function POST(req: Request) {
     }
 
     for (const u of updates) {
-      const { airportId, vehicleId, baseprice, kmrate } = u;
+      const { airport_id, vehicle_id, base_price, km_rate} = u;
 
       await query(
-        `UPDATE airport_rates SET baseprice = $1, kmrate = $2 
-         WHERE airportid = $3 AND vehicleid = $4`,
-        [baseprice, kmrate, airportId, vehicleId]
+        `UPDATE airport_rates SET base_price = $1, km_rate = $2 
+         WHERE airport_id = $3 AND vehicle_id = $4`,
+        [base_price, km_rate, airport_id, vehicle_id]
       );
     }
 

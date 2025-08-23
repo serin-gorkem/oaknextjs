@@ -6,8 +6,8 @@ export async function GET() {
     const result = await query(
       `SELECT ar.*, v.name as vehicle_name, a.name as airport_name 
        FROM airport_rates ar
-       JOIN vehicles v ON ar.vehicleid = v.id
-       JOIN airports a ON ar.airportid = a.id
+       JOIN vehicles v ON ar.vehicle_id = v.id
+       JOIN airports a ON ar.airport_id = a.id
        ORDER BY a.name, v.id`
     );
     return NextResponse.json(result.rows);

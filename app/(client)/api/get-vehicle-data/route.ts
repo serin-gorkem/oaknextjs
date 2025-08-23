@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { query } from "../../lib/db";
 
 export async function GET() {
@@ -10,18 +10,9 @@ export async function GET() {
         v.image_url,
         v.capacity_person,
         v.capacity_bags,
-        v.features,
-       json_agg(
-          json_build_object(
-            'currency', p.currency,
-            'amount', p.amount,
-            'price_id', p.id,
-            'currency_symbol', p.currency_symbol
-          ) ORDER BY p.id
-        ) AS prices
+        v.features
+        v.baseprice
       FROM vehicles v
-      LEFT JOIN prices p ON v.id = p.vehicle_id
-      GROUP BY v.id
       ORDER BY v.id
     `);
 
