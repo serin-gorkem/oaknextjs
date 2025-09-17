@@ -13,7 +13,7 @@ export default function Landing() {
   return (
     <>
       <Suspense fallback={<div className="h-screen">Loading...</div>}>
-      <a href={`https://api.whatsapp.com/send?phone=${process.env.NEXT_PUBLIC_WHATSAPP_PHONE_NUMBER}`}>
+      <a className=" hidden md:block" href={`https://api.whatsapp.com/send?phone=${process.env.NEXT_PUBLIC_WHATSAPP_PHONE_NUMBER}`}>
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"

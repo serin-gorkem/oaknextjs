@@ -1,22 +1,40 @@
+
+// app/api/airport-rates/route.ts
 import { NextRequest, NextResponse } from "next/server";
-import { query } from "../../lib/db";   
+import { query } from "../../lib/db";
+
+export const runtime = "nodejs"; // logların görünmesi için
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const airportId = searchParams.get("airportId");
 
-  if (!airportId) return NextResponse.json({ error: "airportId missing" }, { status: 400 });
+  // Eğer airportId yoksa 400 dön
+  if (!airportId) {
+    return NextResponse.json({ error: "airportId missing" }, { status: 400 });
+  }
 
   try {
-    const result = await query(
-      `SELECT ar.vehicleid, v.name as vehicle_name, ar.baseprice, ar.kmrate
-       FROM airport_rates ar
-       JOIN vehicle v ON v.id = ar.vehicleid
-       WHERE ar.airportid = $1
-       ORDER BY ar.vehicleid`,
-      [airportId]
-    );
-    return NextResponse.json(result.rows);
+    const sql = `
+      SELECT 
+        ar.airport_id,
+        ar.vehicle_id,
+        ar.base_price,
+        ar.km_rate,
+        v.name AS vehicle_name
+      FROM airport_rates ar
+      JOIN vehicles v ON v.id = ar.vehicle_id
+      WHERE TRIM(UPPER(ar.airport_id)) = TRIM(UPPER($1))
+    `;
+
+    const result = await query(sql, [airportId]);
+
+    // Response’a hem query sonucu hem de kullanılan airportId’yi ekle
+    return NextResponse.json({
+      requestedAirportId: airportId,   // Client hangi ID ile çağırdı
+      resultCount: result.rows.length, // Kaç satır geldi
+      rows: result.rows                // Asıl veriler
+    });
   } catch (err) {
     console.error("DB read error:", err);
     return NextResponse.json({ error: "DB error" }, { status: 500 });

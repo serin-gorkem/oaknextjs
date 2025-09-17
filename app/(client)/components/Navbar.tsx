@@ -321,11 +321,11 @@ function DesktopNav() {
           <a href="/">
             <Image
               src="/images/logos/Logo_W.png"
-              width={100}
-              height={100}
+              width={300}
+              height={300}
               alt="Website Logo"
               aria-label="Book now button"
-              className="w-36 p-2 hover:shadow-none hover:text-base-100"
+              className="w-48 p-2 hover:shadow-none hover:text-base-100"
             ></Image>
           </a>
         </li>
@@ -333,9 +333,9 @@ function DesktopNav() {
           <a href="https://www.toursofyou.com/">
             <Image
               src="/images/logos/ToursOfYou.webp"
-              width={100}
-              height={100}
-              alt="Website Logo"
+              width={300}
+              height={300}
+              alt="Tours of you Logo"
               aria-label="Book now button"
               className="w-36 p-2  hover:shadow-none hover:text-base-100"
             ></Image>

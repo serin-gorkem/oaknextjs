@@ -8,6 +8,8 @@ import { UpdateData } from "../../../components/UpdateData";
 import { useCurrency } from "../../../context/CurrencyContext";
 import { useVehicle } from "../../../context/VehicleContext";
 import SessionExpiredFallback from "@/app/(client)/components/SessionExpiredFallback";
+
+
 // #region lazy imports
 const PageIndicator = lazy(() => import("../../../components/PageIndicator"));
 const TransferSummaryCard = lazy(() => import("./TransferSummaryCard"));
@@ -25,20 +27,6 @@ export default function BookingContent() {
   const { currencyIndex } = useCurrency();
   const { vehicles } = useVehicle();
   const [vehiclePrices, setVehiclePrices] = useState<VehiclePrice[]>([]);
-const mergedVehicles = useMemo(() => {
-  return vehicles?.map((v: any) => {
-    const price = vehiclePrices?.find((p) => p.vehicle_id === v.id);
-    return {
-      ...v,
-      base_price: price?.base_price ?? 0,
-      km_rate: price?.km_rate ?? 0,
-      total_price: price?.total_price ?? 0,
-    };
-  });
-}, [vehicles, vehiclePrices]);
-
-  console.log(mergedVehicles);
-  
 
   const [route_info, setRouteInfo] = useState<{
     distanceKm: number;
@@ -47,29 +35,31 @@ const mergedVehicles = useMemo(() => {
     durationMinutes: number;
   } | null>(null);
 
-  useEffect(() => {
-    if (!clientData?.pickup_location?.id || !route_info?.distanceKm) return;
+async function fetchAirportRates(airportId: string) {
+  const res = await fetch(`/api/airport-rates?airportId=${airportId}`);
+  if (!res.ok) throw new Error("Failed to fetch airport rates");
 
-    const fetchPrices = async () => {
-      try {
-        const res = await fetch(
-          `/api/airport-rates?airportId=${clientData.pickup_location.id}`
-        );
-        const rates: VehiclePrice[] = await res.json();
+  const data = await res.json(); // <-- promise'i await ile çöz
+  console.log("⬅️ API response:", data); // artık gerçek veri burada
+  return data;
+}
 
-        const calculated = rates.map((v) => ({
-          ...v,
-          total_price: v.base_price + (v.km_rate * route_info.distanceKm),
-        }));
+  // console.log("Pickup Location ID:", clientData?.pickup_location?.id);
+  // console.log("Fetched vehiclePrices:", vehiclePrices);
+  // console.log("Route Info:", route_info);
+  // console.log("Client Data", clientData);
 
-        setVehiclePrices(calculated);
-      } catch (err) {
-        console.error("Failed to fetch vehicle prices", err);
-      }
-    };
+useEffect(() => {
+  const airportId = clientData?.pickup_location?.id;
+  if (!airportId) return;
 
-    fetchPrices();
-  }, [clientData?.pickup_location?.id, route_info?.distanceKm]);
+  fetchAirportRates(airportId)
+    .then(data => setVehiclePrices(data.rows))
+    .catch(err => console.error(err));
+}, [clientData?.pickup_location?.id]);
+
+console.log(vehiclePrices);
+
 
   useEffect(() => {
     if (!clientData || !clientData.uuid) return;
@@ -218,7 +208,7 @@ const mergedVehicles = useMemo(() => {
             />
           </div>
           {/*Price from the database should be passed here.*/}
-          {mergedVehicles?.map((vehicle: any) => (
+          {vehicles?.map((vehicle: any) => (
             <VehicleFeaturesCard
               key={`${vehicle.id}-${currencyIndex}`}
               img={vehicle.image_url}

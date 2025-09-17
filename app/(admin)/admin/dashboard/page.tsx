@@ -122,7 +122,7 @@ export default function AirportRatesUI() {
       {data.map((airport) => (
         <div key={airport.airport_name} className="mb-4 rounded-lg shadow-sm">
           <button
-            className="w-full flex justify-between items-center p-4 bg-gray-100 hover:bg-gray-200"
+            className="w-full flex cursor-pointer justify-between items-center p-4 bg-gray-100 hover:bg-gray-200"
             onClick={() => toggleAccordion(airport.airport_name)}
           >
             <span className="font-semibold">{airport.airport_name}</span>
@@ -134,7 +134,7 @@ export default function AirportRatesUI() {
               {airport.rates.map((rate) => (
                 <div
                   key={rate.vehicle_id}
-                  className="flex justify-between border p-3 rounded-md shadow-sm items-center"
+                  className="flex flex-col sm:flex-row justify-between border p-3 rounded-md shadow-sm items-center"
                 >
                   <span className="font-medium">{rate.vehicle_name}</span>
 
