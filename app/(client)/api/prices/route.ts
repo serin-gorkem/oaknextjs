@@ -1,15 +1,12 @@
-
-// app/api/airport-rates/route.ts
+// app/api/prices/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { query } from "../../lib/db";
-
-export const runtime = "nodejs"; // logların görünmesi için
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const airportId = searchParams.get("airportId");
+  const distanceKm = Number(searchParams.get("distanceKm"));
 
-  // Eğer airportId yoksa 400 dön
   if (!airportId) {
     return NextResponse.json({ error: "airportId missing" }, { status: 400 });
   }
@@ -29,11 +26,17 @@ export async function GET(req: NextRequest) {
 
     const result = await query(sql, [airportId]);
 
-    // Response’a hem query sonucu hem de kullanılan airportId’yi ekle
+    // Add calculated price per row
+    const rowsWithCalc = result.rows.map((row: any) => ({
+      ...row,
+      total_price: Number(row.base_price) + Number(row.km_rate) * distanceKm,
+    }));
+
     return NextResponse.json({
-      requestedAirportId: airportId,   // Client hangi ID ile çağırdı
-      resultCount: result.rows.length, // Kaç satır geldi
-      rows: result.rows                // Asıl veriler
+      airportId,
+      distanceKm,
+      resultCount: rowsWithCalc.length,
+      rows: rowsWithCalc,
     });
   } catch (err) {
     console.error("DB read error:", err);

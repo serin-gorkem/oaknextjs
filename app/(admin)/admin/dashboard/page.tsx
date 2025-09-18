@@ -76,8 +76,8 @@ export default function AirportRatesUI() {
 
     try {
       const updates = airportData.rates.map((rate) => ({
-        airportId: rate.airport_id,
-        vehicleId: rate.vehicle_id,
+        airport_id: rate.airport_id,
+        vehicle_id: rate.vehicle_id,
         base_price: rate.base_price,
         km_rate: rate.km_rate,
       }));
