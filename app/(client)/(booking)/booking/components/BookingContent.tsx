@@ -35,8 +35,8 @@ interface RouteInfo {
 
 export default function BookingContent() {
   const { clientData, setClientData, error } = useGetData();
-  const { currencyIndex } = useCurrency();
-  const { vehicles } = useVehicle();
+  const { currencyIndex, symbol, convertPrice } = useCurrency();
+    const { vehicles } = useVehicle();
 
   const [vehiclePrices, setVehiclePrices] = useState<VehiclePrice[]>([]);
   const [mergedVehicles, setMergedVehicles] = useState<any[]>([]);
@@ -63,21 +63,32 @@ useEffect(() => {
 }, [clientData?.pickup_location?.id, routeInfo]);
 
   // Merge vehicles with fetched prices
+
 useEffect(() => {
   if (!vehicles || !vehiclePrices) return;
 
-  const merged = vehicles.map((vehicle: any) => {
-    const price = vehiclePrices.find(
-      (p: VehiclePrice) => Number(p.vehicle_id) === Number(vehicle.id)
-    );
-    return {
-      ...vehicle,
-      total_price: price?.total_price?.toFixed(2) ?? 0, // fallback to 0 if no price
-    };
-  });
+  async function updateVehicles() {
+    const merged = await Promise.all(
+      vehicles.map(async (vehicle: any) => {
+        const price = vehiclePrices.find(
+          (p: VehiclePrice) => Number(p.vehicle_id) === Number(vehicle.id)
+        );
+        const rawPrice = price?.total_price ?? 0;
 
-  setMergedVehicles(merged);
-}, [vehicles, vehiclePrices]);
+        // Convert here using context
+        const converted = await convertPrice(rawPrice, "USD");
+
+        return {
+          ...vehicle,
+          total_price: converted.toFixed(2),
+        };
+      })
+    );
+    setMergedVehicles(merged);
+  }
+
+  updateVehicles();
+}, [vehicles, vehiclePrices, currencyIndex]);
 
   // Sync client data
   useEffect(() => {
@@ -167,7 +178,7 @@ useEffect(() => {
               bags={vehicle.capacity_bags}
               features={vehicle.features}
               totalPrice={vehicle.total_price}
-              currency="$"
+              currency={symbol}
               loadExtrasPage={() =>
                 loadExtrasPage(vehicle.name, vehicle.total_price, "$", vehicle.image_url)
               }
