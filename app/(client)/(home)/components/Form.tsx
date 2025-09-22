@@ -1,0 +1,464 @@
+"use client";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { DayPicker } from "react-day-picker";
+import "react-day-picker/style.css";
+
+import { v4 as uuidv4 } from "uuid";
+import AutocompleteInput from "./AutocompleteInput";
+import LoadGoogleMaps from "@/components/LoadGoogleMaps";
+
+interface Location {
+  lat: number;
+  lng: number;
+  address: string;
+  name: string;
+  placeId: string;
+}
+
+export default function Form() {
+  const [clientData, setClientData] = useState({});
+  const [pickupLocation, setPickupLocation] = useState<any>("");
+  const [isPickupLocationValid, setIsPickupLocationValid] = useState(false);
+  const [dropOffLocation, setDropOffLocation] = useState<any>("");
+  const [dropOffInput, setDropOffInput] = useState("");
+  const [isDropOffLocationValid, setIsDropOffLocationValid] = useState(false);
+  const [passengerCount, setPassengerCount] = useState(1);
+  const [pickupDate, setPickupDate] = useState<Date | undefined>(undefined);
+  const [pickupHour, setPickupHour] = useState("00:00");
+  const [isPickupOpen, setIsPickupOpen] = useState(false);
+  const uuid = uuidv4();
+
+  console.log("Pickup Location: ", pickupLocation);
+  console.log("Drop Off Location: ", dropOffLocation);
+
+  const airports = [
+    { id: "IST", name: "Istanbul Airport", query: "Istanbul Airport, Turkey" },
+    {
+      id: "SAW",
+      name: "Sabiha Gökçen International Airport",
+      query: "Sabiha Gökçen International Airport, Turkey",
+    },
+    {
+      id: "ADB",
+      name: "Izmir Adnan Menderes Airport",
+      query: "Izmir Adnan Menderes Airport, Turkey",
+    },
+    {
+      id: "BJV",
+      name: "Milas–Bodrum Airport",
+      query: "Milas–Bodrum Airport, Turkey",
+    },
+    { id: "DLM", name: "Dalaman Airport", query: "Dalaman Airport, Turkey" },
+    { id: "AYT", name: "Antalya Airport", query: "Antalya Airport, Turkey" },
+    {
+      id: "ASR",
+      name: "Kayseri Erkilet Airport",
+      query: "Kayseri Erkilet Airport, Turkey",
+    },
+    {
+      id: "NAV",
+      name: "Nevşehir Kapadokya Airport",
+      query: "Nevşehir Kapadokya Airport, Turkey",
+    },
+    {
+      id: "ESB",
+      name: "Esenboğa International Airport",
+      query: "Esenboğa International Airport, Ankara, Turkey",
+    },
+    {
+      id: "ADA",
+      name: "Adana Şakirpaşa Airport",
+      query: "Adana Şakirpaşa Airport, Turkey",
+    },
+    {
+      id: "GAP",
+      name: "Şanlıurfa GAP Airport",
+      query: "Şanlıurfa GAP Airport, Turkey",
+    },
+    { id: "TZX", name: "Trabzon Airport", query: "Trabzon Airport, Turkey" },
+  ];
+  const airportRadiusKm: Record<string, number> = {
+    "Istanbul Airport": 70,
+    "Sabiha Gökçen International Airport": 50,
+    "Izmir Adnan Menderes Airport": 120,
+    "Milas–Bodrum Airport": 50,
+    "Dalaman Airport": 50,
+    "Antalya Airport": 50,
+    "Kayseri Erkilet Airport": 30,
+    "Nevşehir Kapadokya Airport": 30,
+    "Esenboğa International Airport": 50,
+    "Adana Şakirpaşa Airport": 40,
+    "Şanlıurfa GAP Airport": 30,
+    "Trabzon Airport": 40,
+  };
+  const [message, setMessage] = useState("");
+  function validateForm() {
+    if (
+      !pickupLocation ||
+      !dropOffLocation ||
+      !pickupDate ||
+      !pickupHour ||
+      !passengerCount
+    ) {
+      setMessage("Please fill in all fields.");
+      return false;
+    }
+    if (!isPickupLocationValid) {
+      setMessage("Please select a valid pickup location.");
+      return false;
+    }
+    if (!isDropOffLocationValid) {
+      setMessage("Please select a valid drop-off location.");
+      return false;
+    }
+    if (pickupLocation === "" || dropOffLocation === "") {
+      setMessage("Please fill in location fields.");
+      return false;
+    }
+    if (pickupLocation === dropOffLocation) {
+      setMessage("Pickup and drop-off locations cannot be the same.");
+      return false;
+    }
+    return true;
+  }
+  function getDistanceKm(
+    lat1: number,
+    lon1: number,
+    lat2: number,
+    lon2: number
+  ) {
+    const toRad = (deg: number) => (deg * Math.PI) / 180;
+    const R = 6371; // km
+    const dLat = toRad(lat2 - lat1);
+    const dLon = toRad(lon2 - lon1);
+    const lat1Rad = toRad(lat1);
+    const lat2Rad = toRad(lat2);
+
+    const a =
+      Math.sin(dLat / 2) ** 2 +
+      Math.cos(lat1Rad) * Math.cos(lat2Rad) * Math.sin(dLon / 2) ** 2;
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c;
+  }
+  async function getFreshPlaceId(query: string): Promise<string | null> {
+    return new Promise((resolve) => {
+      const service = new google.maps.places.PlacesService(
+        document.createElement("div")
+      );
+
+      service.findPlaceFromQuery(
+        {
+          query,
+          fields: ["place_id"],
+        },
+        (results, status) => {
+          if (
+            status === google.maps.places.PlacesServiceStatus.OK &&
+            results &&
+            results.length > 0
+          ) {
+            resolve(results[0].place_id!);
+          } else {
+            resolve(null);
+          }
+        }
+      );
+    });
+  }
+
+  async function fetchPlaceDetails(
+    placeId: string,
+    query: string
+  ): Promise<Location | null> {
+    return new Promise((resolve) => {
+      const service = new google.maps.places.PlacesService(
+        document.createElement("div")
+      );
+
+      service.getDetails(
+        { placeId, fields: ["geometry", "formatted_address", "name"] },
+        async (place, status) => {
+          if (
+            status === google.maps.places.PlacesServiceStatus.OK &&
+            place &&
+            place.geometry?.location
+          ) {
+            resolve({
+              lat: place.geometry.location.lat(),
+              lng: place.geometry.location.lng(),
+              address: place.formatted_address || "",
+              name: place.name || "",
+              placeId,
+            });
+          } else if (
+            status === google.maps.places.PlacesServiceStatus.INVALID_REQUEST
+          ) {
+            // Fallback → yeni Place ID bul
+            const newPlaceId = await getFreshPlaceId(query);
+            if (newPlaceId) {
+              const refreshed = await fetchPlaceDetails(newPlaceId, query);
+              resolve(refreshed);
+            } else {
+              resolve(null);
+            }
+          } else {
+            resolve(null);
+          }
+        }
+      );
+    });
+  }
+
+  async function cleanupData() {
+    await fetch("/api/cleanup");
+  }
+
+  const router = useRouter();
+  async function handleSubmit(e: any) {
+    e.preventDefault();
+    if (validateForm()) {
+      const data = {
+        pickup_location: pickupLocation,
+        drop_off_location: dropOffLocation,
+        pickup_date: pickupDate?.toDateString(),
+        pickup_hour: pickupHour,
+        passenger_count: passengerCount,
+        uuid: uuid,
+      };
+      setClientData(data);
+      setMessage("Form submitted successfully!");
+
+      const response = await fetch("api/form-data", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      }).then((res) => res.json());
+      if (response.status === 200) {
+        router.push(`/booking?uuid=${uuid}`);
+      }
+      cleanupData();
+      console.log("Response from API: ", response.status);
+    }
+  }
+
+  const togglePickupDateMenu = () => {
+    setIsPickupOpen((prev) => !prev);
+  };
+
+  function handlePickupTimeChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const time = e.target.value;
+    setPickupHour(time);
+  }
+
+  function handlePickupDaySelect(date: Date) {
+    setPickupDate(date);
+  }
+
+  return (
+    <>
+      <form
+        className="bg-base-300 w-full rounded-box p-5 flex flex-col justify-between h-fit gap-3 shadow-xl"
+        onSubmit={handleSubmit}
+      >
+        <LoadGoogleMaps />
+        <p className="font-semibold text-red-500">{message}</p>
+
+        <fieldset className="fieldset">
+          <select
+            className="p-4 bg-base-100 border-r-16 border-transparent text-black"
+            onChange={async (e) => {
+              const selectedId = e.target.value;
+              const sel = airports.find((a) => a.id === selectedId);
+              if (!sel) return setPickupLocation(null);
+
+              // Eğer pickup değiştiyse drop-off'u sıfırla
+              setDropOffLocation(null);
+              setIsDropOffLocationValid(false);
+
+              // placeId resolve et
+              const freshPlaceId = await getFreshPlaceId(sel.query);
+              if (!freshPlaceId) {
+                setMessage("Could not resolve Place ID for " + sel.name);
+                return;
+              }
+
+              // detaylarını çek
+              const info = await fetchPlaceDetails(freshPlaceId, sel.query);
+              if (info) {
+                setPickupLocation({
+                  id: sel.id,
+                  name: sel.name,
+                  query: sel.query,
+                  placeId: freshPlaceId,
+                  lat: info.lat,
+                  lng: info.lng,
+                  address: info.address,
+                });
+                setIsPickupLocationValid(true);
+                setMessage("");
+              } else {
+                setMessage("Invalid airport selection.");
+                setIsPickupLocationValid(false);
+              }
+            }}
+            value={pickupLocation?.id || ""} // artık ID kullanıyoruz
+          >
+            <option value="">Select airport</option>
+            {airports.map((a) => (
+              <option key={a.id} value={a.id}>
+                {a.name}
+              </option>
+            ))}
+          </select>
+          <legend className="font-semibold text-sm">
+            From (We only operate on Turkey.)
+          </legend>
+        </fieldset>
+        <fieldset className="fieldset ">
+          <legend className="font-semibold text-sm">
+            To (We only operate on Turkey.)
+          </legend>
+          <label
+            htmlFor="drop_off_location"
+            className="input focus-within:outline-0 w-full"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth="1.5"
+              stroke="currentColor"
+              className="w-6 opacity-80"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
+              />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"
+              />
+            </svg>
+            <AutocompleteInput
+              value={dropOffInput}
+              onChange={(val) => {
+                setDropOffInput(val); // sadece yazdığın input görünümü
+                setIsDropOffLocationValid(false); // henüz geçerli seçim yok
+              }}
+              onPlaceSelected={(place) => {
+                if (!pickupLocation) {
+                  setMessage("Please select a pickup location first.");
+                  setDropOffLocation(null);
+                  setIsDropOffLocationValid(false);
+                  setDropOffInput("");
+                  return;
+                }
+
+                const dist = getDistanceKm(
+                  pickupLocation.lat,
+                  pickupLocation.lng,
+                  place.lat,
+                  place.lng
+                );
+                const maxRadius = airportRadiusKm[pickupLocation.name] || 50;
+
+                if (dist > maxRadius) {
+                  setMessage(
+                    `Selected drop-off (${place.name}) is ${dist.toFixed(
+                      1
+                    )}km away. Max allowed is ${maxRadius}km from ${
+                      pickupLocation.name
+                    }.`
+                  );
+                  setDropOffLocation(null);
+                  setIsDropOffLocationValid(false);
+                  setDropOffInput("");
+                } else {
+                  setDropOffLocation(place);
+                  setIsDropOffLocationValid(true);
+                  setDropOffInput(place.name ?? ""); // seçilen yeri input’a yaz
+                  setMessage("");
+                }
+              }}
+              placeholder="Select a hotel"
+              locationType="lodging"
+              bounds={
+                pickupLocation
+                  ? new google.maps.Circle({
+                      center: new google.maps.LatLng(
+                        pickupLocation.lat,
+                        pickupLocation.lng
+                      ),
+                      radius:
+                        (airportRadiusKm[pickupLocation.name] || 50) * 1000, // metre
+                    }).getBounds() || undefined
+                  : undefined
+              }
+            />
+          </label>
+        </fieldset>
+        <fieldset className="fieldset flex">
+          <div className="w-full border border-base-300 rounded-box">
+            <div
+              className="collapse-title text-sm font-semibold bg-base-100 cursor-pointer"
+              onClick={togglePickupDateMenu}
+            >
+              Pickup Date and Time
+            </div>
+            {isPickupOpen && (
+              <div className="md:p-4 bg-base-200 rounded-b-box">
+                <DayPicker
+                  mode="single"
+                  required={true}
+                  disabled={{ before: new Date() }}
+                  selected={pickupDate}
+                  onSelect={handlePickupDaySelect}
+                  className="bg-base-300 rounded-box md:p-3 mb-4 w-full flex flex-col items-center"
+                  footer={
+                    pickupDate
+                      ? `Pickup Date: ${pickupDate.toString().slice(0, 15)}`
+                      : ""
+                  }
+                />
+                <input
+                  type="time"
+                  name="pickupHour"
+                  required={true}
+                  className="input focus-within:outline-0 w-full text-primary"
+                  value={pickupHour}
+                  onChange={handlePickupTimeChange}
+                />
+              </div>
+            )}
+          </div>
+        </fieldset>
+        <fieldset className="fieldset flex focus-within:outline-0">
+          <legend className="font-semibold text-sm">
+            Passenger Count (Max - 45)
+          </legend>
+          <input
+            type="number"
+            className="input validator focus-within:outline-0 w-full"
+            placeholder="Passengers (1-45)"
+            min="1"
+            max="45"
+            title="Passenger Count"
+            value={passengerCount}
+            onChange={(e) => setPassengerCount(parseInt(e.target.value))}
+          />
+        </fieldset>
+        <button
+          type="submit"
+          className="btn btn-primary w-full hover:bg-gray-200 hover:text-black"
+        >
+          Search
+        </button>
+      </form>
+    </>
+  );
+}
