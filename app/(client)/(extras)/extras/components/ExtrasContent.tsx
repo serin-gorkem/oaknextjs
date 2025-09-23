@@ -72,31 +72,44 @@ const Extras = memo(function () {
 useEffect(() => {
   if (!clientData) return;
 
-  const basePrice = Number(clientData.price) || 0;  
+  const basePrice = Number(clientData.basePrice || 0);
 
-  const extrasTotal =
-    childSeatNumber * (extras[0]?.price || 0) +
-    flowersNumber * (extras[1]?.price || 0) +
-    (airportAssistance ? extras[2]?.price || 0 : 0) +
-    (wait ? extras[3]?.price || 0 : 0);
+  const prevExtras = clientData.extras || {
+    childSeat: 0,
+    flowers: 0,
+    airportAssistance: false,
+    wait: false,
+  };
 
-  const newPrice = parseFloat((basePrice + extrasTotal).toFixed(2));
+  // Farkları hesapla
+  const childSeatDiff = childSeatNumber - (prevExtras.childSeat || 0);
+  const flowersDiff = flowersNumber - (prevExtras.flowers || 0);
+  const airportAssistanceDiff = airportAssistance ? 1 : 0 - (prevExtras.airportAssistance ? 1 : 0);
+  const waitDiff = wait ? 1 : 0 - (prevExtras.wait ? 1 : 0);
 
-  console.log("Base price: "+basePrice,"Extras Price Total: ", extrasTotal, "New Price: ", newPrice);
-  
+  const extrasTotalDiff =
+    childSeatDiff * (extras[0]?.price || 0) +
+    flowersDiff * (extras[1]?.price || 0) +
+    airportAssistanceDiff * (extras[2]?.price || 0) +
+    waitDiff * (extras[3]?.price || 0);
+
+  const newPrice = parseFloat((Number(clientData.price) + extrasTotalDiff).toFixed(2));
+
+  const newExtras = {
+    childSeat: childSeatNumber,
+    flowers: flowersNumber,
+    airportAssistance,
+    wait,
+  };
+  console.log("Base price: "+basePrice, "New Price: ", newPrice);
 
   setClientData((prev: typeof clientData) => ({
     ...prev,
     price: newPrice,
-    extras: {
-      childSeat: childSeatNumber,
-      flowers: flowersNumber,
-      airportAssistance,
-      wait,
-    },
+    extras: newExtras,
   }));
 
-  UpdateData({ clientData: { ...clientData, price: newPrice } });
+  UpdateData({ clientData: { ...clientData, price: newPrice, extras: newExtras } });
 }, [childSeatNumber, flowersNumber, airportAssistance, wait, extras]);
 
   useEffect(() => {
