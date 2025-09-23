@@ -9,7 +9,6 @@ type ExtrasCardProps = {
   wait: boolean;
   handleAirportAssistance: () => void;
   handleWait: () => void;
-  updateClientData: (changes: { [key: string]: any }) => void;
   extras: Array<{
     display_name: string;
     price: number;

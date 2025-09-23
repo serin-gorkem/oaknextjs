@@ -45,7 +45,6 @@ const Extras = memo(function () {
   const { clientData, setClientData, error } = useGetData();
   const { symbol, convertPrice } = useCurrency();
 
-
   type Extra = {
     display_name: string;
     price: number;
@@ -59,8 +58,7 @@ const Extras = memo(function () {
   const [wait, setWait] = useState(false);
 
   console.log(clientData);
-  
-  
+
   useEffect(() => {
     getExtras(setExtras, convertPrice);
   }, [convertPrice]);
@@ -70,6 +68,36 @@ const Extras = memo(function () {
       updateClientData({ airportAssistance });
     }
   }, [airportAssistance]);
+
+useEffect(() => {
+  if (!clientData) return;
+
+  const basePrice = Number(clientData.price) || 0;  
+
+  const extrasTotal =
+    childSeatNumber * (extras[0]?.price || 0) +
+    flowersNumber * (extras[1]?.price || 0) +
+    (airportAssistance ? extras[2]?.price || 0 : 0) +
+    (wait ? extras[3]?.price || 0 : 0);
+
+  const newPrice = parseFloat((basePrice + extrasTotal).toFixed(2));
+
+  console.log("Base price: "+basePrice,"Extras Price Total: ", extrasTotal, "New Price: ", newPrice);
+  
+
+  setClientData((prev: typeof clientData) => ({
+    ...prev,
+    price: newPrice,
+    extras: {
+      childSeat: childSeatNumber,
+      flowers: flowersNumber,
+      airportAssistance,
+      wait,
+    },
+  }));
+
+  UpdateData({ clientData: { ...clientData, price: newPrice } });
+}, [childSeatNumber, flowersNumber, airportAssistance, wait, extras]);
 
   useEffect(() => {
     if (clientData !== null) {
@@ -149,7 +177,7 @@ const Extras = memo(function () {
   if (error || !clientData) {
     return <SessionExpiredFallback error={error} clientData={clientData} />;
   }
-    if (!clientData) {
+  if (!clientData) {
     return (
       <div className="h-screen flex items-center justify-center">
         <p className="text-center mt-20">Loading Data...</p>
@@ -166,7 +194,6 @@ const Extras = memo(function () {
             <ExtrasCard
               increase={increase}
               decrease={decrease}
-              updateClientData={updateClientData}
               childSeatNumber={childSeatNumber}
               flowersNumber={flowersNumber}
               airportAssistance={airportAssistance}
@@ -230,7 +257,6 @@ const Extras = memo(function () {
               <ExtrasCard
                 increase={increase}
                 decrease={decrease}
-                updateClientData={updateClientData}
                 childSeatNumber={childSeatNumber}
                 flowersNumber={flowersNumber}
                 airportAssistance={airportAssistance}
