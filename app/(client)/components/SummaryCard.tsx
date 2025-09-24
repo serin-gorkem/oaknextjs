@@ -6,16 +6,16 @@ const SummaryCard = memo(function ({ clientData }: any) {
   const { symbol, convertPrice } = useCurrency();
   const [finalPrice, setFinalPrice] = useState<number | null>(null);
 
-  useEffect(() => {
-    const fetchConvertedPrice = async () => {
-      if (clientData?.booking?.total_price) {
-        const converted = await convertPrice(clientData.booking.total_price);
-        setFinalPrice(Math.round(converted)); // 🔥 burada round ediyoruz
-      }
-    };
-    fetchConvertedPrice();
-  }, [clientData?.booking?.total_price, convertPrice]);
-  
+useEffect(() => {
+  const fetchConvertedPrice = async () => {
+    const basePrice = clientData?.booking?.total_price ?? clientData?.price;
+    if (basePrice) {
+      const converted = await convertPrice(basePrice);
+      setFinalPrice(Math.round(converted));
+    }
+  };
+  fetchConvertedPrice();
+}, [clientData?.booking?.total_price, clientData?.price, convertPrice]);
   
   return (
     <article className="bg-base-300 rounded-box shadow-md flex gap-4 flex-col px-3 py-4 ">
@@ -93,8 +93,8 @@ const SummaryCard = memo(function ({ clientData }: any) {
                   {Object.entries(clientData?.extras).map(
                     ([key, value]: [string, unknown], index: number) => {
                       const labelMap: Record<string, string> = {
-                        childSeatNumber: "Child Seat",
-                        flowersNumber: "Bouquet of Flowers",
+                        childSeat: "Child Seat",
+                        flowers: "Bouquet of Flowers",
                         airportAssistance: "Airport Assistance",
                         wait: "Extra Wait",
                       };

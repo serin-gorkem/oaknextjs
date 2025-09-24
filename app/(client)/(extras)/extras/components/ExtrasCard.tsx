@@ -16,6 +16,10 @@ type ExtrasCardProps = {
   symbol: string;
 };
 const ExtrasCard = memo(function (props: ExtrasCardProps) {
+
+  console.log(props.extras);
+  
+
   return (
     <article className="bg-base-300 rounded-box shadow-md flex gap-4 flex-col px-3 py-4 ">
       {}

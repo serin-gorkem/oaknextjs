@@ -10,7 +10,7 @@ const RideDetails = memo(function ({
   navigateToDetails,
 }: RideDetailsProps) {
   //Get local variables
-  const { currencyIndex } = useCurrency();
+  const { symbol } = useCurrency();
   const { vehicles } = useVehicle();
 
   return (
@@ -120,10 +120,9 @@ const RideDetails = memo(function ({
         </div>
         <div className="flex justify-between">
           <h2 className="title text-2xl mb-1">TOTAL PRICE</h2>
-          {/* <p className="section-text text-xl font-bold">
-            {vehicles?.[currencyIndex]?.prices[currencyIndex]?.amount}
-            {vehicles?.[currencyIndex]?.prices[currencyIndex]?.currency_symbol}
-          </p> */}
+          <p className="section-text text-xl font-bold">
+            {clientData.price} {symbol}
+          </p>
         </div>
       </div>
     </article>

@@ -80,17 +80,11 @@ const Details = memo(function () {
   const [message, setMessage] = useState("");
   const [isFormValid, setIsFormValid] = useState<any>("");
 
-  console.log(clientData);
+  console.log("Client Data: ",clientData);
   
 
   const router = useRouter();
   function handleNavigateToExtras() {
-    setClientData((prev: any) => {
-      return {
-        ...prev,
-        extras: null,
-      };
-    });
     router.push(`/extras?uuid=${clientData.uuid}`);
   }
 

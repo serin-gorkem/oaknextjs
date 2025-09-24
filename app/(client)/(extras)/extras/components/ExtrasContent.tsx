@@ -45,6 +45,10 @@ const Extras = memo(function () {
   const { clientData, setClientData, error } = useGetData();
   const { symbol, convertPrice } = useCurrency();
 
+
+  console.log("Client Data: ",clientData);
+  
+
   type Extra = {
     display_name: string;
     price: number;
@@ -68,32 +72,27 @@ const Extras = memo(function () {
       updateClientData({ airportAssistance });
     }
   }, [airportAssistance]);
+  
+  useEffect(() => {
+    if (clientData !== null) {
+      updateClientData({ wait });
+    }
+  }, [wait]);
 
 useEffect(() => {
-  if (!clientData) return;
+  if (!clientData || extras.length === 0) return;
 
-  const basePrice = Number(clientData.basePrice || 0);
+  // Base price'ı koruyoruz, her seferinde tekrar ekleme yapmıyoruz
+  const basePrice = Number(clientData.basePrice || clientData.price);
 
-  const prevExtras = clientData.extras || {
-    childSeat: 0,
-    flowers: 0,
-    airportAssistance: false,
-    wait: false,
-  };
+  // Yeni extras toplamını hesapla (currency'ye göre çevrilmiş)
+  const extrasTotal =
+    childSeatNumber * (extras[0]?.price || 0) +
+    flowersNumber * (extras[1]?.price || 0) +
+    (airportAssistance ? extras[2]?.price || 0 : 0) +
+    (wait ? extras[3]?.price || 0 : 0);
 
-  // Farkları hesapla
-  const childSeatDiff = childSeatNumber - (prevExtras.childSeat || 0);
-  const flowersDiff = flowersNumber - (prevExtras.flowers || 0);
-  const airportAssistanceDiff = airportAssistance ? 1 : 0 - (prevExtras.airportAssistance ? 1 : 0);
-  const waitDiff = wait ? 1 : 0 - (prevExtras.wait ? 1 : 0);
-
-  const extrasTotalDiff =
-    childSeatDiff * (extras[0]?.price || 0) +
-    flowersDiff * (extras[1]?.price || 0) +
-    airportAssistanceDiff * (extras[2]?.price || 0) +
-    waitDiff * (extras[3]?.price || 0);
-
-  const newPrice = parseFloat((Number(clientData.price) + extrasTotalDiff).toFixed(2));
+  const newPrice = parseFloat((basePrice + extrasTotal).toFixed(2));
 
   const newExtras = {
     childSeat: childSeatNumber,
@@ -101,22 +100,24 @@ useEffect(() => {
     airportAssistance,
     wait,
   };
-  console.log("Base price: "+basePrice, "New Price: ", newPrice);
 
   setClientData((prev: typeof clientData) => ({
     ...prev,
+    basePrice, // 🔑 basePrice'ı koruyoruz
     price: newPrice,
     extras: newExtras,
   }));
 
-  UpdateData({ clientData: { ...clientData, price: newPrice, extras: newExtras } });
+  UpdateData({
+    clientData: {
+      ...clientData,
+      basePrice,
+      price: newPrice,
+      extras: newExtras,
+    },
+  });
 }, [childSeatNumber, flowersNumber, airportAssistance, wait, extras]);
 
-  useEffect(() => {
-    if (clientData !== null) {
-      updateClientData({ wait });
-    }
-  }, [wait]);
 
   function updateClientData(changes: Partial<typeof clientData> = {}) {
     if (clientData === null) {

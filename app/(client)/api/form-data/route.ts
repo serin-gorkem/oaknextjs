@@ -20,14 +20,15 @@ export async function POST(request: Request) {
     extras,
     details,
     price,
+    base_price
   } = body;
 
   try {
     await query(
       `INSERT INTO bookings (
     pickup_location, drop_off_location, pickup_date,
-    pickup_hour, passenger_count, uuid,return_data,booking, extras, details, price
-      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)`,
+    pickup_hour, passenger_count, uuid,return_data,booking, extras, details, price, base_price
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)`,
       [
         JSON.stringify(pickup_location),
         JSON.stringify(drop_off_location),
@@ -39,8 +40,8 @@ export async function POST(request: Request) {
         booking ? JSON.stringify(booking) : JSON.stringify({}),
         extras ? JSON.stringify(extras) : null,
         details ? JSON.stringify(details) : JSON.stringify({}),
-        price ?? 0
-
+        price ?? 0,
+        base_price ?? 0
       ]
     );
     return NextResponse.json({ status: 200 });
@@ -97,6 +98,7 @@ export async function PUT(request: Request) {
     extras,
     details,
     price,
+    base_price
   } = body;
 
   if (!uuid) {
@@ -107,8 +109,8 @@ export async function PUT(request: Request) {
     await query(
       `
       UPDATE bookings
-      SET return_data = $1, booking=$2, extras = $3, details = $4 , price = $5
-      WHERE uuid = $6
+      SET return_data = $1, booking=$2, extras = $3, details = $4 , price = $5, base_price = $6
+      WHERE uuid = $7
     `,
       [
         return_data ?? null,
@@ -116,6 +118,7 @@ export async function PUT(request: Request) {
         extras ?? null, 
         details ?? {},
         price ?? 0,
+        base_price ?? 0,
         uuid,
       ]
     );

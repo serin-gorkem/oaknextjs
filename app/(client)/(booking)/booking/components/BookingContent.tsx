@@ -11,6 +11,7 @@ import { useGetData } from "../../../components/GetData";
 import { UpdateData } from "../../../components/UpdateData";
 import { useCurrency } from "../../../context/CurrencyContext";
 import { useVehicle } from "../../../context/VehicleContext";
+import { base } from "framer-motion/client";
 
 // Lazy imports
 const PageIndicator = lazy(() => import("../../../components/PageIndicator"));
@@ -125,7 +126,8 @@ useEffect(() => {
         vehicle_name: vehicleName,
         image_url: imageURL,
       },
-      price: price
+      price: price,
+      basePrice: price
     }));
 
     router.push(`/extras?uuid=${clientData.uuid}`);
