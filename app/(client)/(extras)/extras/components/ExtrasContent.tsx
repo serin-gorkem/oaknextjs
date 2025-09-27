@@ -21,20 +21,11 @@ import { useCurrency } from "@/app/(client)/context/CurrencyContext";
 {
   /* On Form.jsx, there is a submit button and it will push form information to this jsx file and it will be used in Transfer Card  */
 }
-async function getExtras(setExtras: any, convertPrice: any) {
+async function getExtras(setExtras: any) {
   const res = await fetch(`/api/get-extras-data`, { method: "GET" });
   if (res.ok) {
     const data = await res.json();
-
-    // Convert all extra prices to current currency
-    const convertedExtras = await Promise.all(
-      data.map(async (extra: any) => {
-        const convertedPrice = await convertPrice(extra.price);
-        return { ...extra, price: Math.round(convertedPrice) };
-      })
-    );
-
-    setExtras(convertedExtras);
+    setExtras(data); // raw değerler
   } else {
     const error = await res.json();
     console.error("Veri çekme hatası:", error);
@@ -47,7 +38,7 @@ const Extras = memo(function () {
 
 
   console.log("Client Data: ",clientData);
-  
+
 
   type Extra = {
     display_name: string;
@@ -61,10 +52,11 @@ const Extras = memo(function () {
   const [airportAssistance, setAirportAssistance] = useState(false);
   const [wait, setWait] = useState(false);
 
-  console.log(clientData);
+  console.log("Extras Data: ",extras);
+  
 
   useEffect(() => {
-    getExtras(setExtras, convertPrice);
+    getExtras(setExtras);
   }, [convertPrice]);
 
   useEffect(() => {
@@ -82,28 +74,26 @@ const Extras = memo(function () {
 useEffect(() => {
   if (!clientData || extras.length === 0) return;
 
-  // Base price'ı koruyoruz, her seferinde tekrar ekleme yapmıyoruz
-  const basePrice = Number(clientData.basePrice || clientData.price);
+const basePrice = Math.round(Number(clientData.basePrice || clientData.price));
 
-  // Yeni extras toplamını hesapla (currency'ye göre çevrilmiş)
-  const extrasTotal =
-    childSeatNumber * (extras[0]?.price || 0) +
-    flowersNumber * (extras[1]?.price || 0) +
-    (airportAssistance ? extras[2]?.price || 0 : 0) +
-    (wait ? extras[3]?.price || 0 : 0);
+const extrasTotal = 
+  childSeatNumber * Math.round(extras[0]?.price || 0) +
+  flowersNumber * Math.round(extras[1]?.price || 0) +
+  (airportAssistance ? Math.round(extras[2]?.price || 0) : 0) +
+  (wait ? Math.round(extras[3]?.price || 0) : 0);
 
-  const newPrice = parseFloat((basePrice + extrasTotal).toFixed(2));
+const newPrice = Math.round(basePrice + extrasTotal);
 
-  const newExtras = {
-    childSeat: childSeatNumber,
-    flowers: flowersNumber,
-    airportAssistance,
-    wait,
-  };
+const newExtras = {
+  childSeat: childSeatNumber,
+  flowers: flowersNumber,
+  airportAssistance: Boolean(airportAssistance),
+  wait: Boolean(wait),
+};
 
   setClientData((prev: typeof clientData) => ({
     ...prev,
-    basePrice, // 🔑 basePrice'ı koruyoruz
+    basePrice,
     price: newPrice,
     extras: newExtras,
   }));
@@ -117,6 +107,7 @@ useEffect(() => {
     },
   });
 }, [childSeatNumber, flowersNumber, airportAssistance, wait, extras]);
+
 
 
   function updateClientData(changes: Partial<typeof clientData> = {}) {
@@ -213,6 +204,7 @@ useEffect(() => {
               airportAssistance={airportAssistance}
               wait={wait}
               extras={extras}
+              convertPrice={convertPrice}
               symbol={symbol}
               handleAirportAssistance={handleAirportAssistance}
               handleWait={handleWait}
@@ -276,6 +268,7 @@ useEffect(() => {
                 airportAssistance={airportAssistance}
                 wait={wait}
                 extras={extras}
+                convertPrice={convertPrice}
                 symbol={symbol}
                 handleAirportAssistance={handleAirportAssistance}
                 handleWait={handleWait}

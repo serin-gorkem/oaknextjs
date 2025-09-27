@@ -7,6 +7,7 @@ import "react-day-picker/style.css";
 import { v4 as uuidv4 } from "uuid";
 import AutocompleteInput from "./AutocompleteInput";
 import LoadGoogleMaps from "@/components/LoadGoogleMaps";
+import { getDrivingDistance } from "./CalculateDistance";
 
 interface Location {
   lat: number;
@@ -86,21 +87,6 @@ export default function Form() {
     return true;
   }
 
-  function getDistanceKm(lat1: number, lon1: number, lat2: number, lon2: number) {
-    const toRad = (deg: number) => (deg * Math.PI) / 180;
-    const R = 6371; // km
-    const dLat = toRad(lat2 - lat1);
-    const dLon = toRad(lon2 - lon1);
-    const lat1Rad = toRad(lat1);
-    const lat2Rad = toRad(lat2);
-
-    const a =
-      Math.sin(dLat / 2) ** 2 +
-      Math.cos(lat1Rad) * Math.cos(lat2Rad) * Math.sin(dLon / 2) ** 2;
-
-    return 2 * R * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  }
-
   async function getFreshPlaceId(query: string): Promise<string | null> {
     return new Promise((resolve) => {
       const service = new google.maps.places.PlacesService(document.createElement("div"));
@@ -173,6 +159,48 @@ export default function Form() {
     cleanupData();
   }
 
+const handlePickupChange = async (selectedId: string) => {
+  const sel = airports.find((a) => a.id === selectedId);
+  if (!sel) {
+    setPickupLocation(null);
+    setIsPickupLocationValid(false);
+    return;
+  }
+
+  // Reset drop-off completely
+  setDropOffLocation(null);
+  setDropOffInput("");
+  setIsDropOffLocationValid(false);
+
+  const freshPlaceId = await getFreshPlaceId(sel.query);
+  if (!freshPlaceId) {
+    setMessage("Could not resolve Place ID for " + sel.name);
+    setIsPickupLocationValid(false);
+    return;
+  }
+
+  const info = await fetchPlaceDetails(freshPlaceId, sel.query);
+  if (!info) {
+    setMessage("Invalid airport selection.");
+    setIsPickupLocationValid(false);
+    return;
+  }
+
+  // ✅ Update pickup location
+  setPickupLocation({
+    id: sel.id,
+    name: sel.name,
+    query: sel.query,
+    placeId: freshPlaceId,
+    lat: info.lat,
+    lng: info.lng,
+    address: info.address,
+  });
+  setIsPickupLocationValid(true);
+  setMessage("");
+};
+
+
   const togglePickupDateMenu = () => setIsPickupOpen((prev) => !prev);
   const handlePickupTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => setPickupHour(e.target.value);
   const handlePickupDaySelect = (date: Date) => setPickupDate(date);
@@ -190,35 +218,7 @@ export default function Form() {
         <select
           className="p-4 bg-base-100 border-r-16 border-transparent text-black"
           value={pickupLocation?.id || ""}
-          onChange={async (e) => {
-            const selectedId = e.target.value;
-            const sel = airports.find((a) => a.id === selectedId);
-            if (!sel) return setPickupLocation(null);
-
-            setDropOffLocation(null);
-            setIsDropOffLocationValid(false);
-
-            const freshPlaceId = await getFreshPlaceId(sel.query);
-            if (!freshPlaceId) return setMessage("Could not resolve Place ID for " + sel.name);
-
-            const info = await fetchPlaceDetails(freshPlaceId, sel.query);
-            if (info) {
-              setPickupLocation({
-                id: sel.id,
-                name: sel.name,
-                query: sel.query,
-                placeId: freshPlaceId,
-                lat: info.lat,
-                lng: info.lng,
-                address: info.address,
-              });
-              setIsPickupLocationValid(true);
-              setMessage("");
-            } else {
-              setMessage("Invalid airport selection.");
-              setIsPickupLocationValid(false);
-            }
-          }}
+          onChange={(e) => handlePickupChange(e.target.value)}
         >
           <option value="">Select airport</option>
           {airports.map((a) => (
@@ -227,16 +227,38 @@ export default function Form() {
             </option>
           ))}
         </select>
-        <legend className="font-semibold text-sm">From (We only operate in Turkey.)</legend>
+        <legend className="font-semibold text-sm">
+          From (We only operate in Turkey.)
+        </legend>
       </fieldset>
 
       {/* Drop Off Location */}
       <fieldset className="fieldset">
-        <legend className="font-semibold text-sm">To (We only operate in Turkey.)</legend>
-        <label htmlFor="drop_off_location" className="input focus-within:outline-0 w-full">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-6 opacity-80">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
-            <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
+        <legend className="font-semibold text-sm">
+          To (We only operate in Turkey.)
+        </legend>
+        <label
+          htmlFor="drop_off_location"
+          className="input focus-within:outline-0 w-full"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth="1.5"
+            stroke="currentColor"
+            className="w-6 opacity-80"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
+            />
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"
+            />
           </svg>
           <AutocompleteInput
             value={dropOffInput}
@@ -244,7 +266,9 @@ export default function Form() {
               setDropOffInput(val);
               setIsDropOffLocationValid(false);
             }}
-            onPlaceSelected={(place) => {
+            onPlaceSelected={async (place) => {
+              console.log("Selected place:", pickupLocation);
+              
               if (!pickupLocation) {
                 setMessage("Please select a pickup location first.");
                 setDropOffLocation(null);
@@ -253,12 +277,30 @@ export default function Form() {
                 return;
               }
 
-              const dist = getDistanceKm(pickupLocation.lat, pickupLocation.lng, place.lat, place.lng);
+              const result = await getDrivingDistance(
+                { lat: pickupLocation.lat, lng: pickupLocation.lng },
+                { lat: place.lat, lng: place.lng }
+              );
+
               const maxRadius = airportRadiusKm[pickupLocation.name] || 50;
 
-              if (dist > maxRadius) {
+              if (!result) {
+                setMessage("Could not calculate driving distance. Try again.");
+                setDropOffLocation(null);
+                setIsDropOffLocationValid(false);
+                setDropOffInput("");
+                return;
+              }
+
+              if (result.distanceKm > maxRadius) {
                 setMessage(
-                  `Selected drop-off (${place.name}) is ${dist.toFixed(1)}km away. Max allowed is ${maxRadius}km from ${pickupLocation.name}.`
+                  `Selected drop-off (${
+                    place.name
+                  }) is ${result.distanceKm.toFixed(
+                    1
+                  )}km away by car. Max allowed is ${maxRadius}km from ${
+                    pickupLocation.name
+                  }.`
                 );
                 setDropOffLocation(null);
                 setIsDropOffLocationValid(false);
@@ -275,7 +317,10 @@ export default function Form() {
             bounds={
               pickupLocation
                 ? new google.maps.Circle({
-                    center: new google.maps.LatLng(pickupLocation.lat, pickupLocation.lng),
+                    center: new google.maps.LatLng(
+                      pickupLocation.lat,
+                      pickupLocation.lng
+                    ),
                     radius: (airportRadiusKm[pickupLocation.name] || 50) * 1000,
                   }).getBounds() || undefined
                 : undefined
@@ -287,7 +332,10 @@ export default function Form() {
       {/* Pickup Date & Time */}
       <fieldset className="fieldset flex">
         <div className="w-full border border-base-300 rounded-box">
-          <div className="collapse-title text-sm font-semibold bg-base-100 cursor-pointer" onClick={togglePickupDateMenu}>
+          <div
+            className="collapse-title text-sm font-semibold bg-base-100 cursor-pointer"
+            onClick={togglePickupDateMenu}
+          >
             Pickup Date and Time
           </div>
           {isPickupOpen && (
@@ -299,7 +347,11 @@ export default function Form() {
                 selected={pickupDate}
                 onSelect={handlePickupDaySelect}
                 className="bg-base-300 rounded-box md:p-3 mb-4 w-full flex flex-col items-center"
-                footer={pickupDate ? `Pickup Date: ${pickupDate.toString().slice(0, 15)}` : ""}
+                footer={
+                  pickupDate
+                    ? `Pickup Date: ${pickupDate.toString().slice(0, 15)}`
+                    : ""
+                }
               />
               <input
                 type="time"
@@ -316,7 +368,9 @@ export default function Form() {
 
       {/* Passenger Count */}
       <fieldset className="fieldset flex focus-within:outline-0">
-        <legend className="font-semibold text-sm">Passenger Count (Max - 45)</legend>
+        <legend className="font-semibold text-sm">
+          Passenger Count (Max - 45)
+        </legend>
         <input
           type="number"
           className="input validator focus-within:outline-0 w-full"
@@ -329,7 +383,10 @@ export default function Form() {
         />
       </fieldset>
 
-      <button type="submit" className="btn btn-primary w-full hover:bg-gray-200 hover:text-black">
+      <button
+        type="submit"
+        className="btn btn-primary w-full hover:bg-gray-200 hover:text-black"
+      >
         Search
       </button>
     </form>

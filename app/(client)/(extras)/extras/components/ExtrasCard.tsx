@@ -1,4 +1,4 @@
-import { memo} from "react";
+import { memo, useEffect, useState} from "react";
 
 type ExtrasCardProps = {
   increase: (type: string) => void;
@@ -6,6 +6,7 @@ type ExtrasCardProps = {
   childSeatNumber: number;
   flowersNumber: number;
   airportAssistance: boolean;
+  convertPrice: (price: number, base?: string) => Promise<number>;
   wait: boolean;
   handleAirportAssistance: () => void;
   handleWait: () => void;
@@ -16,13 +17,24 @@ type ExtrasCardProps = {
   symbol: string;
 };
 const ExtrasCard = memo(function (props: ExtrasCardProps) {
+  const [convertedPrices, setConvertedPrices] = useState<number[]>([]);
 
-  console.log(props.extras);
-  
+  useEffect(() => {
+    async function convertAll() {
+      if (!props.extras || props.extras.length === 0) {
+        setConvertedPrices([]);
+        return;
+      }
+      const prices = await Promise.all(
+        props.extras.map(extra => props.convertPrice(extra.price, "USD"))
+      );
+      setConvertedPrices(prices.map(p => Math.round(p)));
+    }
+    convertAll();
+  }, [props.extras, props.convertPrice]);
 
   return (
     <article className="bg-base-300 rounded-box shadow-md flex gap-4 flex-col px-3 py-4 ">
-      {}
       <figure className="flex gap-2 lg:gap-4">
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -47,7 +59,7 @@ const ExtrasCard = memo(function (props: ExtrasCardProps) {
       <form className="flex flex-col md:hidden justify-between gap-8">
         <fieldset className="flex flex-col md:justify-between md:items-center md:w-full md:flex-row gap-3">
           <legend className="font-bold text-[clamp(1rem,0.9142rem+0.3661vw,1.5rem)] ">
-            {props.extras[0]?.display_name} {props.extras[0]?.price} {props?.symbol}
+            {props.extras[0]?.display_name} {convertedPrices[0]} {props.symbol}
           </legend>
           <label className="md:text-lg">
             Baby car seat for children aged 0-36 months (max-2)
@@ -105,7 +117,7 @@ const ExtrasCard = memo(function (props: ExtrasCardProps) {
         </fieldset>
         <fieldset className="flex flex-col md:justify-between md:items-center md:w-full md:flex-row gap-3">
           <legend className="font-bold text-[clamp(1rem,0.9142rem+0.3661vw,1.5rem)] ">
-            {props.extras[1]?.display_name} {props.extras[1]?.price} {props?.symbol}
+            {props.extras[0]?.display_name} {convertedPrices[1]} {props.symbol}
           </legend>
           <label className="md:text-lg">
             A bouquet of seasonal flowers prepared by a local florist (max-3)
@@ -163,7 +175,7 @@ const ExtrasCard = memo(function (props: ExtrasCardProps) {
         </fieldset>
         <fieldset className="flex flex-col md:justify-between md:items-center md:w-full md:flex-row gap-3">
           <legend className="font-bold text-[clamp(1rem,0.9142rem+0.3661vw,1.5rem)] ">
-            {props.extras[2]?.display_name} {props.extras[2]?.price} {props?.symbol}
+            {props.extras[0]?.display_name} {convertedPrices[2]} {props.symbol}
           </legend>
           <label className="md:text-lg">
             One of our hostesses will accompany you throughout your stay at the
@@ -191,7 +203,7 @@ const ExtrasCard = memo(function (props: ExtrasCardProps) {
         </fieldset>
         <fieldset className="flex flex-col md:justify-between md:items-center md:w-full md:flex-row gap-3">
           <legend className="font-bold text-[clamp(1rem,0.9142rem+0.3661vw,1.5rem)] ">
-            {props.extras[3]?.display_name} {props.extras[3]?.price} {props?.symbol}
+            {props.extras[0]?.display_name} {convertedPrices[3]} {props.symbol}
           </legend>
           <label className="md:text-lg">
             Our vehicle and staff will be on site before you arrive to make sure
@@ -224,7 +236,7 @@ const ExtrasCard = memo(function (props: ExtrasCardProps) {
         <fieldset className="flex border-y-2 border-[#B9B9B9] items-center justify-between w-full">
           <div>
             <h1 className="font-bold text-[clamp(1rem,0.9142rem+0.3661vw,1.5rem)] ">
-              {props.extras[0]?.display_name} {props.extras[0]?.price} {props?.symbol}
+            {props.extras[0]?.display_name} {convertedPrices[0]} {props.symbol}
             </h1>
             <label className="text-[clamp(0.75rem,0.7071rem+0.1831vw,1rem))]">
               Baby car seat for children aged 0-36 months (max-2)
@@ -282,7 +294,7 @@ const ExtrasCard = memo(function (props: ExtrasCardProps) {
         <fieldset className="flex border-y-2 border-[#B9B9B9] items-center justify-between w-full">
           <div>
             <h1 className="font-bold text-[clamp(1rem,0.9142rem+0.3661vw,1.5rem)] ">
-              {props.extras[1]?.display_name} {props.extras[1]?.price} {props?.symbol}
+            {props.extras[0]?.display_name} {convertedPrices[1]} {props.symbol}            
             </h1>
             <label className="text-[clamp(0.75rem,0.7071rem+0.1831vw,1rem))]">
               A bouquet of seasonal flowers prepared by a local florist (max-3)
@@ -340,7 +352,7 @@ const ExtrasCard = memo(function (props: ExtrasCardProps) {
         <fieldset className="flex border-y-2 py-4 border-[#B9B9B9] items-center justify-between w-full">
           <div>
             <h1 className="font-bold text-[clamp(1rem,0.9142rem+0.3661vw,1.5rem)] ">
-              {props.extras[2]?.display_name} {props.extras[2]?.price} {props?.symbol}
+            {props.extras[0]?.display_name} {convertedPrices[2]} {props.symbol}
             </h1>
             <label className="text-[clamp(0.75rem,0.7071rem+0.1831vw,1rem))]">
               One of our hostesses will accompany you throughout your stay at
@@ -369,7 +381,7 @@ const ExtrasCard = memo(function (props: ExtrasCardProps) {
         <fieldset className="flex border-y-2 py-4 border-[#B9B9B9] items-center justify-between w-full">
           <div>
             <h1 className="font-bold text-[clamp(1rem,0.9142rem+0.3661vw,1.5rem)] ">
-              {props.extras[3]?.display_name} {props.extras[3]?.price} {props?.symbol}
+            {props.extras[0]?.display_name} {convertedPrices[3]} {props.symbol}
             </h1>
             <label className="text-[clamp(0.75rem,0.7071rem+0.1831vw,1rem))]">
               Our vehicle and staff will be on site before you arrive to make
