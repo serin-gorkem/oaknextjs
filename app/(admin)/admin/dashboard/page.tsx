@@ -54,7 +54,10 @@ export default function AirportRatesUI() {
       .then((res) => res.json())
       .then((rows: Extra[]) =>
         setExtras(
-          rows.map((e) => ({ ...e, price: e.price !== null ? Number(e.price) : 0 }))
+          rows.map((e) => ({
+            ...e,
+            price: e.price !== null ? Number(e.price) : 0,
+          }))
         )
       )
       .catch((err) => console.error(err));
@@ -77,7 +80,9 @@ export default function AirportRatesUI() {
           ? {
               ...airport,
               rates: airport.rates.map((rate) =>
-                rate.vehicle_id === vehicleId ? { ...rate, [field]: value } : rate
+                rate.vehicle_id === vehicleId
+                  ? { ...rate, [field]: value }
+                  : rate
               ),
             }
           : airport
@@ -107,8 +112,16 @@ export default function AirportRatesUI() {
       });
 
       const json = await res.json();
-      if (res.ok) setMessages((prev) => ({ ...prev, [airportName]: "Changes saved successfully!" }));
-      else setMessages((prev) => ({ ...prev, [airportName]: "Error saving changes: " + json.error }));
+      if (res.ok)
+        setMessages((prev) => ({
+          ...prev,
+          [airportName]: "Changes saved successfully!",
+        }));
+      else
+        setMessages((prev) => ({
+          ...prev,
+          [airportName]: "Error saving changes: " + json.error,
+        }));
     } catch (err) {
       console.error(err);
       setMessages((prev) => ({ ...prev, [airportName]: "Unexpected error" }));
@@ -118,8 +131,14 @@ export default function AirportRatesUI() {
   };
 
   // Extras handlers
-  const handleChangeExtra = (id: number, field: "display_name" | "price", value: string | number) => {
-    setExtras((prev) => prev.map((e) => (e.id === id ? { ...e, [field]: value } : e)));
+  const handleChangeExtra = (
+    id: number,
+    field: "display_name" | "price",
+    value: string | number
+  ) => {
+    setExtras((prev) =>
+      prev.map((e) => (e.id === id ? { ...e, [field]: value } : e))
+    );
   };
 
   const handleSubmitExtras = async () => {
@@ -134,7 +153,11 @@ export default function AirportRatesUI() {
       });
 
       const json = await res.json();
-      if (res.ok) setMessages((prev) => ({ ...prev, extras: "Extras saved successfully!" }));
+      if (res.ok)
+        setMessages((prev) => ({
+          ...prev,
+          extras: "Extras saved successfully!",
+        }));
       else setMessages((prev) => ({ ...prev, extras: "Error: " + json.error }));
     } catch (err) {
       console.error(err);
@@ -150,108 +173,138 @@ export default function AirportRatesUI() {
   };
 
   return (
-    <div className="w-full max-w-3xl mx-auto lg:mt-8 mt-32">
-      <button
-        onClick={handleLogout}
-        className="btn btn-primary absolute right-5 top-10 hover:btn-warning text-base-100"
-      >
-        Çıkış Yap
-      </button>
-
-      {/* Airport rates */}
-      {data.map((airport) => (
-        <div key={airport.airport_name} className="mb-4 rounded-lg shadow-sm">
-          <button
-            className="w-full flex cursor-pointer justify-between items-center p-4 bg-gray-100 hover:bg-gray-200"
-            onClick={() => toggleAccordion(airport.airport_name)}
-          >
-            <span className="font-semibold">{airport.airport_name}</span>
-            <span>{openAirport === airport.airport_name ? "-" : "+"}</span>
-          </button>
-
-          {openAirport === airport.airport_name && (
-            <div className="p-4 bg-white space-y-3">
-              {airport.rates.map((rate) => (
-                <div
-                  key={rate.vehicle_id}
-                  className="flex flex-col sm:flex-row justify-between border p-3 rounded-md shadow-sm items-center"
-                >
-                  <span className="font-medium">{rate.vehicle_name}</span>
-
-                  <div className="flex gap-2 items-center">
-                    <input
-                      type="number"
-                      className="input input-bordered w-24"
-                      value={rate.base_price}
-                      onChange={(e) => handleChange(airport.airport_name, rate.vehicle_id, "base_price", parseFloat(e.target.value))}
-                    />
-                    <span>₺ base</span>
-
-                    <input
-                      type="number"
-                      className="input input-bordered w-24"
-                      value={rate.km_rate}
-                      onChange={(e) => handleChange(airport.airport_name, rate.vehicle_id, "km_rate", parseFloat(e.target.value))}
-                    />
-                    <span>₺/km</span>
-                  </div>
-                </div>
-              ))}
-
-              <button
-                className="btn btn-primary w-full mt-2"
-                onClick={() => handleSubmit(airport.airport_name)}
-                disabled={savingAirport === airport.airport_name}
-              >
-                {savingAirport === airport.airport_name ? "Saving..." : "Save Changes"}
-              </button>
-
-              {messages[airport.airport_name] && <p className="mt-2 text-green-600">{messages[airport.airport_name]}</p>}
-            </div>
-          )}
-        </div>
-      ))}
-
-      {/* Extras */}
-      <div className="mb-4 rounded-lg shadow-sm">
+    <div className="flex flex-col xl:flex-row lg:gap-16 m-8 justify-between items-start">
+      <div className="w-11/12 max-w-3xl mx-auto lg:mt-8 mt-16">
         <button
-          className="w-full flex cursor-pointer justify-between items-center p-4 bg-gray-100 hover:bg-gray-200"
-          onClick={() => toggleAccordion("extras")}
+          onClick={handleLogout}
+          className="btn btn-primary absolute right-5 top-10 hover:btn-warning text-base-100"
         >
-          <span className="font-semibold">Extras</span>
-          <span>{openAirport === "extras" ? "-" : "+"}</span>
+          Çıkış Yap
         </button>
 
-        {openAirport === "extras" && (
-          <div className="p-4 bg-white space-y-3">
-            {extras.map((extra) => (
-              <div key={extra.id} className="flex flex-col sm:flex-row justify-between border p-3 rounded-md shadow-sm items-center">
-                <input
-                  type="text"
-                  className="input input-bordered w-1/2"
-                  value={extra.display_name}
-                  onChange={(e) => handleChangeExtra(extra.id, "display_name", e.target.value)}
-                />
-                <input
-                  type="number"
-                  className="input input-bordered w-24"
-                  value={extra.price ?? 0}
-                  onChange={(e) => handleChangeExtra(extra.id, "price", parseFloat(e.target.value))}
-                />
-              </div>
-            ))}
-
+        {/* Airport rates */}
+        <h2 className="text-2xl font-semibold mb-4">Airport Rates</h2>
+        {data.map((airport) => (
+          <div key={airport.airport_name} className="mb-4 rounded-lg shadow-sm">
             <button
-              className="btn btn-primary w-full mt-2"
-              onClick={handleSubmitExtras}
-              disabled={savingExtras}
+              className="w-full flex cursor-pointer justify-between items-center p-4 bg-gray-100 hover:bg-gray-200"
+              onClick={() => toggleAccordion(airport.airport_name)}
             >
-              {savingExtras ? "Saving..." : "Save Extras"}
+              <span className="font-semibold">{airport.airport_name}</span>
+              <span>{openAirport === airport.airport_name ? "-" : "+"}</span>
             </button>
 
-            {messages["extras"] && <p className="mt-2 text-green-600">{messages["extras"]}</p>}
+            {openAirport === airport.airport_name && (
+              <div className="p-4 bg-white space-y-3">
+                {airport.rates.map((rate) => (
+                  <div
+                    key={rate.vehicle_id}
+                    className="flex flex-col sm:flex-row justify-between border p-3 rounded-md shadow-sm items-start sm:items-center"
+                  >
+                    <span className="font-medium">{rate.vehicle_name}</span>
+
+                    <div className="flex sm:flex-row flex-col gap-2 items-center">
+                      <div className="w-full sm:w-fit">
+                        <input
+                          type="number"
+                          className="input input-bordered w-24 mr-2"
+                          value={rate.base_price}
+                          onChange={(e) =>
+                            handleChange(
+                              airport.airport_name,
+                              rate.vehicle_id,
+                              "base_price",
+                              parseFloat(e.target.value)
+                            )
+                          }
+                        />
+                        <span>₺ base</span>
+                      </div>
+                      <div className="w-full sm:w-fit">
+                        <input
+                          type="number"
+                          className="input input-bordered w-24 mr-2"
+                          value={rate.km_rate}
+                          onChange={(e) =>
+                            handleChange(
+                              airport.airport_name,
+                              rate.vehicle_id,
+                              "km_rate",
+                              parseFloat(e.target.value)
+                            )
+                          }
+                        />
+                        <span>₺/km</span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+
+                <button
+                  className="btn btn-primary w-full mt-2"
+                  onClick={() => handleSubmit(airport.airport_name)}
+                  disabled={savingAirport === airport.airport_name}
+                >
+                  {savingAirport === airport.airport_name
+                    ? "Saving..."
+                    : "Save Changes"}
+                </button>
+
+                {messages[airport.airport_name] && (
+                  <p className="mt-2 text-green-600">
+                    {messages[airport.airport_name]}
+                  </p>
+                )}
+              </div>
+            )}
           </div>
-        )}
+        ))}
+      </div>
+
+      {/* Extras panel */}
+      <div className="w-11/12 max-w-3xl mx-auto lg:mt-8 ">
+        <h2 className="text-2xl font-semibold mb-4">Extras</h2>
+        <div className="p-4 bg-white  shadow-sm space-y-3">
+          {extras.map((extra) => (
+            <div
+              key={extra.id}
+              className="flex  justify-between border p-2 rounded-md shadow-sm items-center"
+            >
+              <input
+                type="text"
+                className="input input-bordered w-1/2"
+                value={extra.display_name}
+                onChange={(e) =>
+                  handleChangeExtra(extra.id, "display_name", e.target.value)
+                }
+              />
+              <input
+                type="number"
+                className="input input-bordered w-24"
+                value={extra.price ?? 0}
+                onChange={(e) =>
+                  handleChangeExtra(
+                    extra.id,
+                    "price",
+                    parseFloat(e.target.value)
+                  )
+                }
+              />
+            </div>
+          ))}
+
+          <button
+            className="btn btn-primary w-full mt-2"
+            onClick={handleSubmitExtras}
+            disabled={savingExtras}
+          >
+            {savingExtras ? "Saving..." : "Save Extras"}
+          </button>
+
+          {messages["extras"] && (
+            <p className="mt-2 text-green-600">{messages["extras"]}</p>
+          )}
+        </div>
       </div>
     </div>
   );
