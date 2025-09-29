@@ -1,21 +1,10 @@
-import { memo, useEffect, useState } from "react";
+import { memo } from "react";
 import { useCurrency } from "../context/CurrencyContext";
-import { useVehicle } from "@/app/(client)/context/VehicleContext";
+import GetFinalPrice from "./GetFinalPrice";
 
 const SummaryCard = memo(function ({ clientData }: any) {
-  const { symbol, convertPrice } = useCurrency();
-  const [finalPrice, setFinalPrice] = useState<number | null>(null);
+  const { symbol } = useCurrency();
 
-useEffect(() => {
-  const fetchConvertedPrice = async () => {
-    const basePrice = clientData?.booking?.total_price ?? clientData?.price;
-    if (basePrice) {
-      const converted = await convertPrice(basePrice);
-      setFinalPrice(Math.round(converted));
-    }
-  };
-  fetchConvertedPrice();
-}, [clientData?.booking?.total_price, clientData?.price, convertPrice]);
   
   return (
     <article className="bg-base-300 rounded-box shadow-md flex gap-4 flex-col px-3 py-4 ">
@@ -139,9 +128,7 @@ useEffect(() => {
           <div className="flex justify-between">
             <h2 className="title text-2xl mb-1">TOTAL</h2>
             <p className="section-text text-xl font-bold">
-              {finalPrice !== null 
-                ? Math.round(finalPrice) 
-                : Math.round(clientData?.price)} {symbol}
+              {GetFinalPrice(clientData)} {symbol}
             </p>
           </div>
         </>

@@ -1,6 +1,6 @@
+import GetFinalPrice from "@/app/(client)/components/GetFinalPrice";
 import { useCurrency } from "@/app/(client)/context/CurrencyContext";
-import { useVehicle } from "@/app/(client)/context/VehicleContext";
-import { memo } from "react";
+import { memo} from "react";
 type RideDetailsProps = {
   clientData: any;
   navigateToDetails: () => void;
@@ -10,8 +10,7 @@ const RideDetails = memo(function ({
   navigateToDetails,
 }: RideDetailsProps) {
   //Get local variables
-  const { symbol } = useCurrency();
-  const { vehicles } = useVehicle();
+  const { symbol} = useCurrency();
 
   return (
     <article className="flex flex-col relative gap-4 rounded-box p-6 bg-base-300 w-full md:flex-1/2 lg:flex-1/4 card-xl shadow-xl">
@@ -121,7 +120,7 @@ const RideDetails = memo(function ({
         <div className="flex justify-between">
           <h2 className="title text-2xl mb-1">TOTAL PRICE</h2>
           <p className="section-text text-xl font-bold">
-            {clientData.price} {symbol}
+            {GetFinalPrice(clientData)} {symbol}
           </p>
         </div>
       </div>

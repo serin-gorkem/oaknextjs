@@ -52,14 +52,14 @@ export default function Form() {
     "Istanbul Airport": 70,
     "Sabiha Gökçen International Airport": 50,
     "Izmir Adnan Menderes Airport": 120,
-    "Milas–Bodrum Airport": 50,
+    "Milas–Bodrum Airport": 60,
     "Dalaman Airport": 50,
     "Antalya Airport": 50,
-    "Kayseri Erkilet Airport": 30,
-    "Nevşehir Kapadokya Airport": 30,
+    "Kayseri Erkilet Airport": 40,
+    "Nevşehir Kapadokya Airport": 50,
     "Esenboğa International Airport": 50,
     "Adana Şakirpaşa Airport": 40,
-    "Şanlıurfa GAP Airport": 30,
+    "Şanlıurfa GAP Airport": 40,
     "Trabzon Airport": 40,
   };
 

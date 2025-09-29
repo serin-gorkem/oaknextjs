@@ -35,10 +35,14 @@ const Extras = memo(function () {
   //Get local variables
   const { clientData, setClientData, error } = useGetData();
   const { symbol, convertPrice } = useCurrency();
+  const [extras, setExtras] = useState<Extra[]>([]);
+  const [childSeatNumber, setChildSeatNumber] = useState(0);
+  const [flowersNumber, setFlowersNumber] = useState(0);
+  const [airportAssistance, setAirportAssistance] = useState(false);
+  const [wait, setWait] = useState(false);
+  const [isPriceUpdated, setIsPriceUpdated] = useState(false);
 
-
-  console.log("Client Data: ",clientData);
-
+  console.log("Client Data: ", clientData);
 
   type Extra = {
     display_name: string;
@@ -46,90 +50,66 @@ const Extras = memo(function () {
     // add other properties if needed
   };
 
-  const [extras, setExtras] = useState<Extra[]>([]);
-  const [childSeatNumber, setChildSeatNumber] = useState(0);
-  const [flowersNumber, setFlowersNumber] = useState(0);
-  const [airportAssistance, setAirportAssistance] = useState(false);
-  const [wait, setWait] = useState(false);
-
-  console.log("Extras Data: ",extras);
-  
-
   useEffect(() => {
     getExtras(setExtras);
   }, [convertPrice]);
 
   useEffect(() => {
-    if (clientData !== null) {
-      updateClientData({ airportAssistance });
+    if (clientData?.extras) {
+      setChildSeatNumber(clientData.extras.childSeat || 0);
+      setFlowersNumber(clientData.extras.flowers || 0);
+      setAirportAssistance(Boolean(clientData.extras.airportAssistance));
+      setWait(Boolean(clientData.extras.wait));
     }
-  }, [airportAssistance]);
-  
+  }, [clientData]);
+
   useEffect(() => {
-    if (clientData !== null) {
-      updateClientData({ wait });
+    if (clientData && clientData.price && clientData.basePrice == null) {
+      const initialBase = Number(clientData.price);
+      setClientData((prev: any) => ({
+        ...prev,
+        basePrice: initialBase,
+      }));
     }
-  }, [wait]);
+  }, [clientData]);
 
-useEffect(() => {
-  if (!clientData || extras.length === 0) return;
+  useEffect(() => {
+    if (!clientData || extras.length === 0) return;
 
-const basePrice = Math.round(Number(clientData.basePrice || clientData.price));
+    const basePrice = Number(clientData.basePrice ?? clientData.price);
 
-const extrasTotal = 
-  childSeatNumber * Math.round(extras[0]?.price || 0) +
-  flowersNumber * Math.round(extras[1]?.price || 0) +
-  (airportAssistance ? Math.round(extras[2]?.price || 0) : 0) +
-  (wait ? Math.round(extras[3]?.price || 0) : 0);
+    // Calculate extras total fresh every time
+    const extrasTotal =
+      childSeatNumber * Math.round(extras[0]?.price || 0) +
+      flowersNumber * Math.round(extras[1]?.price || 0) +
+      (airportAssistance ? Math.round(extras[2]?.price || 0) : 0) +
+      (wait ? Math.round(extras[3]?.price || 0) : 0);
 
-const newPrice = Math.round(basePrice + extrasTotal);
+    console.log("Extras Total:",extrasTotal);
+    
 
-const newExtras = {
-  childSeat: childSeatNumber,
-  flowers: flowersNumber,
-  airportAssistance: Boolean(airportAssistance),
-  wait: Boolean(wait),
-};
+    const newPrice = Math.round(basePrice + extrasTotal);
 
-  setClientData((prev: typeof clientData) => ({
-    ...prev,
-    basePrice,
-    price: newPrice,
-    extras: newExtras,
-  }));
+    const newExtras = {
+      childSeat: childSeatNumber,
+      flowers: flowersNumber,
+      airportAssistance,
+      wait,
+    };
 
-  UpdateData({
-    clientData: {
+    // Decide if the price has been updated relative to base
+    setIsPriceUpdated(newPrice !== basePrice);
+
+    const newClientData = {
       ...clientData,
-      basePrice,
-      price: newPrice,
+      basePrice, // stays locked
+      price: newPrice, // always recalculated
       extras: newExtras,
-    },
-  });
-}, [childSeatNumber, flowersNumber, airportAssistance, wait, extras]);
+    };
 
-
-
-  function updateClientData(changes: Partial<typeof clientData> = {}) {
-    if (clientData === null) {
-      setChildSeatNumber(0);
-      setFlowersNumber(0);
-      setAirportAssistance(false);
-      setWait(false);
-      return;
-    }
-    setClientData((prev: any) => {
-      const base = prev || {};
-      return {
-        ...base,
-        extras: {
-          ...(base.extras || {}),
-          ...changes,
-        },
-      };
-    });
-    UpdateData({ clientData });
-  }
+    setClientData(newClientData);
+    UpdateData({ clientData: newClientData });
+  }, [childSeatNumber, flowersNumber, airportAssistance, wait, extras]);
 
   function handleAirportAssistance() {
     setAirportAssistance((prev) => !prev);
@@ -144,19 +124,19 @@ const newExtras = {
     router.push(`/booking?uuid=${clientData.uuid}`);
   }
   function handleNavigateToDetails() {
-    router.push(`/details?uuid=${clientData.uuid}`);
+    if (isPriceUpdated) {
+      router.push(`/details?uuid=${clientData.uuid}`);
+    }
   }
 
   function increase(type: string) {
     switch (true) {
       case type === "child-seat" && childSeatNumber < 2:
         setChildSeatNumber(childSeatNumber + 1);
-        updateClientData({ childSeatNumber: childSeatNumber + 1 });
         break;
 
       case type === "flowers" && flowersNumber < 3:
         setFlowersNumber(flowersNumber + 1);
-        updateClientData({ flowersNumber: flowersNumber + 1 });
         break;
 
       default:
@@ -167,12 +147,10 @@ const newExtras = {
     switch (true) {
       case type === "child-seat" && childSeatNumber > 0:
         setChildSeatNumber(childSeatNumber - 1);
-        updateClientData({ childSeatNumber: childSeatNumber - 1 });
         break;
 
       case type === "flowers" && flowersNumber > 0:
         setFlowersNumber(flowersNumber - 1);
-        updateClientData({ flowersNumber: flowersNumber - 1 });
         break;
 
       default:
