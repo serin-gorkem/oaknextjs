@@ -4,14 +4,18 @@ import { query } from "../../lib/db";
 export async function GET() {
   try {
     const result = await query(`
-      SELECT 
-        e.id,
-        e.display_name
-      FROM extras e
-      ORDER BY e.id ASC
+      SELECT id, display_name, price
+      FROM extras
+      ORDER BY id ASC
     `);
 
-    return NextResponse.json(result.rows); // array of vehicle objects
+    // price değerini kesinlikle number olarak gönderiyoruz
+    const formatted = result.rows.map((r) => ({
+      ...r,
+      price: r.price !== null ? Number(r.price) : 0,
+    }));
+
+    return NextResponse.json(formatted);
   } catch (error) {
     console.error("DB ERROR:", error);
     return NextResponse.json({ error: "Database error" }, { status: 500 });
