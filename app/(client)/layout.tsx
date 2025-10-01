@@ -16,24 +16,28 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Airport To Hotels",
-  description: "Book your private transfer between airport and hotel easily.",
-  keywords: ["airport transfer", "hotel transfer", "private driver"],
+  title: "Airport To Hotels – Private Airport Transfers in Turkey",
+  description: "Book your private airport to hotel transfer in Istanbul, Izmir, Antalya, and other cities in Turkey. Fast, safe, and comfortable rides.",
+  keywords: [
+    "airport transfer", "hotel transfer", "private driver", 
+    "Istanbul airport transfer", "Izmir airport transfer", 
+    "Antalya airport transfer", "Turkey transfer service", "VIP transfer"
+  ],
   authors: [{ name: "AirportToHotels" }],
   icons: {
-    icon: "/favicon.ico", // favicon için public/favicon.ico
+    icon: "/favicon.ico",
   },
   openGraph: {
-    title: "Airport To Hotels",
-    description: "Luxury transfer service between airport and hotels.",
+    title: "Airport To Hotels – Private Airport Transfers",
+    description: "Luxury and reliable airport to hotel transfers across Turkey. Book online for fast and comfortable rides.",
     url: "https://airporttohotels.com",
     siteName: "Airport To Hotels",
     images: [
       {
-        url: "/images/og-image.png", // public/images/og-image.png
+        url: "/images/og-image.png",
         width: 1200,
         height: 630,
-        alt: "Airport To Hotels",
+        alt: "Airport To Hotels – Transfer Service",
       },
     ],
     locale: "en_US",
@@ -41,11 +45,12 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Airport To Hotels",
-    description: "Book your airport to hotel transfer online.",
+    title: "Airport To Hotels – Book Your Transfer Online",
+    description: "Private airport to hotel transfer in Istanbul, Izmir, Antalya, and across Turkey. Fast, safe, and comfortable.",
     images: ["/images/og-image.png"],
   },
 };
+
 
 export default function RootLayout({
   children,
