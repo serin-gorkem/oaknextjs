@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { memo, useState } from "react";
 
 const VehicleCard = memo(function (props: {
@@ -15,7 +16,7 @@ const VehicleCard = memo(function (props: {
   }
 
   return (
-    <article className="bg-base-300 rounded-box shadow-md flex md:flex-1/3 lg:flex-1/4 w-full flex-col p-6 ">
+    <article className="bg-base-300 rounded-box shadow-md h-fit flex md:flex-1/3 lg:flex-1/4 w-full flex-col p-6 ">
       {!details ? (
         <FrontFace
           showDetails={showDetails}
@@ -73,7 +74,7 @@ function BackFace(props: BackFaceProps) {
     );
   });
   return (
-    <figure className="flex relative flex-col justify-center gap-4">
+    <figure className="flex relative h-fit flex-col justify-center gap-4">
       <figcaption
         onClick={props.showDetails}
         className="cursor-pointer text-xs absolute text-warning -top-2 right-0 font-bold"
@@ -116,7 +117,7 @@ function BackFace(props: BackFaceProps) {
       <hr></hr>
       <div className="flex flex-col flex-wrap gap-2 ">{specsList}</div>
       <p>
-        <span className="text-warning font-black pr-2">{props.basePrice}</span>
+        <span className="text-warning font-black pr-2">{props.basePrice} $</span>
         with prices starting
       </p>
       <hr></hr>
@@ -148,12 +149,14 @@ function FrontFace(props: FrontFaceProps) {
       >
         All features
       </figcaption>
-      <img
+      <Image
         src={props.img}
+        width={200}
+        height={200}
         loading="lazy"
         alt="vehicle image"
-        className="object-cover mt-3 object-center w-full md:w-full"
-      />
+        className=" mt-3 w-full h-48 object-contain"
+      /> 
       <h1 className="text-2xl font-heading font-bold">{props.text}</h1>
       <div className="flex gap-2">
         <svg
@@ -189,7 +192,7 @@ function FrontFace(props: FrontFaceProps) {
       </div>
       <p>
         Starting from
-        <span className="text-warning font-black pr-2"> {props.basePrice}</span>
+        <span className="text-warning font-black pr-2"> {props.basePrice} $</span>
       </p>
       <hr></hr>
     </figure>

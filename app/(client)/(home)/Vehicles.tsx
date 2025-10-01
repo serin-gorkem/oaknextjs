@@ -22,21 +22,19 @@ const Vehicles = memo(function () {
     base_price: number;
   };
   const {vehicles} = useVehicle();
-
-  const {currencyIndex} = useCurrency();
   
   useEffect(() => {
     const updatePerPage = () => {
       const width = window.innerWidth;
       if (width < 640) {
         setPerPage(1); // mobile: <640px
-        setCarouselHeight("28rem");
+        setCarouselHeight("100%");
       } else if (width < 1024) {
         setPerPage(2); // tablet: 640px–1023px
-        setCarouselHeight("30rem");
+        setCarouselHeight("100%");
       } else {
         setPerPage(3); // desktop: >=1024px
-        setCarouselHeight("30rem");
+        setCarouselHeight("100%");
       }
     };
     updatePerPage(); // Run once on mount
@@ -54,7 +52,7 @@ const Vehicles = memo(function () {
         id="vehicles"
         className="h-fit mt-16 px-2 pb-8 flex flex-col lg:p-0 xl:max-w-9/12 lg:max-w-11/12 mx-auto flex-wrap gap-4"
       >
-        <figure className="flex flex-col gap-2.5">
+        <figure className="flex flex-col gap-2.5 h-fit">
           <figcaption className="text-xl lg:text-2xl text-warning font-bold font-heading leading-tight">
             Our Vehicles
           </figcaption>

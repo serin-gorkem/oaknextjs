@@ -11,7 +11,7 @@ const VehicleInfo = ({ clientData, navigateToBooking }: VehicleInfoProps) => {
   return (
     <div className="bg-base-300 relative sm:w-full rounded-box shadow-md flex gap-4 flex-col px-3 py-4">
       <Image
-        src={"/images/vito.webp"}
+        src={clientData?.booking?.image_url || "/images/vito.webp"}
         alt="vehicle"
         width={200}
         height={200}
