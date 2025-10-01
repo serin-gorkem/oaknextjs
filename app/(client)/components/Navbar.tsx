@@ -8,7 +8,7 @@ import CurrencyDropdown from "./CurrencyDropdown";
 export default function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
-  const isBookingPage = pathname !== "/";
+  const isBookingPage = pathname === "/booking";
 
   const handleNavigateToHome = () => router.push("/");
 
@@ -77,12 +77,6 @@ function PageNav({
           </a>
         </li>
         <li className="flex items-center gap-4 w-fit cursor-pointer">
-          {/* <button
-            aria-label="Book button"
-            className="btn btn-primary w-30 lg:w-36 hover:bg-white hover:text-primary"
-          >
-            Book Now
-          </button> */}
           <button
             onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
             aria-label="Go back to top button"
@@ -166,8 +160,6 @@ function MobileNav() {
                     d="M6 18 18 6M6 6l12 12"
                   />
                 </svg>
-
-                {/* SVG same as before */}
               </div>
             </li>
           </ul>
@@ -262,7 +254,7 @@ function DesktopNav() {
             aria-label="Book now button"
             className="btn w-36 hover:bg-primary hover:border-primary hover:shadow-none hover:text-base-100"
           >
-            <a href="/">
+            <a href="/book" className="w-full" aria-label="Go to book now.">
             Book Now
             </a>
           </button>
@@ -310,13 +302,13 @@ function BookingNav() {
 // ---------------------- Menu Items ----------------------
 function menuItems() {
   const items = [
-    ["Booking", "/booking"],
-    ["Who we are", "#us"],
-    ["Our Vehicles", "#vehicles"],
-    ["Reviews", "#reviews"],
-    ["How to book your ride", "#steps"],
-    ["FAQ", "#FAQ"],
-    ["Contact", "#Contact"],
+    ["Book", "/book"],
+    ["Who we are", "/#us"],
+    ["Our Vehicles", "/#vehicles"],
+    ["Reviews", "/#reviews"],
+    ["How to book your ride", "/#steps"],
+    ["FAQ", "/#FAQ"],
+    ["Contact", "/#Contact"],
   ];
 
   return items.map(([text, link]) => (

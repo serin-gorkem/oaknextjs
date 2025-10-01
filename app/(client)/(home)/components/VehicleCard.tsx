@@ -117,7 +117,9 @@ function BackFace(props: BackFaceProps) {
       <hr></hr>
       <div className="flex flex-col flex-wrap gap-2 ">{specsList}</div>
       <p>
-        <span className="text-warning font-black pr-2">{props.basePrice} $</span>
+        <span className="text-warning font-black pr-2">
+          {props.basePrice} $
+        </span>
         with prices starting
       </p>
       <hr></hr>
@@ -125,7 +127,7 @@ function BackFace(props: BackFaceProps) {
         aria-label="Go to booking button"
         className="btn btn-warning text-base-100 w-5/8 h-12"
       >
-        Go to booking
+        <a href="/book" className="w-full">Go to booking</a>
       </button>
     </figure>
   );
@@ -156,7 +158,7 @@ function FrontFace(props: FrontFaceProps) {
         loading="lazy"
         alt="vehicle image"
         className=" mt-3 w-full h-48 object-contain"
-      /> 
+      />
       <h1 className="text-2xl font-heading font-bold">{props.text}</h1>
       <div className="flex gap-2">
         <svg
@@ -192,7 +194,9 @@ function FrontFace(props: FrontFaceProps) {
       </div>
       <p>
         Starting from
-        <span className="text-warning font-black pr-2"> {props.basePrice} $</span>
+        <span className="text-warning font-black pr-2">
+          {props.basePrice} $
+        </span>
       </p>
       <hr></hr>
     </figure>
