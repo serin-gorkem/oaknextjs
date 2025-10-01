@@ -5,6 +5,7 @@ import Footer from "./components/Footer";
 import Navbar from "./components/Navbar";
 import CurrencyProvider from "./components/CurrencyWrapper";
 import VehicleProvider from "./components/VehicleWrapper";
+import Head from "next/head";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -59,6 +60,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" data-theme="base">
+      <Head>
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
