@@ -416,6 +416,8 @@ const TransferSummaryCard = memo(function (props: TransferSummaryCardProps) {
       </div>
       <ReturnTripForm
         returnDate={returnDate}
+        pickupDate={props.clientData?.pickup_date ?? ""}
+        pickupHour={props.clientData?.pickup_hour ?? ""}
         handleReturnTrip={handleReturnTrip}
         returnHour={returnHour}
         handleDaySelect={handleDaySelect}

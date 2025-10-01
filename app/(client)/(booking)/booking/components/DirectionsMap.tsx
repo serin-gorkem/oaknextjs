@@ -31,7 +31,6 @@ const containerStyle = {
   height: "400px",
 };
 
-const centerOfTurkey = { lat: 39.0, lng: 35.0, address: "" };
 const libraries = ["places"] as Libraries;
 
 export default function DirectionsMap({ origin, destination,onRouteInfo }: Props) {
