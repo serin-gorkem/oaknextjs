@@ -95,7 +95,6 @@ useEffect(() => {
   useEffect(() => {
     if (clientData?.uuid) {
       UpdateData({ clientData });
-
     }
   }, [clientData]);
 
@@ -127,7 +126,7 @@ useEffect(() => {
         image_url: imageURL,
       },
       price: price,
-      basePrice: price
+      base_price: price
     }));
 
     router.push(`/extras?uuid=${clientData.uuid}`);

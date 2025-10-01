@@ -18,9 +18,6 @@ import { useRouter } from "next/navigation";
 import SessionExpiredFallback from "@/app/(client)/components/SessionExpiredFallback";
 import { useCurrency } from "@/app/(client)/context/CurrencyContext";
 
-{
-  /* On Form.jsx, there is a submit button and it will push form information to this jsx file and it will be used in Transfer Card  */
-}
 async function getExtras(setExtras: any) {
   const res = await fetch(`/api/get-extras-data`, { method: "GET" });
   if (res.ok) {
@@ -31,10 +28,23 @@ async function getExtras(setExtras: any) {
     console.error("Veri çekme hatası:", error);
   }
 }
+
+type Extra = {
+  display_name: string;
+  price: number;
+};
+
+interface ExtrasData {
+  childSeat: number;
+  flowers: number;
+  airportAssistance: boolean;
+  wait: boolean;
+}
+
 const Extras = memo(function () {
-  //Get local variables
   const { clientData, setClientData, error } = useGetData();
   const { symbol, convertPrice } = useCurrency();
+
   const [extras, setExtras] = useState<Extra[]>([]);
   const [childSeatNumber, setChildSeatNumber] = useState(0);
   const [flowersNumber, setFlowersNumber] = useState(0);
@@ -44,16 +54,11 @@ const Extras = memo(function () {
 
   console.log("Client Data: ", clientData);
 
-  type Extra = {
-    display_name: string;
-    price: number;
-    // add other properties if needed
-  };
-
   useEffect(() => {
     getExtras(setExtras);
   }, [convertPrice]);
 
+  // Populate local state from clientData.extras on load
   useEffect(() => {
     if (clientData?.extras) {
       setChildSeatNumber(clientData.extras.childSeat || 0);
@@ -63,58 +68,68 @@ const Extras = memo(function () {
     }
   }, [clientData]);
 
+  // Derive basePrice only once (exclude extras if already included)
   useEffect(() => {
-    if (clientData && clientData.price && clientData.basePrice == null) {
-      const initialBase = Number(clientData.price);
-      setClientData((prev: any) => ({
-        ...prev,
-        basePrice: initialBase,
-      }));
-    }
-  }, [clientData]);
+    if (!clientData || clientData.basePrice != null || extras.length === 0) return;
 
+    const existingExtras = clientData.extras ?? {};
+    const extrasTotal =
+      (existingExtras.childSeat || 0) * Math.round(extras[0]?.price || 0) +
+      (existingExtras.flowers || 0) * Math.round(extras[1]?.price || 0) +
+      (existingExtras.airportAssistance ? Math.round(extras[2]?.price || 0) : 0) +
+      (existingExtras.wait ? Math.round(extras[3]?.price || 0) : 0);
+
+    const derivedBase = Number(clientData.price ?? 0) - extrasTotal;
+
+    setClientData((prev: any) => ({
+      ...prev,
+      basePrice: Math.max(0, Math.round(derivedBase)),
+    }));
+  }, [clientData, extras, setClientData]);
+
+  // Recalculate price whenever extras selection changes
   useEffect(() => {
-    if (!clientData || extras.length === 0) return;
+    if (!clientData || extras.length === 0 || clientData.base_price == null) return;
 
-    const basePrice = Number(clientData.basePrice ?? clientData.price);
+    const basePrice = Number(clientData.base_price);
 
-    // Calculate extras total fresh every time
     const extrasTotal =
       childSeatNumber * Math.round(extras[0]?.price || 0) +
       flowersNumber * Math.round(extras[1]?.price || 0) +
       (airportAssistance ? Math.round(extras[2]?.price || 0) : 0) +
       (wait ? Math.round(extras[3]?.price || 0) : 0);
 
-    console.log("Extras Total:",extrasTotal);
-    
+    const newPrice = Math.max(0, Math.round(basePrice + extrasTotal));
 
-    const newPrice = Math.round(basePrice + extrasTotal);
-
-    const newExtras = {
+    const newExtras: ExtrasData = {
       childSeat: childSeatNumber,
       flowers: flowersNumber,
       airportAssistance,
       wait,
     };
 
-    // Decide if the price has been updated relative to base
     setIsPriceUpdated(newPrice !== basePrice);
 
-    const newClientData = {
-      ...clientData,
-      basePrice, // stays locked
-      price: newPrice, // always recalculated
-      extras: newExtras,
-    };
+    // Only update if something really changed
+    if (
+      clientData.price !== newPrice ||
+      JSON.stringify(clientData.extras ?? {}) !== JSON.stringify(newExtras)
+    ) {
+      const newClientData = {
+        ...clientData,
+        basePrice,
+        price: newPrice,
+        extras: newExtras,
+      };
 
-    setClientData(newClientData);
-    UpdateData({ clientData: newClientData });
-  }, [childSeatNumber, flowersNumber, airportAssistance, wait, extras]);
+      setClientData(newClientData);
+      UpdateData({ clientData: newClientData });
+    }
+  }, [childSeatNumber, flowersNumber, airportAssistance, wait, extras, clientData, setClientData]);
 
   function handleAirportAssistance() {
     setAirportAssistance((prev) => !prev);
   }
-
   function handleWait() {
     setWait((prev) => !prev);
   }
@@ -124,9 +139,7 @@ const Extras = memo(function () {
     router.push(`/booking?uuid=${clientData.uuid}`);
   }
   function handleNavigateToDetails() {
-    if (isPriceUpdated) {
-      router.push(`/details?uuid=${clientData.uuid}`);
-    }
+    router.push(`/details?uuid=${clientData.uuid}`);
   }
 
   function increase(type: string) {
@@ -134,12 +147,8 @@ const Extras = memo(function () {
       case type === "child-seat" && childSeatNumber < 2:
         setChildSeatNumber(childSeatNumber + 1);
         break;
-
       case type === "flowers" && flowersNumber < 3:
         setFlowersNumber(flowersNumber + 1);
-        break;
-
-      default:
         break;
     }
   }
@@ -148,15 +157,12 @@ const Extras = memo(function () {
       case type === "child-seat" && childSeatNumber > 0:
         setChildSeatNumber(childSeatNumber - 1);
         break;
-
       case type === "flowers" && flowersNumber > 0:
         setFlowersNumber(flowersNumber - 1);
         break;
-
-      default:
-        break;
     }
   }
+
   if (error || !clientData) {
     return <SessionExpiredFallback error={error} clientData={clientData} />;
   }
@@ -167,12 +173,12 @@ const Extras = memo(function () {
       </div>
     );
   }
+
   return (
     <Suspense fallback={<div>Loading...</div>}>
       <div className="flex relative flex-col mt-30 justify-between lg:block xl:max-w-9/12 lg:max-w-11/12 mx-auto">
         <section className="p-4 md:px-4 flex justify-between flex-col lg:flex-row-reverse gap-4 w-full lg:px-0 ">
           <div className="lg:hidden block">
-            {/* Use switch case to change the page indicator */}
             <PageIndicator activeStep="extras" />
             <ExtrasCard
               increase={increase}
@@ -190,26 +196,11 @@ const Extras = memo(function () {
           </div>
           <aside className="flex flex-col gap-3 xl:w-4/12 lg:w-5/12">
             <SummaryCard clientData={clientData} />
-            {/* Navigation Buttons */}
             <div className="flex md:flex-wrap gap-2 justify-between w-full">
               <button
                 onClick={handleNavigateBooking}
                 className="btn w-5/12 px-0 md:w-full btn-gray"
               >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.5}
-                  stroke="currentColor"
-                  className="size-6"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M6.75 15.75 3 12m0 0 3.75-3.75M3 12h18"
-                  />
-                </svg>
                 Booking
               </button>
               <button
@@ -217,26 +208,11 @@ const Extras = memo(function () {
                 className="btn w-5/12 px-0 md:w-full btn-warning text-base-100"
               >
                 Personal Details
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.5}
-                  stroke="currentColor"
-                  className="size-6"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M17.25 8.25 21 12m0 0-3.75 3.75M21 12H3"
-                  />
-                </svg>
               </button>
             </div>
           </aside>
           <div className="lg:w-full flex flex-col gap-4">
             <div className="hidden lg:flex lg:flex-col lg:gap-4">
-              {/*For page indicator active functionality, later.*/}
               <PageIndicator activeStep="extras" />
               <ExtrasCard
                 increase={increase}

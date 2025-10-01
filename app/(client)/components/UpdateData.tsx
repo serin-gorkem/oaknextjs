@@ -12,7 +12,7 @@ export async function UpdateData({ clientData }: { clientData: any }) {
         extras: clientData.extras,
         details: clientData.details,
         price: clientData.price,
-        base_price: clientData.basePrice,
+        base_price: clientData.base_price,
       }),
     });
 
