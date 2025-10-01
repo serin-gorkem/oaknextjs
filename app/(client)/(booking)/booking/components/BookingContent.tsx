@@ -66,37 +66,40 @@ export default function BookingContent() {
 
   // Merge vehicles with fetched prices
 
-  useEffect(() => {
-    if (!vehicles || !vehiclePrices) return;
+useEffect(() => {
+  if (!vehicles || !vehiclePrices) return;
 
-    async function updateVehicles() {
-      const merged = await Promise.all(
-        vehicles.map(async (vehicle: any) => {
-          const price = vehiclePrices.find(
-            (p: VehiclePrice) => Number(p.vehicle_id) === Number(vehicle.id)
-          );
-          let rawPrice = price?.total_price ?? 0;
+  async function updateVehicles() {
+    const merged = await Promise.all(
+      vehicles.map(async (vehicle: any) => {
+        const price = vehiclePrices.find(
+          (p: VehiclePrice) => Number(p.vehicle_id) === Number(vehicle.id)
+        );
 
-          // Eğer dönüş yolculuğu varsa fiyatı 2 ile çarp
-          if (clientData?.return_data?.return_trip === true) {
-            rawPrice *= 2;
-            console.log("Return trip selected, doubling price:", rawPrice);
-          }
+        if (!price) return null; // Fiyat yoksa null döndür
 
-          // Convert here using context
-          const converted = await convertPrice(rawPrice, "USD");
+        let rawPrice = price.total_price ?? 0;
 
-          return {
-            ...vehicle,
-            total_price: converted.toFixed(2),
-          };
-        })
-      );
-      setMergedVehicles(merged);
-    }
+        if (clientData?.return_data?.return_trip === true) {
+          rawPrice *= 2;
+        }
 
-    updateVehicles();
-  }, [vehicles, vehiclePrices, currencyIndex, clientData]);
+        const converted = await convertPrice(rawPrice, "USD");
+
+        return {
+          ...vehicle,
+          total_price: converted.toFixed(2),
+        };
+      })
+    );
+
+    // null olanları filtrele
+    setMergedVehicles(merged.filter((v) => v !== null));
+  }
+
+  updateVehicles();
+}, [vehicles, vehiclePrices, currencyIndex, clientData]);
+
 
   // Sync client data
   useEffect(() => {
@@ -108,6 +111,7 @@ export default function BookingContent() {
   // Navigate to extras page
   function loadExtrasPage(
     vehicleName: string,
+    vehicleId: number,
     price: number,
     imageURL: string
   ) {
@@ -130,6 +134,7 @@ export default function BookingContent() {
       booking: {
         route_info: routeInfo,
         vehicle_name: vehicleName,
+        vehicle_id: vehicleId,
         image_url: imageURL,
       },
       price: price,
@@ -189,6 +194,7 @@ export default function BookingContent() {
               loadExtrasPage={() =>
                 loadExtrasPage(
                   vehicle.name,
+                  vehicle.id,
                   vehicle.total_price,
                   vehicle.image_url
                 )

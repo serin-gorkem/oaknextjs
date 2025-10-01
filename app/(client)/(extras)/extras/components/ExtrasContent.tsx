@@ -18,15 +18,27 @@ import { useRouter } from "next/navigation";
 import SessionExpiredFallback from "@/app/(client)/components/SessionExpiredFallback";
 import { useCurrency } from "@/app/(client)/context/CurrencyContext";
 
-async function getExtras(setExtras: any) {
+async function getExtras(setExtras: any, vehicleId: number) {
   const res = await fetch(`/api/get-extras-data`, { method: "GET" });
-  if (res.ok) {
-    const data = await res.json();
-    setExtras(data); // raw değerler
-  } else {
+  if (!res.ok) {
     const error = await res.json();
     console.error("Veri çekme hatası:", error);
+    return;
   }
+
+  const data: Extra[] = await res.json();
+
+  // Vehicle ID'ye göre filtreleme
+  let filtered: Extra[] = [];
+  if (vehicleId >= 1 && vehicleId <= 4) {
+    filtered = data.slice(0, 4); // 0-3 arası
+  } else if (vehicleId === 5 || vehicleId === 6) {
+    filtered = data.slice(4, 8); // 4-7 arası
+  } else {
+    filtered = data; // default olarak tüm extras
+  }
+
+  setExtras(filtered);
 }
 
 type Extra = {
@@ -50,13 +62,18 @@ const Extras = memo(function () {
   const [flowersNumber, setFlowersNumber] = useState(0);
   const [airportAssistance, setAirportAssistance] = useState(false);
   const [wait, setWait] = useState(false);
-  const [isPriceUpdated, setIsPriceUpdated] = useState(false);
+
+  console.log("Extras Data: ", extras);
+  
 
   console.log("Client Data: ", clientData);
 
-  useEffect(() => {
-    getExtras(setExtras);
-  }, [convertPrice]);
+useEffect(() => {
+  if (!clientData?.booking?.vehicle_id) return;
+  getExtras(setExtras, clientData.booking.vehicle_id);
+  console.log("Extras", extras);
+  
+}, [clientData?.booking?.vehicle_id]);
 
   // Populate local state from clientData.extras on load
   useEffect(() => {
