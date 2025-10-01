@@ -1,6 +1,26 @@
+"use client";
 import { memo } from "react";
 
 const Contact = memo(function () {
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  event.preventDefault();
+  const form = event.currentTarget;
+  const formData = new FormData(form);
+  const data = Object.fromEntries(formData.entries());
+
+  const res = await fetch("/api/contact", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+
+  if (res.ok) {
+    alert("Message sent successfully!");
+    form.reset();
+  } else {
+    alert("Failed to send message.");
+  }
+}
   return (
     <section
       id="Contact"
@@ -15,7 +35,7 @@ const Contact = memo(function () {
         </h1>
       </figure>
       <div className="flex flex-col lg:flex-row gap-6">
-        <form className="flex flex-col gap-2 lg:w-1/2">
+        <form className="flex flex-col gap-2 lg:w-1/2" onSubmit={handleSubmit}>
           <fieldset className="fieldset flex focus-within:outline-0">
             <legend className="font-bold text-sm lg:text-base">
               First Name <span className="text-warning">*</span>
