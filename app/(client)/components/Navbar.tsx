@@ -8,7 +8,8 @@ import CurrencyDropdown from "./CurrencyDropdown";
 export default function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
-  const isBookingPage = pathname === "/booking";
+  const isBookingPage = pathname === "/book" || pathname === "/";
+
 
   const handleNavigateToHome = () => router.push("/");
 
@@ -16,12 +17,14 @@ export default function Navbar() {
     <div className="mb-5 absolute z-100 top-0 w-full">
       <PageNav handleNavigateToHome={handleNavigateToHome} />
       {isBookingPage ? (
-        <BookingNav />
-      ) : (
         <>
           {/* original desktop/mobile */}
           <MobileNav />
           <DesktopNav />
+        </>
+      ) : (
+        <>
+          <BookingNav />
         </>
       )}
     </div>
