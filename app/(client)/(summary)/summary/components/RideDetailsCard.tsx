@@ -74,8 +74,8 @@ const RideDetails = memo(function ({
                   {Object.entries(clientData?.extras).map(
                     ([key, value]: [string, unknown], index: number) => {
                       const labelMap: Record<string, string> = {
-                        childSeatNumber: "Child Seat",
-                        flowersNumber: "Bouquet of Flowers",
+                        childSeat: "Child Seat",
+                        flowers: "Bouquet of Flowers",
                         airportAssistance: "Airport Assistance",
                         wait: "Extra Wait",
                       };
@@ -105,7 +105,7 @@ const RideDetails = memo(function ({
           <div className="flex flex-col w-1/2">
             <h2 className="title mb-1">TOTAL DISTANCE</h2>
             <p className="section-text font-bold">
-              {clientData?.booking.route_info.distanceKm}
+              {clientData?.booking.route_info.distanceKm.toFixed(2)} km
             </p>
             <div className="divider my-1"></div>
           </div>

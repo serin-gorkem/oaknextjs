@@ -11,7 +11,6 @@ import { useGetData } from "../../../components/GetData";
 import { UpdateData } from "../../../components/UpdateData";
 import { useCurrency } from "../../../context/CurrencyContext";
 import { useVehicle } from "../../../context/VehicleContext";
-import { base } from "framer-motion/client";
 
 // Lazy imports
 const PageIndicator = lazy(() => import("../../../components/PageIndicator"));
@@ -37,7 +36,7 @@ interface RouteInfo {
 export default function BookingContent() {
   const { clientData, setClientData, error } = useGetData();
   const { currencyIndex, symbol, convertPrice } = useCurrency();
-    const { vehicles } = useVehicle();
+  const { vehicles } = useVehicle();
 
   const [vehiclePrices, setVehiclePrices] = useState<VehiclePrice[]>([]);
   const [mergedVehicles, setMergedVehicles] = useState<any[]>([]);
@@ -47,49 +46,57 @@ export default function BookingContent() {
 
   // Fetch airport rates
   async function fetchAirportRates(airportId: string, distanceKm: number) {
-    const res = await fetch(`/api/prices?airportId=${airportId}&distanceKm=${distanceKm}`);
+    const res = await fetch(
+      `/api/prices?airportId=${airportId}&distanceKm=${distanceKm}`
+    );
     if (!res.ok) throw new Error("Failed to fetch airport rates");
     const data = await res.json();
     console.log("⬅️ API response:", data);
     return data;
   }
 
-useEffect(() => {
-  const airportId = clientData?.pickup_location?.id;
-  if (!airportId || !routeInfo) return; // exit early if route info not ready
+  useEffect(() => {
+    const airportId = clientData?.pickup_location?.id;
+    if (!airportId || !routeInfo) return; // exit early if route info not ready
 
-  fetchAirportRates(airportId, routeInfo.distanceKm)
-    .then((data) => setVehiclePrices(data.rows))
-    .catch((err) => console.error(err));
-}, [clientData?.pickup_location?.id, routeInfo]);
+    fetchAirportRates(airportId, routeInfo.distanceKm)
+      .then((data) => setVehiclePrices(data.rows))
+      .catch((err) => console.error(err));
+  }, [clientData?.pickup_location?.id, routeInfo]);
 
   // Merge vehicles with fetched prices
 
-useEffect(() => {
-  if (!vehicles || !vehiclePrices) return;
+  useEffect(() => {
+    if (!vehicles || !vehiclePrices) return;
 
-  async function updateVehicles() {
-    const merged = await Promise.all(
-      vehicles.map(async (vehicle: any) => {
-        const price = vehiclePrices.find(
-          (p: VehiclePrice) => Number(p.vehicle_id) === Number(vehicle.id)
-        );
-        const rawPrice = price?.total_price ?? 0;
+    async function updateVehicles() {
+      const merged = await Promise.all(
+        vehicles.map(async (vehicle: any) => {
+          const price = vehiclePrices.find(
+            (p: VehiclePrice) => Number(p.vehicle_id) === Number(vehicle.id)
+          );
+          let rawPrice = price?.total_price ?? 0;
 
-        // Convert here using context
-        const converted = await convertPrice(rawPrice, "USD");
+          // Eğer dönüş yolculuğu varsa fiyatı 2 ile çarp
+          if (clientData?.return_data?.return_trip === true) {
+            rawPrice *= 2;
+            console.log("Return trip selected, doubling price:", rawPrice);
+          }
 
-        return {
-          ...vehicle,
-          total_price: converted.toFixed(2),
-        };
-      })
-    );
-    setMergedVehicles(merged);
-  }
+          // Convert here using context
+          const converted = await convertPrice(rawPrice, "USD");
 
-  updateVehicles();
-}, [vehicles, vehiclePrices, currencyIndex]);
+          return {
+            ...vehicle,
+            total_price: converted.toFixed(2),
+          };
+        })
+      );
+      setMergedVehicles(merged);
+    }
+
+    updateVehicles();
+  }, [vehicles, vehiclePrices, currencyIndex, clientData]);
 
   // Sync client data
   useEffect(() => {
@@ -126,7 +133,7 @@ useEffect(() => {
         image_url: imageURL,
       },
       price: price,
-      base_price: price
+      base_price: price,
     }));
 
     router.push(`/extras?uuid=${clientData.uuid}`);
@@ -180,7 +187,11 @@ useEffect(() => {
               totalPrice={vehicle.total_price}
               currency={symbol}
               loadExtrasPage={() =>
-                loadExtrasPage(vehicle.name, vehicle.total_price, vehicle.image_url)
+                loadExtrasPage(
+                  vehicle.name,
+                  vehicle.total_price,
+                  vehicle.image_url
+                )
               }
             />
           ))}

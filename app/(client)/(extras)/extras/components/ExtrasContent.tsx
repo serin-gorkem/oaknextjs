@@ -70,13 +70,16 @@ const Extras = memo(function () {
 
   // Derive basePrice only once (exclude extras if already included)
   useEffect(() => {
-    if (!clientData || clientData.basePrice != null || extras.length === 0) return;
+    if (!clientData || clientData.basePrice != null || extras.length === 0)
+      return;
 
     const existingExtras = clientData.extras ?? {};
     const extrasTotal =
       (existingExtras.childSeat || 0) * Math.round(extras[0]?.price || 0) +
       (existingExtras.flowers || 0) * Math.round(extras[1]?.price || 0) +
-      (existingExtras.airportAssistance ? Math.round(extras[2]?.price || 0) : 0) +
+      (existingExtras.airportAssistance
+        ? Math.round(extras[2]?.price || 0)
+        : 0) +
       (existingExtras.wait ? Math.round(extras[3]?.price || 0) : 0);
 
     const derivedBase = Number(clientData.price ?? 0) - extrasTotal;
@@ -87,45 +90,54 @@ const Extras = memo(function () {
     }));
   }, [clientData, extras, setClientData]);
 
-  // Recalculate price whenever extras selection changes
+// Debounce helper
+function useDebouncedCallback(callback: () => void, delay: number, deps: any[]) {
   useEffect(() => {
-    if (!clientData || extras.length === 0 || clientData.base_price == null) return;
+    const handler = setTimeout(callback, delay);
+    return () => clearTimeout(handler);
+  }, [...deps]);
+}
 
-    const basePrice = Number(clientData.base_price);
+// Recalculate price whenever extras selection changes
+useDebouncedCallback(() => {
+  if (!clientData || extras.length === 0 || clientData.base_price == null) return;
 
-    const extrasTotal =
-      childSeatNumber * Math.round(extras[0]?.price || 0) +
-      flowersNumber * Math.round(extras[1]?.price || 0) +
-      (airportAssistance ? Math.round(extras[2]?.price || 0) : 0) +
-      (wait ? Math.round(extras[3]?.price || 0) : 0);
+  const basePrice = Number(clientData.base_price);
 
-    const newPrice = Math.max(0, Math.round(basePrice + extrasTotal));
+  const extrasTotal =
+    childSeatNumber * Math.round(extras[0]?.price || 0) +
+    flowersNumber * Math.round(extras[1]?.price || 0) +
+    (airportAssistance ? Math.round(extras[2]?.price || 0) : 0) +
+    (wait ? Math.round(extras[3]?.price || 0) : 0);
 
-    const newExtras: ExtrasData = {
-      childSeat: childSeatNumber,
-      flowers: flowersNumber,
-      airportAssistance,
-      wait,
+  const newPrice = Math.max(0, Math.round(basePrice + extrasTotal));
+
+  const newExtras: ExtrasData = {
+    childSeat: childSeatNumber,
+    flowers: flowersNumber,
+    airportAssistance,
+    wait,
+  };
+
+  const extrasChanged =
+    clientData.extras?.childSeat !== childSeatNumber ||
+    clientData.extras?.flowers !== flowersNumber ||
+    clientData.extras?.airportAssistance !== airportAssistance ||
+    clientData.extras?.wait !== wait;
+
+  if (clientData.price !== newPrice || extrasChanged) {
+    const newClientData = {
+      ...clientData,
+      basePrice,
+      price: newPrice,
+      extras: newExtras,
     };
 
-    setIsPriceUpdated(newPrice !== basePrice);
+    setClientData(newClientData);
+    UpdateData({ clientData: newClientData }); // backend update debounced
+  }
+}, 300, [childSeatNumber, flowersNumber, airportAssistance, wait]);
 
-    // Only update if something really changed
-    if (
-      clientData.price !== newPrice ||
-      JSON.stringify(clientData.extras ?? {}) !== JSON.stringify(newExtras)
-    ) {
-      const newClientData = {
-        ...clientData,
-        basePrice,
-        price: newPrice,
-        extras: newExtras,
-      };
-
-      setClientData(newClientData);
-      UpdateData({ clientData: newClientData });
-    }
-  }, [childSeatNumber, flowersNumber, airportAssistance, wait, extras, clientData, setClientData]);
 
   function handleAirportAssistance() {
     setAirportAssistance((prev) => !prev);
@@ -201,12 +213,40 @@ const Extras = memo(function () {
                 onClick={handleNavigateBooking}
                 className="btn w-5/12 px-0 md:w-full btn-gray"
               >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.5}
+                  stroke="currentColor"
+                  className="size-6"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M6.75 15.75 3 12m0 0 3.75-3.75M3 12h18"
+                  />
+                </svg>
                 Booking
               </button>
               <button
                 onClick={handleNavigateToDetails}
                 className="btn w-5/12 px-0 md:w-full btn-warning text-base-100"
               >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.5}
+                  stroke="currentColor"
+                  className="size-6 rotate-180"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M6.75 15.75 3 12m0 0 3.75-3.75M3 12h18"
+                  />
+                </svg>
                 Personal Details
               </button>
             </div>
