@@ -50,17 +50,17 @@ export default function Form() {
 
   const airportRadiusKm: Record<string, number> = {
     "Istanbul Airport": 70,
-    "Sabiha Gökçen International Airport": 50,
-    "Izmir Adnan Menderes Airport": 120,
-    "Milas–Bodrum Airport": 60,
-    "Dalaman Airport": 50,
-    "Antalya Airport": 50,
-    "Kayseri Erkilet Airport": 40,
-    "Nevşehir Kapadokya Airport": 50,
-    "Esenboğa International Airport": 50,
-    "Adana Şakirpaşa Airport": 40,
-    "Şanlıurfa GAP Airport": 40,
-    "Trabzon Airport": 40,
+    "Sabiha Gökçen International Airport": 70,
+    "Izmir Adnan Menderes Airport": 180,
+    "Milas–Bodrum Airport": 70,
+    "Dalaman Airport": 70,
+    "Antalya Airport": 100,
+    "Kayseri Erkilet Airport": 70,
+    "Nevşehir Kapadokya Airport": 70,
+    "Esenboğa International Airport": 70,
+    "Adana Şakirpaşa Airport": 50,
+    "Şanlıurfa GAP Airport": 50,
+    "Trabzon Airport": 50,
   };
 
   function validateForm() {

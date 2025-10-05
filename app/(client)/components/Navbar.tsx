@@ -243,16 +243,20 @@ function DesktopNav() {
           </a>
         </li>
         <li className="flex items-center gap-4 w-fit cursor-pointer">
+          <button
+            aria-label="Tours of you button"
+            className="btn w-36 p-4 hover:bg-primary hover:border-primary hover:shadow-none hover:text-base-100"
+          >
           <a href="https://www.toursofyou.com/">
             <Image
               src="/images/logos/ToursOfYou.webp"
               width={300}
               height={300}
               alt="Tours of you Logo"
-              aria-label="Book now button"
               className="w-36 p-2 hover:shadow-none hover:text-base-100"
             />
           </a>
+          </button>
           <button
             aria-label="Book now button"
             className="btn w-36 hover:bg-primary hover:border-primary hover:shadow-none hover:text-base-100"

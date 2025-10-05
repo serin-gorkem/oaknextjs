@@ -19,9 +19,10 @@ export default function Home() {
       />
       <article
         id="above-the-fold"
-        className="p-2 md:px-4 my-24 sm:my-48 lg:px-0 flex flex-col lg:flex-row gap-4 z-10 xl:max-w-9/12 lg:max-w-11/12 mx-auto"
+        className="p-2 md:px-4 my-24 sm:my-48 lg:px-0 flex flex-col justify-between lg:flex-row gap-4 z-10 xl:max-w-9/12 lg:max-w-11/12 mx-auto"
       >
-        <div className="flex flex-col w-fit  gap-4">
+
+        <div className="flex flex-col gap-4">
           <h1 className="font-heading font-bold tracking-tight leading-snug text-2xl sm:w-full lg:leading-tight md:w-full lg:w-fit xl:w-9/12 sm:text-4xl xl:text-5xl text-base-100">
             Reliable <span className=" text-warning ">Airport Travels.</span>
             Travel with Confidence and Luxury at Great Prices.
@@ -36,7 +37,7 @@ export default function Home() {
             How to book your ride
           </button>
         </div>
-        <div className="relative sm:max-w-96 h-fit w-full">
+                <div className="relative sm:max-w-96 h-fit w-full">
           <CurrencyWrapper>
             <Form/>
           </CurrencyWrapper>

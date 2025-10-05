@@ -218,7 +218,7 @@ export default function AirportRatesUI() {
                             )
                           }
                         />
-                        <span>₺ base</span>
+                        <span>$ base</span>
                       </div>
                       <div className="w-full sm:w-fit">
                         <input
@@ -234,7 +234,7 @@ export default function AirportRatesUI() {
                             )
                           }
                         />
-                        <span>₺/km</span>
+                        <span>$/km</span>
                       </div>
                     </div>
                   </div>
@@ -278,6 +278,7 @@ export default function AirportRatesUI() {
                   handleChangeExtra(extra.id, "display_name", e.target.value)
                 }
               />
+              <div className="flex items-center gap-2 ">
               <input
                 type="number"
                 className="input input-bordered w-24"
@@ -289,7 +290,9 @@ export default function AirportRatesUI() {
                     parseFloat(e.target.value)
                   )
                 }
-              />
+                />
+              <p>$</p>
+                </div>
             </div>
           ))}
 

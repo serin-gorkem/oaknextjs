@@ -20,7 +20,7 @@ const About = memo(function () {
           src="/images/Team.webp"
           width={1000}
           height={1000}
-          className="lg:w-1/2 object-cover"
+          className="w-full lg:w-1/2 h-auto object-cover rounded-lg"
           alt="team image"
         ></Image>
         <div className="flex flex-col gap-4">

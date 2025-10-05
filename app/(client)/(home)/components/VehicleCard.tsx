@@ -7,7 +7,7 @@ const VehicleCard = memo(function (props: {
   personCount: number;
   bagsCount: number;
   specs: string[];
-  base_price: number;
+  base_price: string | number;
 }) {
   const [details, setDetails] = useState(false);
 
@@ -24,6 +24,7 @@ const VehicleCard = memo(function (props: {
           text={props.text}
           personCount={props.personCount}
           bagsCount={props.bagsCount}
+          specs={props.specs}
           basePrice={props.base_price}
         />
       ) : (
@@ -48,7 +49,7 @@ type BackFaceProps = {
   personCount: number;
   bagsCount: number;
   specs: string[];
-  basePrice: number;
+  basePrice: string | number;
 };
 
 function BackFace(props: BackFaceProps) {
@@ -117,17 +118,16 @@ function BackFace(props: BackFaceProps) {
       <hr></hr>
       <div className="flex flex-col flex-wrap gap-2 ">{specsList}</div>
       <p>
-        <span className="text-warning font-black pr-2">
-          {props.basePrice} $
-        </span>
-        with prices starting
+        <span className="text-warning font-black pr-2">{props.basePrice}</span>
       </p>
       <hr></hr>
       <button
         aria-label="Go to booking button"
         className="btn btn-warning text-base-100 w-5/8 h-12"
       >
-        <a href="/book" className="w-full">Go to booking</a>
+        <a href="/book" className="w-full">
+          Go to booking
+        </a>
       </button>
     </figure>
   );
@@ -139,12 +139,34 @@ type FrontFaceProps = {
   text: string;
   personCount: number;
   bagsCount: number;
-  basePrice: number;
+  specs: string[];
+  basePrice: string | number;
 };
 
 function FrontFace(props: FrontFaceProps) {
+  const specsList = props.specs.map((spec, index) => {
+    return (
+      <div className="flex gap-2 w-fit" key={index}>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          strokeWidth={1.5}
+          stroke=" oklch(59.27% 0.2264 26.75)"
+          className="size-6"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+          />
+        </svg>
+        <p>{spec}</p>
+      </div>
+    );
+  });
   return (
-    <figure className="flex relative h-96 flex-col justify-center gap-2">
+    <figure className="flex relative h-fit flex-col justify-center gap-4">
       <figcaption
         onClick={props.showDetails}
         className="cursor-pointer text-xs absolute text-warning -top-2 right-0 font-bold"
@@ -153,8 +175,8 @@ function FrontFace(props: FrontFaceProps) {
       </figcaption>
       <Image
         src={props.img}
-        width={200}
-        height={200}
+        width={1920}
+        height={1080}
         loading="lazy"
         alt="vehicle image"
         className=" mt-3 w-full h-48 object-contain"
@@ -192,13 +214,9 @@ function FrontFace(props: FrontFaceProps) {
         </svg>
         <p>{props.bagsCount} bag</p>
       </div>
-      <p>
-        Starting from
-        <span className="text-warning font-black pr-2">
-          {props.basePrice} $
-        </span>
-      </p>
+      <p className="text-warning font-black">{props.basePrice}</p>
       <hr></hr>
+      <div className="flex flex-col flex-wrap gap-2 ">{specsList}</div>
     </figure>
   );
 }
