@@ -121,14 +121,23 @@ function BackFace(props: BackFaceProps) {
         <span className="text-warning font-black pr-2">{props.basePrice}</span>
       </p>
       <hr></hr>
-      <button
-        aria-label="Go to booking button"
-        className="btn btn-warning text-base-100 w-5/8 h-12"
-      >
-        <a href="/book" className="w-full">
-          Go to booking
-        </a>
-      </button>
+      <div className="flex  gap-4">
+        <button
+          aria-label="Go to booking button"
+          className="btn btn-warning text-base-100 w-1/3 h-12"
+        >
+          <a href="/book" className="w-full">
+            Go to booking
+          </a>
+        </button>
+        <button
+          aria-label="Go to booking button"
+          className="btn btn-primary text-base-100 w-1/3 h-12"
+          onClick={props.showDetails}
+        >
+            Return
+        </button>
+      </div>
     </figure>
   );
 }
@@ -167,12 +176,6 @@ function FrontFace(props: FrontFaceProps) {
   });
   return (
     <figure className="flex relative h-fit flex-col justify-center gap-4">
-      <figcaption
-        onClick={props.showDetails}
-        className="cursor-pointer text-xs absolute text-warning -top-2 right-0 font-bold"
-      >
-        All features
-      </figcaption>
       <Image
         src={props.img}
         width={1920}
@@ -217,6 +220,13 @@ function FrontFace(props: FrontFaceProps) {
       <p className="text-warning font-black">{props.basePrice}</p>
       <hr></hr>
       <div className="flex flex-col flex-wrap gap-2 ">{specsList}</div>
+      <button
+        aria-label="Go to booking button"
+        className="btn btn-warning text-base-100 w-5/8 h-12"
+        onClick={props.showDetails}
+      >
+          All Features
+      </button>
     </figure>
   );
 }
