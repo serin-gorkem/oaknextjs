@@ -35,7 +35,7 @@ const Footer = memo(function () {
           <ul className="text-base-100 w-full">
             {menuItem("Booking and Cancelation Policy", "/policy")}
             {menuItem("Privacy Policy", "/privacy")}
-            {menuItem("Our Vehicles", "#vehicles")}
+            {menuItem("Our Vehicles", "/#vehicles")}
             {menuItem("Tours of You", "https://www.toursofyou.com/")}
             {menuItem("TURSAB Digital Verification System", "/")}
           </ul>

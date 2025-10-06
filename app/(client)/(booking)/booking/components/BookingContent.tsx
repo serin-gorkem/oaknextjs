@@ -139,6 +139,7 @@ useEffect(() => {
       },
       price: price,
       base_price: price,
+      extras: { childSeat: 0, flowers: 0, airportAssistance: false, wait: false },
     }));
 
     router.push(`/extras?uuid=${clientData.uuid}`);

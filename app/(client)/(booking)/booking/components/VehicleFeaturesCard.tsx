@@ -39,7 +39,7 @@ const VehicleFeaturesCard = memo(function (props: VehicleFeaturesCardProps) {
       <div className="flex gap-6 items-center lg:gap-10">
         <h1 className="text-2xl md:text-4xl">{props.vehicleName}</h1>
       </div>
-      <div className="flex lg:gap-10 gap-5">
+      <div className="flex gap-5">
         <div className="flex  items-center">
           <svg
             xmlns="http://www.w3.org/2000/svg"

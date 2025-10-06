@@ -63,17 +63,13 @@ const Extras = memo(function () {
   const [airportAssistance, setAirportAssistance] = useState(false);
   const [wait, setWait] = useState(false);
 
-  console.log("Extras Data: ", extras);
-  
-
   console.log("Client Data: ", clientData);
 
-useEffect(() => {
-  if (!clientData?.booking?.vehicle_id) return;
-  getExtras(setExtras, clientData.booking.vehicle_id);
-  console.log("Extras", extras);
-  
-}, [clientData?.booking?.vehicle_id]);
+  useEffect(() => {
+    if (!clientData?.booking?.vehicle_id) return;
+    getExtras(setExtras, clientData.booking.vehicle_id);
+    console.log("Extras", extras);
+  }, [clientData?.booking?.vehicle_id]);
 
   // Populate local state from clientData.extras on load
   useEffect(() => {
@@ -82,13 +78,17 @@ useEffect(() => {
       setFlowersNumber(clientData.extras.flowers || 0);
       setAirportAssistance(Boolean(clientData.extras.airportAssistance));
       setWait(Boolean(clientData.extras.wait));
+      console.log("Client Extras loaded to state.");
     }
-  }, [clientData]);
+  }, [clientData?.extras]);
 
   // Derive basePrice only once (exclude extras if already included)
   useEffect(() => {
     if (!clientData || clientData.basePrice != null || extras.length === 0)
       return;
+    const totalPrice = Number(clientData.price ?? 0);
+    const currentBase = Number(clientData.base_price ?? 0);
+    console.log("Deriving base price from total price...");
 
     const existingExtras = clientData.extras ?? {};
     const extrasTotal =
@@ -99,62 +99,83 @@ useEffect(() => {
         : 0) +
       (existingExtras.wait ? Math.round(extras[3]?.price || 0) : 0);
 
-    const derivedBase = Number(clientData.price ?? 0) - extrasTotal;
+    const derivedBase = Math.max(0, Math.round(totalPrice - extrasTotal));
 
-    setClientData((prev: any) => ({
-      ...prev,
-      basePrice: Math.max(0, Math.round(derivedBase)),
-    }));
-  }, [clientData, extras, setClientData]);
+    // ❌ Eğer totalPrice sabit ama extras değişiyorsa, base_price'ı güncelleme
+    const priceStable = Math.abs(totalPrice - currentBase) < 1;
 
-// Debounce helper
-function useDebouncedCallback(callback: () => void, delay: number, deps: any[]) {
-  useEffect(() => {
-    const handler = setTimeout(callback, delay);
-    return () => clearTimeout(handler);
-  }, [...deps]);
-}
+    // ❌ Eğer derivedBase < currentBase ise veya fiyat sabit ise — dokunma
+    if (priceStable || derivedBase < currentBase) {
+      console.log("Skipping recalculation — base already valid or extras already included.");
+      return;
+    }
 
-// Recalculate price whenever extras selection changes
-useDebouncedCallback(() => {
-  if (!clientData || extras.length === 0 || clientData.base_price == null) return;
+    // ✅ Sadece base_price yoksa veya fark mantıklıysa güncelle
+    if (!clientData.base_price || Math.abs(currentBase - derivedBase) > 1) {
+      setClientData((prev: any) => ({
+        ...prev,
+        base_price: derivedBase,
+      }));
+      console.log("✅ Base price updated to:", derivedBase);
+    }
+  }, [extras]);
 
-  const basePrice = Number(clientData.base_price);
-
-  const extrasTotal =
-    childSeatNumber * Math.round(extras[0]?.price || 0) +
-    flowersNumber * Math.round(extras[1]?.price || 0) +
-    (airportAssistance ? Math.round(extras[2]?.price || 0) : 0) +
-    (wait ? Math.round(extras[3]?.price || 0) : 0);
-
-  const newPrice = Math.max(0, Math.round(basePrice + extrasTotal));
-
-  const newExtras: ExtrasData = {
-    childSeat: childSeatNumber,
-    flowers: flowersNumber,
-    airportAssistance,
-    wait,
-  };
-
-  const extrasChanged =
-    clientData.extras?.childSeat !== childSeatNumber ||
-    clientData.extras?.flowers !== flowersNumber ||
-    clientData.extras?.airportAssistance !== airportAssistance ||
-    clientData.extras?.wait !== wait;
-
-  if (clientData.price !== newPrice || extrasChanged) {
-    const newClientData = {
-      ...clientData,
-      basePrice,
-      price: newPrice,
-      extras: newExtras,
-    };
-
-    setClientData(newClientData);
-    UpdateData({ clientData: newClientData }); // backend update debounced
+  // Debounce helper
+  function useDebouncedCallback(
+    callback: () => void,
+    delay: number,
+    deps: any[]
+  ) {
+    useEffect(() => {
+      const handler = setTimeout(callback, delay);
+      return () => clearTimeout(handler);
+    }, [...deps]);
   }
-}, 300, [childSeatNumber, flowersNumber, airportAssistance, wait]);
 
+  // Recalculate price whenever extras selection changes
+  useDebouncedCallback(
+    () => {
+      if (!clientData || extras.length === 0 || clientData.base_price == null)
+        return;
+
+      const basePrice = Number(clientData.base_price);
+
+      const extrasTotal =
+        childSeatNumber * Math.round(extras[0]?.price || 0) +
+        flowersNumber * Math.round(extras[1]?.price || 0) +
+        (airportAssistance ? Math.round(extras[2]?.price || 0) : 0) +
+        (wait ? Math.round(extras[3]?.price || 0) : 0);
+
+      const newPrice = Math.max(0, Math.round(basePrice + extrasTotal));
+
+      const newExtras: ExtrasData = {
+        childSeat: childSeatNumber,
+        flowers: flowersNumber,
+        airportAssistance,
+        wait,
+      };
+
+      const extrasChanged =
+        clientData.extras?.childSeat !== childSeatNumber ||
+        clientData.extras?.flowers !== flowersNumber ||
+        clientData.extras?.airportAssistance !== airportAssistance ||
+        clientData.extras?.wait !== wait;
+
+      if (clientData.price !== newPrice || extrasChanged) {
+        const newClientData = {
+          ...clientData,
+          base_price: basePrice,
+          price: newPrice,
+          extras: newExtras,
+        };
+
+        setClientData(newClientData);
+        UpdateData({ clientData: newClientData }); // backend update debounced
+      }
+    },
+    300,
+    [childSeatNumber, flowersNumber, airportAssistance, wait]
+  );
 
   function handleAirportAssistance() {
     setAirportAssistance((prev) => !prev);

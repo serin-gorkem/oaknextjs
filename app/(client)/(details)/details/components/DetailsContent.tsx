@@ -218,7 +218,8 @@ const Details = memo(function () {
                     Phone Number <span className="text-warning">*</span>
                   </legend>
                   <input
-                    type="text"
+                    type="tel"
+                    autoComplete="tel"
                     className="bg-base-300 h-10 p-2 w-full shadow-sm lg:text-base"
                     placeholder="+00 000 000 00 00"
                     required

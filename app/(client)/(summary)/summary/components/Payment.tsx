@@ -163,7 +163,7 @@ const navigateToFailed = (clientData:any) => {
         </span>
       </label>
       <p className="text-sm text-gray-500">
-        <a href="/terms/booking-policy" target="_blank" className="underline">
+        <a href="/policy" target="_blank" className="underline">
           View Terms
         </a>
       </p>

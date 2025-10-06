@@ -23,7 +23,7 @@ const SuccessPage = () => {
   return (
     <div className="min-h-[70vh] flex flex-col items-center justify-center bg-base-200 rounded-box shadow-md p-8 text-center">
       <h1 className="text-2xl font-semibold mb-4">
-        Payment {isCard ? "Confirmed" : "Pending Payment"}
+        Payment {isCard ? "Confirmed" : "Pending "}
       </h1>
 
       {isCard && (
