@@ -14,8 +14,7 @@ import { useRouter } from "next/navigation";
 import ContactSummaryCard from "./ContactSummaryCard";
 import VehicleInfo from "./VehicleInfo";
 import RideDetails from "./RideDetailsCard";
-
-
+import Payment from "./Payment";
 
 {
   /* On Form.jsx, there is a submit button and it will push form information to this jsx file and it will be used in Transfer Card  */
@@ -41,8 +40,9 @@ const Summary = memo(function () {
               clientData={clientData}
               navigateToBooking={navigateToBooking}
             />
-            {/* Navigation Buttons */}
-            {/* Navigation Buttons */}
+            <Payment/>
+
+            {/* Navigation Button */}
             <div className="flex flex-col">
               <button
                 onClick={navigateToDetails}
@@ -64,13 +64,8 @@ const Summary = memo(function () {
                 </svg>
                 Personal Details
               </button>
-              <button
-                onClick={navigateToDetails}
-                className="btn btn-primary hover:text-white mt-2  hover:btn-warning px-2 md:w-full btn-gray"
-              >
-                Book your trip now !
-              </button>
             </div>
+
           </aside>
           <div className="lg:w-full flex flex-col gap-4">
             <div className=" lg:flex lg:flex-col lg:gap-4">

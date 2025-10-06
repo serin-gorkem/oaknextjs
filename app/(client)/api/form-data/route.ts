@@ -20,15 +20,16 @@ export async function POST(request: Request) {
     extras,
     details,
     price,
-    base_price
+    base_price,
+    payment_method
   } = body;
 
   try {
     await query(
       `INSERT INTO bookings (
     pickup_location, drop_off_location, pickup_date,
-    pickup_hour, passenger_count, uuid,return_data,booking, extras, details, price, base_price
-      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)`,
+    pickup_hour, passenger_count, uuid,return_data,booking, extras, details, price, base_price, payment_method
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)`,
       [
         JSON.stringify(pickup_location),
         JSON.stringify(drop_off_location),
@@ -41,7 +42,8 @@ export async function POST(request: Request) {
         extras ? JSON.stringify(extras) : null,
         details ? JSON.stringify(details) : JSON.stringify({}),
         price ?? 0,
-        base_price ?? 0
+        base_price ?? 0,
+        payment_method ?? null
       ]
     );
     return NextResponse.json({ status: 200 });
@@ -55,7 +57,7 @@ export async function GET(req: NextRequest) {
   const uuid = req.nextUrl.searchParams.get("uuid");
 
   if (!uuid) {
-    return NextResponse.json({ error: "UUID eksik" }, { status: 400 });
+    return NextResponse.json({ error: "Missing UUID" }, { status: 400 });
   }
 
   try {
@@ -65,27 +67,27 @@ export async function GET(req: NextRequest) {
     );
 
     if (result.rows.length === 0) {
-      return NextResponse.json({ error: "Kayıt bulunamadı" }, { status: 404 });
+      return NextResponse.json({ error: "Couldn't find the client." }, { status: 404 });
     }
 
     return NextResponse.json(result.rows[0]);
   } catch (error) {
     console.error("GET Error:", error);
-    return NextResponse.json({ error: "Veri çekme hatası" }, { status: 500 });
+    return NextResponse.json({ error: "Data fetch error." }, { status: 500 });
   }
 }
 
 export async function DELETE(req: NextRequest) {
   const uuid = req.nextUrl.searchParams.get("uuid");
   if (!uuid) {
-    return NextResponse.json({ error: "UUID eksik" }, { status: 400 });
+    return NextResponse.json({ error: "Missing UUID" }, { status: 400 });
   }
   try {
     await query("DELETE FROM bookings WHERE uuid = $1", [uuid]);
     return NextResponse.json({ status: 200 });
   } catch (error) {
     console.error("DELETE Error:", error);
-    return NextResponse.json({ error: "Veri silme hatası" }, { status: 500 });
+    return NextResponse.json({ error: "Data delete error." }, { status: 500 });
   }
 }
 
@@ -98,7 +100,8 @@ export async function PUT(request: Request) {
     extras,
     details,
     price,
-    base_price
+    base_price,
+    payment_method
   } = body;
 
   if (!uuid) {
@@ -109,8 +112,8 @@ export async function PUT(request: Request) {
     await query(
       `
       UPDATE bookings
-      SET return_data = $1, booking=$2, extras = $3, details = $4 , price = $5, base_price = $6
-      WHERE uuid = $7
+      SET return_data = $1, booking=$2, extras = $3, details = $4 , price = $5, base_price = $6, payment_method = $7
+      WHERE uuid = $8
     `,
       [
         return_data ?? null,
@@ -119,6 +122,7 @@ export async function PUT(request: Request) {
         details ?? {},
         price ?? 0,
         base_price ?? 0,
+        payment_method ?? null,
         uuid,
       ]
     );
