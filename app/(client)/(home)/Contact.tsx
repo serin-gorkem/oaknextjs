@@ -1,26 +1,36 @@
 "use client";
-import { memo } from "react";
+import { memo, useState } from "react";
 
 const Contact = memo(function () {
+    const [statusMessage, setStatusMessage] = useState<string | null>(null);
+  const [statusType, setStatusType] = useState<"success" | "error" | null>(null);
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-  event.preventDefault();
-  const form = event.currentTarget;
-  const formData = new FormData(form);
-  const data = Object.fromEntries(formData.entries());
+    event.preventDefault();
+    const form = event.currentTarget;
+    const formData = new FormData(form);
+    const data = Object.fromEntries(formData.entries());
 
-  const res = await fetch("/api/contact", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data),
-  });
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
 
-  if (res.ok) {
-    alert("Message sent successfully!");
-    form.reset();
-  } else {
-    alert("Failed to send message.");
+      if (res.ok) {
+        setStatusMessage("Message sent successfully!");
+        setStatusType("success");
+        form.reset();
+      } else {
+        setStatusMessage("Failed to send message.");
+        setStatusType("error");
+      }
+    } catch (err) {
+      setStatusMessage("An error occurred. Please try again.");
+      setStatusType("error");
+    }
   }
-}
+
   return (
     <section
       id="Contact"
@@ -43,6 +53,7 @@ const Contact = memo(function () {
             <input
               type="text"
               id="name"
+              name="firstName" 
               autoComplete="given-name"
               className="bg-base-300 h-10 p-2 w-full shadow-sm lg:text-base"
               placeholder="First Name"
@@ -56,6 +67,7 @@ const Contact = memo(function () {
             <input
               type="text"
               id="name"
+              name="lastName"
               autoComplete="family-name"
               className="bg-base-300 h-10 w-full p-2 shadow-sm lg:text-base"
               placeholder="Last Name"
@@ -69,6 +81,7 @@ const Contact = memo(function () {
             <input
               type="text"
               id="name"
+              name="email" 
               autoComplete="email"
               className="bg-base-300 h-10 w-full p-2 shadow-sm lg:text-base"
               placeholder="Email"
@@ -82,6 +95,7 @@ const Contact = memo(function () {
             <input
               type="text"
               id="name"
+              name="phone"
               autoComplete="tel"
               className="bg-base-300 h-10 p-2 w-full shadow-sm lg:text-base"
               placeholder="+00 000 000 00 00"
@@ -94,6 +108,7 @@ const Contact = memo(function () {
             </legend>
             <textarea
               id="message"
+              name="message"
               className="bg-base-300 h-32 w-full p-2 shadow-sm lg:text-base"
               placeholder="Leave us a message..."
               required
@@ -106,6 +121,16 @@ const Contact = memo(function () {
           >
             SEND MESSAGE
           </button>
+        {/* Mesaj gösterimi */}
+          {statusMessage && (
+            <p
+              className={`mt-2 text-sm ${
+                statusType === "success" ? "text-green-600" : "text-red-600"
+              }`}
+            >
+              {statusMessage}
+            </p>
+          )}
         </form>
         <div className="flex flex-col gap-2 lg:w-1/2">
           <h2 className="text-xl lg:text-2xl font-bold">Call Us</h2>

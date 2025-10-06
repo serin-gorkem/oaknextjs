@@ -20,7 +20,7 @@ export async function POST(req: Request) {
     // Mail ayarları
     await transporter.sendMail({
       from: `"${firstName} ${lastName}" <${process.env.MAILGUN_USER}>`,
-      to: "your_email@airporttohotels.com", // kendi mail adresin
+      to: "gorkemserin@outlook.com", // kendi mail adresin
       subject: "New Contact Form Submission",
       html: `
         <p><strong>First Name:</strong> ${firstName}</p>
