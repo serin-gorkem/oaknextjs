@@ -17,11 +17,11 @@ export async function POST(req: Request) {
       },
     });
 
-    // Mail ayarları
     await transporter.sendMail({
-      from: `"${firstName} ${lastName}" <${process.env.MAILGUN_USER}>`,
-      to: "gorkemserin@outlook.com", // kendi mail adresin
-      subject: "New Contact Form Submission",
+      from: `"Website Contact" <${process.env.MAILGUN_USER}>`, // Mailgun hesabınız
+      to: "info@airporttohotels.com", // sizin alıcı mail adresiniz
+      replyTo: email, // kullanıcıdan gelen e-posta, cevaplarken kullanılır
+      subject: "Airport to Hotels Contact Formu Mesajı",
       html: `
         <p><strong>First Name:</strong> ${firstName}</p>
         <p><strong>Last Name:</strong> ${lastName}</p>
@@ -30,7 +30,6 @@ export async function POST(req: Request) {
         <p><strong>Message:</strong><br/>${message}</p>
       `,
     });
-
     return NextResponse.json({ success: true });
   } catch (error: any) {
     console.error("Mail send error:", error);
