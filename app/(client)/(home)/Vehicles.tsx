@@ -52,7 +52,7 @@ const Vehicles = memo(function () {
         className="h-fit mt-16 px-2 pb-8 flex flex-col lg:p-0 xl:max-w-9/12 lg:max-w-11/12 mx-auto flex-wrap gap-4"
       >
         <figure className="flex flex-col gap-2.5 h-fit">
-          <figcaption className="text-xl lg:text-2xl text-warning font-bold font-heading leading-tight">
+          <figcaption className="text-xl title lg:text-2xl text-warning font-bold font-heading leading-tight">
             Our Vehicles
           </figcaption>
           <h1 className="text-2xl lg:text-4xl font-bold opacity-85">

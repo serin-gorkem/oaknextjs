@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { memo } from "react";
 
 const FAQ = memo(function () {
@@ -7,14 +8,15 @@ const FAQ = memo(function () {
       className="h-fit mt-16 px-2 pb-8 flex flex-col lg:p-0 xl:max-w-9/12 lg:max-w-11/12 mx-auto gap-8 lg:gap-16"
     >
       <figure className="flex flex-col gap-2.5">
-        <figcaption className="text-xl lg:text-2xl text-warning font-bold font-heading leading-tight">
+        <figcaption className="text-xl title lg:text-2xl text-warning font-bold font-heading leading-tight">
           FAQ
         </figcaption>
         <h1 className="text-2xl lg:text-4xl font-bold opacity-85">
           Frequently Asked Questions
         </h1>
       </figure>
-      <div className="flex flex-col gap-3">
+      <div className="flex flex-col lg:flex-row gap-8 lg:gap-4">
+      <div className="flex flex-col justify-between ">
         <FAQElement
           title="How do I book a hotel?"
           text="To book a hotel, visit our website and select your preferred accommodation. You can also contact our customer support team at 123-456-7890."
@@ -32,12 +34,20 @@ const FAQ = memo(function () {
           text="To secure your booking, make sure to use a secure payment method like PayPal or Stripe. Additionally, we recommend using a reputable hotel chain to ensure your stay is as comfortable as possible."
         />
       </div>
+        <Image
+          src="/images/faq.webp"
+          alt="FAQ"
+          width={1920}
+          height={1080}
+          className="rounded-box w-full h-96 object-cover -z-5"
+        ></Image>
+      </div>
       <div className="flex flex-col items-center gap-3">
         <h2 className=" text-xl md:text-2xl font-bold">
-        Still have questions ?
+          Still have questions ?
         </h2>
         <p className="text-xs md:text-lg">
-        Please contact with our support team, we’re happy to help!
+          Please contact with our support team, we’re happy to help!
         </p>
         <button className="btn btn-outline px-8 btn-lg"> Contact Us</button>
       </div>

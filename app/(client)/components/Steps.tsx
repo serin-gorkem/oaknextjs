@@ -5,7 +5,7 @@ const Steps = memo(function () {
   return (
     <section id="steps" className="h-fit mt-16 px-2 pb-8 flex flex-col lg:p-0 xl:max-w-9/12 lg:max-w-11/12 mx-auto gap-8 lg:gap-16">
       <figure className="flex flex-col gap-2.5">
-        <figcaption className="text-xl lg:text-2xl text-warning font-bold font-heading leading-tight">
+        <figcaption className="text-xl title lg:text-2xl text-warning font-bold font-heading leading-tight">
           How to book your ride
         </figcaption>
         <h1 className="text-2xl lg:text-4xl font-bold opacity-85">

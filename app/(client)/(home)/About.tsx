@@ -5,49 +5,40 @@ const About = memo(function () {
   return (
     <section
       id="about"
-      className="p-2 md:px-4 lg:px-0 flex flex-col gap-8 z-10 xl:max-w-9/12 lg:max-w-11/12 mx-auto"
+      className="relative w-full h-[40rem] xl:max-w-9/12 lg:max-w-11/12 lg:mx-auto"
     >
-      <figure className="flex flex-col gap-2.5">
-        <figcaption className="text-xl text-warning lg:text-2xl font-black font-heading leading-tight">
-          About Us
-        </figcaption>
-        <h1 className="text-2xl lg:text-4xl font-bold opacity-85">
-          Who we are ?
-        </h1>
-      </figure>
-      <figure className="flex lg:flex-row flex-col gap-4">
-        <Image
-          src="/images/Team.webp"
-          width={1000}
-          height={1000}
-          className="w-full lg:w-1/2 h-auto object-cover rounded-lg"
-          alt="team image"
-        ></Image>
-        <div className="flex flex-col gap-4">
-          <h2 className="font-bold text-2xl lg:text-4xl">We are Airport to Hotels</h2>
-          <p className="text-xs font-normal text-primary xl:text-xl leading-relaxed tracking-tighter">
-            At Airport to Hotels, we specialize in providing seamless, reliable,
-            and comfortable transfers directly from airports to your hotel. Our
-            mission is to make your arrival and departure effortless, allowing
-            you to start and end your trip with ease.
-          </p>
-          <p className="text-xs font-normal text-primary xl:text-xl leading-relaxed tracking-tighter">
-            Our team of licensed and trained professionals is dedicated to
-            ensuring safety, punctuality, and customer satisfaction. We operate
-            with a modern fleet of luxury vehicles that are regularly maintained
-            for maximum comfort and safety on every journey.
-          </p>
-          <p className="text-xs font-normal text-primary xl:text-xl leading-relaxed tracking-tighter">
-            Thanks to our extensive and affordable service network, we offer
-            fast, dependable, and cost-effective transportation solutions across
-            the region. Whether you're traveling for business or leisure, we are
-            committed to providing an exceptional transfer experience.
-          </p>
-          <p className="text-xs font-normal text-primary xl:text-xl leading-relaxed tracking-tighter">
-Travel with Airport to Hotels for a comfortable, safe, and economical ride from the airport directly to your accommodation.
-          </p>
+      <Image
+        src="/images/about.webp"
+        alt="About Us"
+        fill
+        className="rounded-box object-cover -z-5"
+      ></Image>
+      <div className="lg:p-16 p-4 max-w-2xl">
+        <div className="bg-base-300 z-100 lg:h-[33rem] lg:w-[60rem] rounded-[10px] p-4 lg:p-8 opacity-90">
+          <div className="flex flex-col gap-8">
+            <div className="flex flex-col gap-2"> 
+            <p className="text-xl title lg:text-xl text-warning font-bold leading-tight">
+              About Us
+            </p>
+            <h1 className="text-3xl lg:text-7xl w-5/6 leading-tight title ">
+              We are Airport to Hotels
+            </h1>
+
+            </div>
+            <p className="text-base lg:text-xl opacity-85 w-5/6 leading-tight" >
+              At Airport to Hotels, we specialize in providing seamless, reliable, and comfortable transfers directly from airports to your hotel. Our mission is to make your arrival and departure effortless, allowing you to start and end your trip with ease. 
+            </p>
+          <button
+            aria-label="Book now button"
+            className="btn w-48 h-12 bg-primary text-white hover:bg-warning hover:border-warning hover:shadow-none hover:text-base-100"
+          >
+            <a href="/about" className="w-full" aria-label="Go to book now.">
+            Learn More
+            </a>
+          </button>
+          </div>
         </div>
-      </figure>
+      </div>
     </section>
   );
 });

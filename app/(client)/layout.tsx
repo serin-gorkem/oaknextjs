@@ -1,20 +1,24 @@
   import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import {Merriweather, Lato } from "next/font/google";
 import "./styles/globals.css";
 import Footer from "./components/Footer";
 import Navbar from "./components/Navbar";
 import CurrencyProvider from "./components/CurrencyWrapper";
 import VehicleProvider from "./components/VehicleWrapper";
 import Head from "next/head";
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+
+const merriweather = Merriweather({
+  variable: "--font-merriweather",
   subsets: ["latin"],
+  weight: ["400", "700"],
+});
+const lato = Lato({
+  variable: "--font-lato",
+  subsets: ["latin"],
+  weight: ["400", "700"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+
 
 export const metadata: Metadata = {
   title: "Airport To Hotels – Private Airport Transfers in Turkey",
@@ -59,20 +63,22 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" data-theme="base">
+    <html
+      lang="en"
+      className={` ${merriweather.variable} ${lato.variable} antialiased`}
+      data-theme="base"
+    >
       <Head>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+      <body className="font-lato">
         <VehicleProvider>
           <CurrencyProvider>
-            <Navbar/>
+            <Navbar />
             {children}
           </CurrencyProvider>
         </VehicleProvider>
-        <Footer/>
+        <Footer />
       </body>
     </html>
   );

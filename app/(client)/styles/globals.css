@@ -34,3 +34,15 @@
     --depth: 1;
     --noise: 0;
 }
+:root {
+  --font-merriweather: Merriweather, serif;
+  --font-lato: Lato, sans-serif;
+}
+
+html{
+  font-family: var(--font-lato);
+}
+
+.title{
+  font-family: var(--font-merriweather);
+}
