@@ -6,7 +6,7 @@ const VehicleCard = lazy(() => import("./components/VehicleCard"));
 import "@splidejs/react-splide/css";
 import { Splide, SplideSlide } from "@splidejs/react-splide";
 import { useVehicle } from "../context/VehicleContext";
-
+import Image from "next/image";
 
 const Vehicles = memo(function () {
   const [perPage, setPerPage] = useState(2);
@@ -20,8 +20,8 @@ const Vehicles = memo(function () {
     features: string[];
     base_price: number;
   };
-  const {vehicles} = useVehicle();
-  
+  const { vehicles } = useVehicle();
+
   useEffect(() => {
     const updatePerPage = () => {
       const width = window.innerWidth;
@@ -43,7 +43,6 @@ const Vehicles = memo(function () {
       window.removeEventListener("resize", updatePerPage);
     };
   }, []);
-
 
   return (
     <>
@@ -88,11 +87,76 @@ const Vehicles = memo(function () {
                 personCount={vehicle.capacity_person}
                 bagsCount={vehicle.capacity_bags}
                 specs={vehicle.features}
-                base_price = {vehicle.base_price}
+                base_price={vehicle.base_price}
               />
             </SplideSlide>
           ))}
         </Splide>
+        {/* Helicopter and Jet Section.  */}
+        <figure className="flex flex-col text-center w-full mt-4 gap-5 h-fit">
+          <figcaption className="text-2xl lg:text-4xl font-bold opacity-85">
+            A SOLUTION FOR EVERY DESTINATION
+          </figcaption>
+          <h2 className=" text-xl font-medium opacity-70">
+            Discover our private Jet and Helicopter choices.
+          </h2>
+          <Image
+            src="/images/helicopter-jet.jpg"
+            alt="Helicopter and Jet"
+            width={1920}
+            height={1080}
+            className="w-full h-96 rounded-lg object-cover"
+            priority
+          ></Image>
+          <div className="w-full flex flex-col lg:flex-row justify-between">
+            <div className="flex flex-col gap-8 lg:flex-row justify-between ">
+              <Image
+                src="/images/private-jet.jpg"
+                alt="Private Jet"
+                width={1920}
+                height={1080}
+                className="h-96 lg:w-1/2 rounded-lg object-cover"
+                priority
+              ></Image>
+              <div className="text-left flex lg:w-1/2 flex-col gap-2.5 lg:pl-2">
+                <h3 className="text-2xl lg:text-4xl font-bold opacity-85">
+                  Private Jet
+                </h3>
+                <p className="text-xl font-medium opacity-70 lg:w-10/12">
+                  Enjoy exclusive helicopter transfers for a VIP experience.
+                  Available at Istanbul, Sabiha Gökçen, Dalaman, Bodrum, İzmir,
+                  and Antalya Airports. Contact us via WhatsApp for pricing and
+                  booking.
+                </p>
+              </div>
+            </div>
+            <div></div>
+          </div>
+          <div className="w-full flex flex-col lg:flex-row justify-between">
+            <div className="flex flex-col-reverse gap-8 lg:flex-row justify-between ">
+              <div className="text-left flex lg:w-1/2 flex-col gap-2.5 lg:pr-2">
+                <h3 className="text-2xl lg:text-4xl font-bold opacity-85">
+                  Private Helicopter
+                </h3>
+                <p className="text-xl font-medium opacity-70 lg:w-10/12">
+                  Enjoy exclusive helicopter transfers for a VIP experience.
+                  Available at Istanbul, Sabiha Gökçen, Dalaman, Bodrum, İzmir,
+                  and Antalya Airports. Contact us via WhatsApp for pricing and
+                  booking.
+                </p>
+              </div>
+              <Image
+                src="/images/helicopter.jpg"
+                alt="Private Jet"
+                width={1920}
+                height={1080}
+                className="h-96 lg:w-1/2 rounded-lg object-cover"
+                priority
+              ></Image>
+            </div>
+            <div></div>
+          </div>
+        </figure>
       </section>
     </>
   );

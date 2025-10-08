@@ -8,10 +8,10 @@ export default function BookContent() {
   return (
     <section
       id="home"
-      className="h-fit flex flex-col relative sm:gap-5 lg:gap-10"
+      className="h-svh flex flex-col relative sm:gap-5 lg:gap-10"
     >
       <Image
-        src="/images/BookBackground.webp"
+        src="/images/BookBackground.jpg"
         width={2048}
         height={1556}
         className="object-center object-cover absolute w-full h-full brightness-40"
