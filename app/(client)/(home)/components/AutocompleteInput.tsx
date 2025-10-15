@@ -74,6 +74,7 @@ export default function AutocompleteInput({
       value={value}
       onChange={(e) => onChange(e.target.value)}
       placeholder={placeholder}
+      className="text-base w-full"
     />
   );
 }
