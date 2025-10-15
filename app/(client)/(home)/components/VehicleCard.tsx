@@ -76,7 +76,7 @@ function BackFace(props: BackFaceProps) {
     <figure className="flex relative h-fit flex-col justify-center gap-4">
       <figcaption
         onClick={props.showDetails}
-        className="cursor-pointer text-xs absolute text-warning -top-2 right-0 font-bold"
+        className="cursor-pointer text-base absolute text-warning -top-2 right-0 font-bold"
       >
         Exit
       </figcaption>

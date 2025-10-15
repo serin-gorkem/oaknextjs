@@ -10,7 +10,6 @@ import Image from "next/image";
 
 const Vehicles = memo(function () {
   const [perPage, setPerPage] = useState(2);
-  const [carouselHeight, setCarouselHeight] = useState("25rem");
   type Vehicle = {
     id: number;
     name: string;
@@ -27,13 +26,10 @@ const Vehicles = memo(function () {
       const width = window.innerWidth;
       if (width < 640) {
         setPerPage(1); // mobile: <640px
-        setCarouselHeight("100%");
       } else if (width < 1024) {
         setPerPage(2); // tablet: 640px–1023px
-        setCarouselHeight("100%");
       } else {
         setPerPage(3); // desktop: >=1024px
-        setCarouselHeight("100%");
       }
     };
     updatePerPage(); // Run once on mount
@@ -62,7 +58,7 @@ const Vehicles = memo(function () {
           </h2>
         </figure>
         <Splide
-          aria-label="My Favorite Images"
+          aria-label="Vehicle Carousel"
           className="overflow-hidden"
           options={{
             type: "loop",
@@ -76,7 +72,7 @@ const Vehicles = memo(function () {
             rewind: true,
             rewindByDrag: true,
             rewindSpeed: 1000,
-            height: carouselHeight,
+            height: "100%",
           }}
         >
           {vehicles?.map((vehicle, index) => (
@@ -101,7 +97,7 @@ const Vehicles = memo(function () {
             Discover our private Jet and Helicopter choices.
           </h2>
           <Image
-            src="/images/helicopter-jet.jpg"
+            src="/images/helicopter-jet.webp"
             alt="Helicopter and Jet"
             width={1920}
             height={1080}
@@ -111,7 +107,7 @@ const Vehicles = memo(function () {
           <div className="w-full flex flex-col lg:flex-row justify-between">
             <div className="flex flex-col gap-8 lg:flex-row justify-between ">
               <Image
-                src="/images/private-jet.jpg"
+                src="/images/private-jet.webp"
                 alt="Private Jet"
                 width={1920}
                 height={1080}
@@ -146,7 +142,7 @@ const Vehicles = memo(function () {
                 </p>
               </div>
               <Image
-                src="/images/helicopter.jpg"
+                src="/images/helicopter.webp"
                 alt="Private Jet"
                 width={1920}
                 height={1080}

@@ -10,7 +10,7 @@ export default function Home() {
       className="h-fit flex flex-col relative sm:gap-5 lg:gap-10"
     >
       <Image
-        src="/images/homepage.jpg"
+        src="/images/homepage.webp"
         width={1920}
         height={1080}
         className="object-center object-cover absolute w-full h-full brightness-40"
@@ -29,15 +29,20 @@ export default function Home() {
             Reliable <span className=" text-warning ">Airport Travels. </span>
             Travel with Confidence and Luxury at Great Prices.
           </h1>
-          <h2 className="font-paragraph xl:pb-8 text-xs font-light text-white opacity-80 sm:w-full md:w-full sm:text-sm xl:text-xl xl:w-8/12 w-fit leading-relaxed tracking-tighter">
-            At Airport to Hotels, we specialize in providing seamless, reliable, and comfortable transfers directly from airports to your hotel. Our mission is to make your arrival and departure effortless, allowing you to start and end your trip with ease.
+          <h2 className="font-paragraph xl:pb-8 text-base font-light text-white opacity-80 sm:w-full md:w-full sm:text-sm xl:text-xl xl:w-8/12 w-fit leading-relaxed tracking-tighter">
+            At Airport to Hotels, we specialize in providing seamless, reliable,
+            and comfortable transfers directly from airports to your hotel. Our
+            mission is to make your arrival and departure effortless, allowing
+            you to start and end your trip with ease.
           </h2>
-          <button
-            aria-label="How to book your ride page navigator button"
-            className="btn btn-md lg:btn-lg hover:bg-primary hover:border-primary hover:shadow-none hover:text-base-100 w-fit font-paragraph font-light self-baseline"
-          >
-            How to book your ride
-          </button>
+          <a href="/#steps">
+            <button
+              aria-label="How to book your ride page navigator button"
+              className="btn btn-md lg:btn-lg hover:bg-primary hover:border-primary hover:shadow-none hover:text-base-100 w-fit font-paragraph font-light self-baseline"
+            >
+              How to book your ride
+            </button>
+          </a>
         </div>
         <div className="relative sm:max-w-96 h-fit w-full">
           <CurrencyWrapper>

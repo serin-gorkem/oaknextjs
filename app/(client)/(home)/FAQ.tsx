@@ -46,7 +46,7 @@ const FAQ = memo(function () {
         <h2 className=" text-xl md:text-2xl font-bold">
           Still have questions ?
         </h2>
-        <p className="text-xs md:text-lg">
+        <p className="text-base md:text-lg">
           Please contact with our support team, we’re happy to help!
         </p>
         <button className="btn btn-outline px-8 btn-lg"> Contact Us</button>
