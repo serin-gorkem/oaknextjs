@@ -87,6 +87,14 @@ function PageNav({
           >
             Back To top
           </button>
+          <a href="/book">
+            <button
+              aria-label="Book Now button"
+              className="btn btn-warning w-30 lg:w-36 text-white hover:bg-white hover:text-primary"
+            >
+              Book Now !
+            </button>
+          </a>
           <CurrencyDropdown />
         </li>
       </ul>

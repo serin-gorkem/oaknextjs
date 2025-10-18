@@ -40,6 +40,32 @@ const Vehicles = memo(function () {
     };
   }, []);
 
+const checkIcon = (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    fill="none"
+    viewBox="0 0 24 24"
+    strokeWidth={1.5}
+    stroke="currentColor"
+    className="size-6 text-warning"
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="M9 12.75 11.25 15 15 9.75m-3-7.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285Z"
+    />
+  </svg>
+);
+
+const items = [
+  "Taxes and Tolls",
+  "Flight Monitoring",
+  "Waiting Time and Parking",
+  "Free Amendments",
+  "Free Cancellations",
+];
+
+
   return (
     <>
       <section
@@ -57,6 +83,7 @@ const Vehicles = memo(function () {
             Licensed vehicles, professional drivers
           </h2>
         </figure>
+
         <Splide
           aria-label="Vehicle Carousel"
           className="overflow-hidden"
@@ -88,6 +115,17 @@ const Vehicles = memo(function () {
             </SplideSlide>
           ))}
         </Splide>
+        <div className="bg-white p-4">
+          <h2 className="text-2xl my-2 title">Prices Include</h2>
+          <ul className="flex flex-col justify-between gap-2 text-base opacity-80">
+            {items.map((text) => (
+              <li key={text} className="flex items-center gap-2">
+                {checkIcon}
+                <span>{text}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
         {/* Helicopter and Jet Section.  */}
         <figure className="flex flex-col text-center w-full mt-8 lg:mt-24 gap-5 h-fit">
           <figcaption className="text-2xl lg:text-4xl font-bold opacity-85">
