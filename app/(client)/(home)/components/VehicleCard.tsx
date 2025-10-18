@@ -182,6 +182,7 @@ function FrontFace(props: FrontFaceProps) {
       />
       <h1 className="text-2xl font-heading font-bold">{props.text}</h1>
       <p className="text-warning font-black">{props.basePrice}</p>
+      <p className="text-warning font-black">Door-to-door</p>
       <hr></hr>
       <div className="flex flex-col flex-wrap gap-2 ">{specsList}</div>
       <button

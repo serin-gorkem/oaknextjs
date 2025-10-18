@@ -55,7 +55,7 @@ export default function Form() {
     "Milas–Bodrum Airport": 70,
     "Dalaman Airport": 70,
     "Antalya Airport": 100,
-    "Kayseri Erkilet Airport": 70,
+    "Kayseri Erkilet Airport": 150,
     "Nevşehir Kapadokya Airport": 70,
     "Esenboğa International Airport": 70,
     "Adana Şakirpaşa Airport": 50,

@@ -89,7 +89,7 @@ const Vehicles = memo(function () {
           ))}
         </Splide>
         {/* Helicopter and Jet Section.  */}
-        <figure className="flex flex-col text-center w-full mt-4 gap-5 h-fit">
+        <figure className="flex flex-col text-center w-full mt-8 lg:mt-24 gap-5 h-fit">
           <figcaption className="text-2xl lg:text-4xl font-bold opacity-85">
             A SOLUTION FOR EVERY DESTINATION
           </figcaption>
@@ -146,7 +146,7 @@ const Vehicles = memo(function () {
                 alt="Private Jet"
                 width={1920}
                 height={1080}
-                className="h-96 lg:w-1/2 rounded-lg object-cover"
+                className="h-96 lg:w-1/2 rounded-lg object-cover "
                 priority
               ></Image>
             </div>
