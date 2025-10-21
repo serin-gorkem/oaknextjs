@@ -99,7 +99,7 @@ const VehicleFeaturesCard = memo(function (props: VehicleFeaturesCardProps) {
           <p>Free Cancellation</p>
         </div>
       </div>
-      <button onClick={props.loadExtrasPage} className="btn btn-warning w-36 text-base-100">SELECT</button>
+      <button onClick={props.loadExtrasPage} className="btn btn-warning w-36 z-100 text-base-100">SELECT</button>
     </article>
   );
 });

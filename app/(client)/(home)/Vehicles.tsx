@@ -115,7 +115,7 @@ const items = [
             </SplideSlide>
           ))}
         </Splide>
-        <div className="bg-white p-4">
+        <div className="bg-white  rounded-box p-4">
           <h2 className="text-2xl my-2 title">Prices Include</h2>
           <ul className="flex flex-col justify-between gap-2 text-base opacity-80">
             {items.map((text) => (

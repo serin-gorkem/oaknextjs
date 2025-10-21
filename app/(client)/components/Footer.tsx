@@ -6,9 +6,14 @@ const Footer = memo(function () {
     <footer className="bg-info-content pt-12 pb-2 relative ">
       <div className="footer sm:footer-horizontal xl:max-w-9/12 lg:max-w-11/12 lg:px-0 sm:px-4 px-2 mx-auto text-neutral-content">
         <div>
-          <h1 className="text-2xl text-base-300 font-bold">
-            Airport to Hotels
-          </h1>
+          <Image
+            src="/images/logos/Logo_W.png"
+            width="512"
+            height="512"
+            alt="Airport to Hotels Logo"
+            className="w-fit h-10"
+          >
+          </Image>
           <p className="w-10/12 text-sm sm:text-base">
             Located in Turkey/Kusadasi; we provide reliable and comfortable
             airport transfers, with transparent pricing and professional
@@ -122,16 +127,24 @@ const Footer = memo(function () {
           <Image
             src="/images/logos/Logo-oak.webp"
             alt="OAK Travel Group Logo"
-            width={50}
-            height={50}
+            width={48}
+            height={48}
           ></Image>
         </div>
+
           <p className="text-sm">© {new Date().getFullYear()} All rights reserved to OAK Travel Group</p>
+
       </div>
       <div className="flex sm:flex-row flex-col sm:items-center gap-2 sm:gap-0 mt-4 sm:justify-between bottom-4 xl:max-w-9/12 lg:max-w-11/12 lg:px-0 sm:px-4 px-2 mx-auto text-neutral-content">
         <a className="text-sm" href="https://gorkemserin.com/">
           Website Designed by Crehera Web Agency - Görkem Serin
         </a>
+                  <Image
+            src="/images/iyzico.webp"
+            alt="OAK Travel Group Logo"
+            width={512}
+            height={512}
+            ></Image>
       </div>
     </footer>
   );

@@ -9,7 +9,7 @@ export default function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
   const shouldShowFullNav = pathname === "/book" || pathname === "/";
-
+  const showCurrency = pathname !== "/policy" 
 
   const handleNavigateToHome = () => router.push("/");
 
@@ -24,7 +24,9 @@ export default function Navbar() {
         </>
       ) : (
         <>
-          <BookingNav />
+          <BookingNav
+            showCurrency={showCurrency} 
+          />
         </>
       )}
     </div>
@@ -79,7 +81,7 @@ function PageNav({
             />
           </a>
         </li>
-        <li className="flex items-center gap-4 w-fit cursor-pointer">
+        <li className="flex flex-wrap items-center gap-4 w-fit cursor-pointer">
           <button
             onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
             aria-label="Go back to top button"
@@ -287,7 +289,8 @@ function DesktopNav() {
 }
 
 // ---------------------- BookingNav ----------------------
-function BookingNav() {
+function BookingNav({ showCurrency }: { showCurrency: boolean }) {
+  console.log("Show Currency: ", showCurrency);
   return (
     <nav className="flex flex-col z-20 lg:px-0 sm:px-4 xl:max-w-9/12 lg:max-w-11/12 mx-auto">
       <div>
@@ -304,9 +307,11 @@ function BookingNav() {
               />
             </a>
           </li>
-          <li className="flex cursor-pointer items-center gap-4">
-            <CurrencyDropdown />
-          </li>
+          {showCurrency === true ? (
+            <li className="flex cursor-pointer items-center gap-4">
+              <CurrencyDropdown />
+            </li>
+          ) : null}
         </ul>
         <hr className="mx-2 text-primary"></hr>
       </div>

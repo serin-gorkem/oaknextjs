@@ -7,6 +7,7 @@ import { useGetData } from "../../../components/GetData";
 import { UpdateData } from "../../../components/UpdateData";
 import { useRouter } from "next/navigation";
 import SessionExpiredFallback from "@/app/(client)/components/SessionExpiredFallback";
+import FallbackLoader from "@/app/(client)/components/FallbackLoader";
 
 {
   /* Lazy Loadings */
@@ -143,15 +144,8 @@ const Details = memo(function () {
   if (error || !clientData) {
     return <SessionExpiredFallback error={error} clientData={clientData} />;
   }
-    if (!clientData) {
-    return (
-      <div className="h-screen flex items-center justify-center">
-        <p className="text-center mt-20">Loading Data...</p>
-      </div>
-    );
-  }
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={<FallbackLoader />}>
       <div className="flex relative flex-col mt-20 sm:mt-24 justify-between lg:block xl:max-w-9/12 lg:max-w-11/12 mx-auto">
         <section className="p-4 md:px-4 flex justify-between flex-col-reverse lg:flex-row-reverse gap-4 w-full lg:px-0 ">
           <aside className="flex flex-col gap-3 xl:w-4/12 lg:w-5/12">

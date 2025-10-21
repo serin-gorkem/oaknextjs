@@ -1,5 +1,6 @@
 // components/SessionExpiredFallback.tsx
 import React from "react";
+import FallbackLoader from "./FallbackLoader";
 
 type Props = {
   error: string | null;
@@ -17,9 +18,7 @@ export default function SessionExpiredFallback({ error, clientData }: Props) {
 
   if (!clientData) {
     return (
-      <div className="h-screen flex items-center justify-center">
-        <p className="text-center mt-20">Loading Data...</p>
-      </div>
+      <FallbackLoader/>
     );
   }
 

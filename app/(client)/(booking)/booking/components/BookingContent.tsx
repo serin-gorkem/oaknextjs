@@ -205,46 +205,48 @@ export default function BookingContent() {
               onRouteInfo={setRouteInfo}
             />
           </div>
-          <Splide
-            aria-label="My Favorite Images"
-            className="overflow-hidden"
-            options={{
-              type: "loop",
-              gap: "1rem",
-              autoplay: true,
-              pauseOnHover: true,
-              resetProgress: false,
-              perPage,
-              speed: 800,
-              rewind: true,
-              rewindByDrag: true,
-              rewindSpeed: 1000,
-              height: "100%",
-            }}
-          >
-            {mergedVehicles?.map((vehicle, index) => (
-              <SplideSlide key={index}>
-                <VehicleFeaturesCard
-                  key={`${vehicle.id}-${currencyIndex}`}
-                  img={vehicle.image_url}
-                  vehicleName={vehicle.name}
-                  person={vehicle.capacity_person}
-                  bags={vehicle.capacity_bags}
-                  features={vehicle.features}
-                  totalPrice={vehicle.total_price}
-                  currency={symbol}
-                  loadExtrasPage={() =>
-                    loadExtrasPage(
-                      vehicle.name,
-                      vehicle.id,
-                      vehicle.total_price,
-                      vehicle.image_url
-                    )
-                  }
-                />
-              </SplideSlide>
-            ))}
-          </Splide>
+          {mergedVehicles?.length > 0 && (
+            <Splide
+              aria-label="My Favorite Images"
+              className="overflow-hidden"
+              options={{
+                type: "loop",
+                gap: "1rem",
+                autoplay: true,
+                pauseOnHover: true,
+                resetProgress: false,
+                perPage,
+                speed: 800,
+                rewind: true,
+                rewindByDrag: true,
+                rewindSpeed: 1000,
+                height: "100%",
+              }}
+            >
+              {mergedVehicles.map((vehicle, index) => (
+                <SplideSlide key={index}>
+                  <VehicleFeaturesCard
+                    key={`${vehicle.id}-${currencyIndex}`}
+                    img={vehicle.image_url}
+                    vehicleName={vehicle.name}
+                    person={vehicle.capacity_person}
+                    bags={vehicle.capacity_bags}
+                    features={vehicle.features}
+                    totalPrice={vehicle.total_price}
+                    currency={symbol}
+                    loadExtrasPage={() =>
+                      loadExtrasPage(
+                        vehicle.name,
+                        vehicle.id,
+                        vehicle.total_price,
+                        vehicle.image_url
+                      )
+                    }
+                  />
+                </SplideSlide>
+              ))}
+            </Splide>
+          )}
         </div>
       </section>
 

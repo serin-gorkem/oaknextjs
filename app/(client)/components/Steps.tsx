@@ -19,25 +19,25 @@ const Steps = memo(function () {
         <Step
           svg="./images/svgs/step_1.svg"
           title="Step 1: Fill out the Form"
-          text="Select your pickup and drop-off locations, travel date, number of passengers, and add a return trip if needed. Airport to Hotels makes booking seamless and stress-free."
+          text="Select your pickup and drop-off locations, travel date, and the number of passengers. If needed, add a return trip. With Airport to Hotels, booking is seamless and stress-free."
           direction=""
         />
         <Step
           svg="./images/svgs/step_2.svg"
           title="Step 2: Choose Your Vehicle"
-          text="Browse our luxury, business, and economy airport transfer vehicles. Each option includes detailed features, transparent pricing, and unmatched comfort to fit your needs."
+          text="Browse our selection of luxury, business, and economy airport transfer vehicles. Each option includes detailed features, transparent pricing, and unmatched comfort. Find the perfect fit for your needs."
           direction="md:flex-row-reverse"
         />
         <Step
           svg="./images/svgs/step_3.svg"
           title="Step 3: Enhance Your Ride"
-          text="Customize your airport transfer with extra services, such as child seats, additional luggage space, or VIP chauffeur service for a premium travel experience."
+          text="Upgrade your airport transfer experience with additional services such as child seats, extra luggage space, and a VIP chauffeur."
           direction=""
         />
         <Step
           svg="./images/svgs/step_4.svg"
           title="Step 4: Secure & Instant Confirmation"
-          text="Enter your personal details, confirm your booking, and receive instant confirmation. With 24/7 Airport to Hotels, your airport transfer is always reliable and hassle-free."
+          text="Enter your personal details, confirm your booking, and receive instant confirmation. With 24/7 Airport to Hotels, you can always count on a reliable, hassle-free airport transfer."
           direction="md:flex-row-reverse"
         />
       </article>

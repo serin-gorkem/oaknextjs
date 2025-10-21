@@ -10,7 +10,7 @@ type ReviewCardProps = {
 
 const ReviewCard = memo(function (props: ReviewCardProps) {
   return (
-    <article className="flex flex-col gap-4 p-6 bg-base-300 w-full md:flex-1/2 lg:flex-1/4 card-xl shadow-xl">
+    <article className="flex flex-col rounded-box gap-4 p-6 bg-base-300 w-full md:flex-1/2 lg:flex-1/4 card-xl shadow-xl">
       <figure className="flex flex-col gap-4">
         <h2 className="card-title">{props.title}</h2>
         <p className="opacity-80">{props.review}</p>
