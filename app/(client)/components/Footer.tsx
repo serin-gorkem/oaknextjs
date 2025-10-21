@@ -12,8 +12,7 @@ const Footer = memo(function () {
             height="512"
             alt="Airport to Hotels Logo"
             className="w-fit h-10"
-          >
-          </Image>
+          ></Image>
           <p className="w-10/12 text-sm sm:text-base">
             Located in Turkey/Kusadasi; we provide reliable and comfortable
             airport transfers, with transparent pricing and professional
@@ -39,6 +38,8 @@ const Footer = memo(function () {
           </h6>
           <ul className="text-base-100 w-full">
             {menuItem("Booking and Cancelation Policy", "/policy")}
+            {menuItem("Distance Sales Agreement Policy", "/policy")}
+            {menuItem("Service Delivery Policy", "/policy")}
             {menuItem("Privacy Policy", "/privacy")}
             {menuItem("Our Vehicles", "/#vehicles")}
             {menuItem("Tours of You", "https://www.toursofyou.com/")}
@@ -66,8 +67,13 @@ const Footer = memo(function () {
                     d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 0 0 2.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 0 1-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 0 0-1.091-.852H4.5A2.25 2.25 0 0 0 2.25 4.5v2.25Z"
                   />
                 </svg>
-                <a href={`tel:${process.env.NEXT_PUBLIC_WHATSAPP_PHONE_NUMBER ?? ""}`} className="text-base lg:text-base">
-                 {process.env.NEXT_PUBLIC_WHATSAPP_PHONE_NUMBER}
+                <a
+                  href={`tel:${
+                    process.env.NEXT_PUBLIC_WHATSAPP_PHONE_NUMBER ?? ""
+                  }`}
+                  className="text-base lg:text-base"
+                >
+                  {process.env.NEXT_PUBLIC_WHATSAPP_PHONE_NUMBER}
                 </a>
               </div>
             </li>
@@ -132,19 +138,20 @@ const Footer = memo(function () {
           ></Image>
         </div>
 
-          <p className="text-sm">© {new Date().getFullYear()} All rights reserved to OAK Travel Group</p>
-
+        <p className="text-sm">
+          © {new Date().getFullYear()} All rights reserved to OAK Travel Group
+        </p>
       </div>
       <div className="flex sm:flex-row flex-col sm:items-center gap-2 sm:gap-0 mt-4 sm:justify-between bottom-4 xl:max-w-9/12 lg:max-w-11/12 lg:px-0 sm:px-4 px-2 mx-auto text-neutral-content">
         <a className="text-sm" href="https://gorkemserin.com/">
           Website Designed by Crehera Web Agency - Görkem Serin
         </a>
-                  <Image
-            src="/images/iyzico.webp"
-            alt="OAK Travel Group Logo"
-            width={512}
-            height={512}
-            ></Image>
+        <Image
+          src="/images/iyzico.webp"
+          alt="OAK Travel Group Logo"
+          width={512}
+          height={512}
+        ></Image>
       </div>
     </footer>
   );
