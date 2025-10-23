@@ -9,7 +9,7 @@ export default function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
   const shouldShowFullNav = pathname === "/book" || pathname === "/";
-  const showCurrency = pathname !== "/policy" 
+  const showCurrency = pathname !== "/policy";
 
   const handleNavigateToHome = () => router.push("/");
 
@@ -24,9 +24,7 @@ export default function Navbar() {
         </>
       ) : (
         <>
-          <BookingNav
-            showCurrency={showCurrency} 
-          />
+          <BookingNav showCurrency={showCurrency} />
         </>
       )}
     </div>
@@ -181,16 +179,27 @@ function MobileNav() {
               {menuItems()}
             </ul>
           </div>
-          <a href="https://www.toursofyou.com/">
-            <Image
-              src="/images/logos/ToursOfYou.webp"
-              width={100}
-              height={100}
-              alt="Website Logo"
-              aria-label="Book now button"
-              className="w-36 p-2 hover:shadow-none hover:text-base-100"
-            />
-          </a>
+
+          <div className="flex items-center justify-between ">
+            <a href="https://www.toursofyou.com/">
+              <Image
+                src="/images/logos/ToursOfYou.webp"
+                width={100}
+                height={100}
+                alt="Website Logo"
+                aria-label="Book now button"
+                className="w-36 p-2 hover:shadow-none hover:text-base-100"
+              />
+            </a>
+            <div className="flex">
+              <p className="text-black pl-2 opacity-70 text-xs font-light ">
+                OAK TRAVEL AGENCY
+              </p>
+              <p className="text-black pl-2 opacity-70 text-xs font-light ">
+                12849
+              </p>
+            </div>
+          </div>
         </div>
       ) : (
         <div className="sm:hidden">
@@ -240,7 +249,7 @@ function DesktopNav() {
   return (
     <nav className="hidden sm:flex sm:flex-col pt-5 items-center z-20 gap-6 w-full lg:px-0 sm:px-4 xl:max-w-9/12 lg:max-w-11/12 mx-auto">
       <ul className="flex justify-between items-center w-full">
-        <li>
+        <li className="flex flex-col ">
           <a href="/">
             <Image
               src="/images/logos/Logo_W.png"
@@ -252,29 +261,37 @@ function DesktopNav() {
             />
           </a>
         </li>
-        <li className="flex items-center gap-4 w-fit cursor-pointer">
+        <li className="flex relative items-center gap-4 w-fit">
           <button
             aria-label="Tours of you button"
-            className="btn w-36 p-4 hover:bg-primary hover:border-primary hover:shadow-none hover:text-base-100"
+            className="btn w-36 p-4 cursor-pointer hover:bg-primary hover:border-primary hover:shadow-none hover:text-base-100"
           >
-          <a href="https://www.toursofyou.com/">
-            <Image
-              src="/images/logos/ToursOfYou.webp"
-              width={300}
-              height={300}
-              alt="Tours of you Logo"
-              className="w-36 p-2 hover:shadow-none hover:text-base-100"
-            />
-          </a>
+            <a href="https://www.toursofyou.com/">
+              <Image
+                src="/images/logos/ToursOfYou.webp"
+                width={300}
+                height={300}
+                alt="Tours of you Logo"
+                className="w-36 p-2 hover:shadow-none hover:text-base-100"
+              />
+            </a>
           </button>
           <button
             aria-label="Book now button"
-            className="btn w-36 hover:bg-primary hover:border-primary hover:shadow-none hover:text-base-100"
+            className="btn w-36 cursor-pointer hover:bg-primary hover:border-primary hover:shadow-none hover:text-base-100"
           >
             <a href="/book" className="w-full" aria-label="Go to book now.">
-            Book Now
+              Book Now
             </a>
           </button>
+          <div className="flex absolute -bottom-7 right-0">
+            <p className="text-white pl-2 opacity-70 text-xs font-light ">
+              OAK TRAVEL AGENCY
+            </p>
+            <p className="text-white pl-2 opacity-70 text-xs font-light ">
+              12849
+            </p>
+          </div>
         </li>
       </ul>
       <div className="flex flex-col items-center w-full gap-3">

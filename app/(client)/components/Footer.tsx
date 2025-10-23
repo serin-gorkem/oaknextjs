@@ -136,8 +136,15 @@ const Footer = memo(function () {
             width={48}
             height={48}
           ></Image>
+          <div className="flex">
+            <p className="text-white pl-2 opacity-70 text-xs font-light ">
+              OAK TRAVEL AGENCY
+            </p>
+            <p className="text-white pl-2 opacity-70 text-xs font-light ">
+              12849
+            </p>
+          </div>
         </div>
-
         <p className="text-sm">
           © {new Date().getFullYear()} All rights reserved to OAK Travel Group
         </p>
