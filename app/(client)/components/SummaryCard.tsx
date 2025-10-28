@@ -11,7 +11,7 @@ const SummaryCard = memo(function ({ clientData }: any) {
       <img src={clientData?.booking?.image_url} className="w-full"></img>
       <div>
         <>
-          <h1 className="text-2xl md:text-4xl my-3">Transfer Details</h1>
+          <h1 className="text-2xl md:text-3xl title my-3">Transfer Details</h1>
           <div className="flex flex-col">
             <h2 className="title mb-1">TRANSFER TYPE</h2>
             <p className="section-text font-bold">
@@ -109,15 +109,15 @@ const SummaryCard = memo(function ({ clientData }: any) {
           ) : null}
           <div className="divider my-1"></div>
           <div className="flex gap-2 justify-between">
-            <div className="flex flex-col w-1/2">
-              <h2 className="title mb-1">TOTAL DISTANCE</h2>
+            <div className="flex flex-col justify-between w-1/2">
+              <h2 className="title mb-1">DISTANCE</h2>
               <p className="section-text font-bold">
                 {clientData?.booking.route_info.distanceKm.toFixed(0)} km
               </p>
               <div className="divider my-1"></div>
             </div>
-            <div className="flex w-1/2 flex-col">
-              <h2 className="title mb-1">TOTAL TIME</h2>
+            <div className="flex w-1/2 justify-between flex-col">
+              <h2 className="title mb-1">TIME</h2>
               <p className="section-text font-bold">
                 {clientData?.booking.route_info.durationHours} h{" "}
                 {clientData?.booking.route_info.durationMinutes} min

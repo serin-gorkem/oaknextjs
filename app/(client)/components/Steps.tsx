@@ -66,7 +66,7 @@ function Step(props: StepProps) {
         className="h-64 lg:h-64 xl:h-96"
       />
       <div className="flex flex-col gap-4">
-        <h2 className="font-bold text-2xl xl:text-3xl">{props.title}</h2>
+        <h2 className="font-bold title text-2xl xl:text-3xl">{props.title}</h2>
         <p className="text-xl lg:text-2xl">{props.text}</p>
       </div>
     </div>

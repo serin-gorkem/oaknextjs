@@ -77,8 +77,7 @@ const Footer = memo(function () {
                 </a>
               </div>
             </li>
-            <li>
-              <div className="flex items-center gap-2 ">
+            <li className="flex items-center gap-2 ">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
@@ -96,17 +95,15 @@ const Footer = memo(function () {
                 <p className=" text-base lg:text-base">
                   info@airporttohotels.com
                 </p>
-              </div>
             </li>
-            <li>
-              <div className="flex items-center gap-2 ">
+            <li className="flex items-center gap-2">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
                   viewBox="0 0 24 24"
                   strokeWidth="1.5"
                   stroke="currentColor"
-                  className="w-6 opacity-80"
+                  className="size-12"
                 >
                   <path
                     strokeLinecap="round"
@@ -120,9 +117,8 @@ const Footer = memo(function () {
                   />
                 </svg>
                 <p className=" text-base lg:text-base">
-                  Based in Kusadasi, Turkey
+                  Cumhuriyet Mahallesi Muhammer Ülgen Sok. Samsara Plaza Kat : 4 Daire :401 Kuşadası/Aydın
                 </p>
-              </div>
             </li>
           </ul>
         </nav>

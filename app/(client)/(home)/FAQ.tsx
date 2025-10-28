@@ -16,24 +16,24 @@ const FAQ = memo(function () {
         </h1>
       </figure>
       <div className="flex flex-col lg:flex-row gap-8 lg:gap-4">
-      <div className="flex flex-col justify-between ">
-        <FAQElement
-          title="How do I book a hotel?"
-          text="To book a hotel, visit our website and select your preferred accommodation. You can also contact our customer support team at 123-456-7890."
-        />
-        <FAQElement
-          title="What are the cancellation policies?"
-          text="We offer flexible cancellation policies. If you need to cancel your booking within 24 hours of booking, you will receive a full refund. If you need to cancel after 24 hours, you will be charged a 10% cancellation fee."
-        />
-        <FAQElement
-          title="How do I secure my booking?"
-          text="To secure your booking, make sure to use a secure payment method like PayPal or Stripe. Additionally, we recommend using a reputable hotel chain to ensure your stay is as comfortable as possible."
-        />
-        <FAQElement
-          title="How do I secure my booking?"
-          text="To secure your booking, make sure to use a secure payment method like PayPal or Stripe. Additionally, we recommend using a reputable hotel chain to ensure your stay is as comfortable as possible."
-        />
-      </div>
+        <div className="flex flex-col justify-between ">
+          <FAQElement
+            title="What is Airport to Hotels and what services do you provide?"
+            text="Airport to Hotels offers private and shared transfers between airports and hotels across Turkey. Our mission is to provide seamless, reliable, and comfortable rides so that your arrival and departure are stress-free. We operate with licensed vehicles and professional drivers."
+          />
+          <FAQElement
+            title="Which airports and destinations do you cover?"
+            text="We currently operate transfers at major Turkish airports including Istanbul Airport, Sabiha Gökçen, İzmir Adnan Menderes, Bodrum Milas, Dalaman, Antalya, Kayseri (Erkilet), Nevşehir Kapadokya, Esenboğa, Adana Şakirpaşa, Şanlıurfa (GAP) and Trabzon. We deliver door-to-door service from airport → hotel or hotel → airport within Turkey."
+          />
+          <FAQElement
+            title="Can I request additional services (child seats, extra luggage, VIP)?"
+            text="Yes. During the booking process you may add optional extras such as child seats, extra luggage space, or a VIP chauffeur service. These options help tailor the ride to your needs."
+          />
+          <FAQElement
+            title="What are your rates, and are there hidden fees?"
+            text="We believe in clear & transparent pricing. The price shown when booking is the total you’ll pay — no hidden fees or surprises."
+          />
+        </div>
         <Image
           src="/images/faq.webp"
           alt="FAQ"
@@ -58,13 +58,17 @@ const FAQ = memo(function () {
 type FAQElementProps = {
   title: string;
   text: string;
-}
-
+};
 
 function FAQElement(props: FAQElementProps) {
   return (
     <div className="collapse collapse-arrow join-item border-primary border">
-      <input aria-label="faq-element" type="radio" name="my-accordion-4" defaultChecked />
+      <input
+        aria-label="faq-element"
+        type="radio"
+        name="my-accordion-4"
+        defaultChecked
+      />
       <div className="collapse-title font-semibold">{props.title}</div>
       <div className="collapse-content text-sm">{props.text}</div>
     </div>

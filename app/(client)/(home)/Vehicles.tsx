@@ -152,8 +152,8 @@ const items = [
                 className="h-96 lg:w-1/2 rounded-lg object-cover"
                 priority
               ></Image>
-              <div className="text-left flex lg:w-1/2 flex-col gap-2.5 lg:pl-2">
-                <h3 className="text-2xl lg:text-4xl font-bold opacity-85">
+              <div className="text-left flex mt-2 lg:w-1/2 flex-col gap-2.5 lg:pl-2">
+                <h3 className="text-2xl title lg:text-4xl font-bold opacity-85">
                   Private Jet
                 </h3>
                 <p className="text-xl font-medium opacity-70 lg:w-10/12">
@@ -168,8 +168,8 @@ const items = [
           </div>
           <div className="w-full flex flex-col lg:flex-row justify-between">
             <div className="flex flex-col-reverse gap-8 lg:flex-row justify-between ">
-              <div className="text-left flex lg:w-1/2 flex-col gap-2.5 lg:pr-2">
-                <h3 className="text-2xl lg:text-4xl font-bold opacity-85">
+              <div className="text-left flex mt-2 lg:w-1/2 flex-col gap-2.5 lg:pr-2">
+                <h3 className="text-2xl title lg:text-4xl font-bold opacity-85">
                   Private Helicopter
                 </h3>
                 <p className="text-xl font-medium opacity-70 lg:w-10/12">

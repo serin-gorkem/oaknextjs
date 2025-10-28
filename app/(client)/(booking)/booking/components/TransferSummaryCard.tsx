@@ -130,7 +130,7 @@ const TransferSummaryCard = memo(function (props: TransferSummaryCardProps) {
   }
 
   return (
-    <article className="bg-base-300 rounded-box shadow-md lg:w-full flex flex-col p-2 py-4">
+    <article className="bg-base-300 rounded-box shadow-md flex flex-col p-2 py-4">
       <h2 className="font-semibold text-xl">Your Transfer</h2>
       <hr className=" text-gray w-full my-2"></hr>
       <div>

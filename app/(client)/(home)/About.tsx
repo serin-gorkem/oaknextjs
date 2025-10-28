@@ -20,8 +20,8 @@ const About = memo(function () {
             <p className="text-xl title lg:text-xl text-warning font-bold leading-tight">
               About Us
             </p>
-            <h1 className="text-3xl lg:text-7xl w-5/6 leading-tight title ">
-              We are Airport to Hotels
+            <h1 className="text-3xl lg:text-6xl w-5/6 leading-tight ">
+              We are <br></br> Airport to Hotels
             </h1>
 
             </div>

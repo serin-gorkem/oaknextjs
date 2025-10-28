@@ -87,6 +87,7 @@ export default function DirectionsMap({ origin, destination,onRouteInfo }: Props
     disableDefaultUI: false,
   };
   return isLoaded ? (
+
     <GoogleMap mapContainerStyle={containerStyle} options={mapOptions} zoom={7}>
       {origin && destination && (
         <>

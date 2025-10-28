@@ -34,7 +34,7 @@ const VehicleFeaturesCard = memo(function (props: VehicleFeaturesCardProps) {
 
 
   return (
-    <article className="bg-base-300 rounded-box shadow-md flex gap-4 flex-col p-2 ">
+    <article className="bg-base-300 rounded-box mb-8 shadow-md flex gap-4 flex-col p-2 ">
       <img src={props.img} className="lg:w-1/3 w-1/2"></img>
       <div className="flex gap-6 items-center lg:gap-10">
         <h1 className="text-2xl md:text-4xl">{props.vehicleName}</h1>

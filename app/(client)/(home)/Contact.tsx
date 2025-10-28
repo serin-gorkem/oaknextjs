@@ -189,7 +189,7 @@ const Contact = memo(function () {
       </div>
       {/* Legal Info */}
       <div className="bg-base-200 p-4 rounded-lg shadow-md flex flex-col gap-4">
-        <h2 className="text-xl lg:text-2xl font-bold">
+        <h2 className="text-xl lg:text-2xl title font-bold">
           Legal & Contact Information
         </h2>
 
@@ -197,11 +197,10 @@ const Contact = memo(function () {
           <h3 className="font-semibold">A) Business / Trade Info</h3>
           <p>
             OAK TURİZM SEYH. ACENTECİLİĞİ OTELCİLİK VE İNŞAAT LTD ŞTİ.,{" "}
-            <br></br> MERSİS numarası : 0632 1006 6690 0001 Kuşadası.
+            <br></br> MERSİS numarası : 0632 1006 6690 0001 Vergi Dairesi: Kuşadası.
             <br />
-            vergi kimlik numarası : 6321006669,
-            <br></br>Cumhuriyet mah muaammer ulgen sok samsara plaza
-            kat 4 no 401
+            Vergi No : 6321006669,
+            <br></br>Cumhuriyet Mahallesi Muhammer Ülgen Sok. Samsara Plaza Kat : 4 Daire :401 Kuşadası/Aydın
           </p>
         </section>
 
@@ -209,15 +208,14 @@ const Contact = memo(function () {
           <h3 className="font-semibold">B) Communication Info</h3>
           <p>
             KEP adresi: ,<br></br> Mail: info@airporttohotels.com,<br></br>
-            {process.env.NEXT_PUBLIC_WHATSAPP_PHONE_NUMBER}
+            Tel: {process.env.NEXT_PUBLIC_WHATSAPP_PHONE_NUMBER}
           </p>
         </section>
 
         <section>
           <h3 className="font-semibold">C) Professional Info</h3>
           <p>
-            Meslek Odası: TÜRSAB, meslekle ilgili davranış kuralları ve bunlara elektronik
-            olarak ne şekilde ulaşılabileceğine ilişkin bilgiler.
+            Meslek Odası: TÜRSAB
           </p>
         </section>
       </div>
