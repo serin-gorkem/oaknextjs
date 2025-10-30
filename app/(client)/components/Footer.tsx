@@ -78,54 +78,64 @@ const Footer = memo(function () {
               </div>
             </li>
             <li className="flex items-center gap-2 ">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.5}
-                  stroke="currentColor"
-                  className="size-6"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75"
-                  />
-                </svg>
-                <p className=" text-base lg:text-base">
-                  info@airporttohotels.com
-                </p>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+                className="size-6"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75"
+                />
+              </svg>
+              <p className=" text-base lg:text-base">
+                info@airporttohotels.com
+              </p>
             </li>
             <li className="flex items-center gap-2">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth="1.5"
-                  stroke="currentColor"
-                  className="size-12"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
-                  />
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"
-                  />
-                </svg>
-                <p className=" text-base lg:text-base">
-                  Cumhuriyet Mahallesi Muhammer Ülgen Sok. Samsara Plaza Kat : 4 Daire :401 Kuşadası/Aydın
-                </p>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth="1.5"
+                stroke="currentColor"
+                className="size-12"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
+                />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"
+                />
+              </svg>
+              <p className=" text-base lg:text-base">
+                Cumhuriyet Mahallesi Muhammer Ülgen Sok. Samsara Plaza Kat : 4
+                Daire :401 Kuşadası/Aydın
+              </p>
             </li>
           </ul>
         </nav>
       </div>
       <div className="flex sm:flex-row flex-col sm:items-center gap-2 sm:gap-0 mt-4 sm:justify-between bottom-4 xl:max-w-9/12 lg:max-w-11/12 lg:px-0 sm:px-4 px-2 mx-auto text-neutral-content">
+      </div>
+      <div className="flex sm:flex-row flex-col sm:items-center gap-2 sm:gap-0 mt-4 sm:justify-between bottom-4 xl:max-w-9/12 lg:max-w-11/12 lg:px-0 sm:px-4 px-2 mx-auto text-neutral-content">
+      </div>
+      <div className="text-white w-full flex-col gap-4 my-2  flex items-center justify-center">
+        <p className="text-sm">
+          © {new Date().getFullYear()} All rights reserved to OAK Travel Group
+        </p>
         <div className="flex items-center gap-2">
-          <p className="text-sm">Airport to Hotels is a company of </p>
+          <p className="text-sm">
+            Airport to Hotels is a company of{" "}
+          </p>
           <Image
             src="/images/logos/Logo-oak.webp"
             alt="OAK Travel Group Logo"
@@ -141,19 +151,15 @@ const Footer = memo(function () {
             </p>
           </div>
         </div>
-        <p className="text-sm">
-          © {new Date().getFullYear()} All rights reserved to OAK Travel Group
-        </p>
-      </div>
-      <div className="flex sm:flex-row flex-col sm:items-center gap-2 sm:gap-0 mt-4 sm:justify-between bottom-4 xl:max-w-9/12 lg:max-w-11/12 lg:px-0 sm:px-4 px-2 mx-auto text-neutral-content">
         <a className="text-sm" href="https://gorkemserin.com/">
           Website Designed by Crehera Web Agency - Görkem Serin
         </a>
         <Image
           src="/images/iyzico.webp"
           alt="OAK Travel Group Logo"
-          width={512}
-          height={512}
+          width={256}
+          height={256}
+          className=""
         ></Image>
       </div>
     </footer>

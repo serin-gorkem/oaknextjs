@@ -99,7 +99,6 @@ const navigateToFailed = (clientData:any) => {
         onClick={() => handlePaymentSelect("credit")}
       >
         <div className="flex items-center gap-2">
-
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
@@ -114,13 +113,7 @@ const navigateToFailed = (clientData:any) => {
               d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 0 0 2.25-2.25V6.75A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25v10.5A2.25 2.25 0 0 0 4.5 19.5Z"
             />
           </svg>
-                    <Image
-            src="/images/iyzico_payment.webp"
-            alt="Credit Card Icon"
-            width={96}
-            height={96}
-            className="w-24 "
-          ></Image>
+          <h3>Pay with Credit Card.</h3>
         </div>
         {renderCheckIcon("credit")}
       </div>
@@ -166,8 +159,10 @@ const navigateToFailed = (clientData:any) => {
           }}
         />
         <span>
-          I have read and agree to the <strong>Service Delivery</strong>, <strong>Pre-Information Form</strong>,
-          <strong>Cancellation & Refund Policy</strong> and <strong>Distance Sales Agreement.</strong>.
+          I have read and agree to the <strong>Service Delivery</strong>,{" "}
+          <strong>Pre-Information Form</strong>,
+          <strong>Cancellation & Refund Policy</strong> and{" "}
+          <strong>Distance Sales Agreement.</strong>.
         </span>
       </label>
       <p className="text-sm text-gray-500">
@@ -177,13 +172,13 @@ const navigateToFailed = (clientData:any) => {
       </p>
 
       {/* SUBMIT BUTTON */}
-        <button
+      <button
         className="btn btn-primary w-full mt-2"
         disabled={!selectedMethod || !termsAccepted}
         onClick={handlePayment} // handleSubmit değil
-        >
+      >
         Confirm & Continue
-        </button>
+      </button>
 
       {/* MESSAGE BOX */}
       {message && (
