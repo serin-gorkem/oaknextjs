@@ -4,7 +4,7 @@ import PolicyContent from "./components/PolicyContent";
 import FallbackLoader from "../../components/FallbackLoader";
 
 
-export default function DetailsPage() {
+export default function PolicyPage() {
   return (
     <Suspense fallback={<FallbackLoader />}>
       <PolicyContent />

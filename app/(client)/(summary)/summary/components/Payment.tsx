@@ -1,199 +1,223 @@
 "use client";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useGetData } from "@/app/(client)/components/GetData";
-import Image from "next/image";
 
-const Payment = () => {
-  const [selectedMethod, setSelectedMethod] = useState<
-    "credit" | "cash" | null
-  >(null);
-  const [termsAccepted, setTermsAccepted] = useState(false);
-  const [message, setMessage] = useState<{
-    type: "error" | "success";
-    text: string;
-  } | null>(null);
+const onlyDigits = (s: string) => s.replace(/\D/g, "");
+
+export default function Payment() {
   const router = useRouter();
-  const {clientData} = useGetData();
+  const { clientData } = useGetData();
+  const [selectedMethod, setSelectedMethod] = useState<"credit" | "cash" | null>(null);
+  const [termsAccepted, setTermsAccepted] = useState(false);
+  const [message, setMessage] = useState<{ type: "error" | "success"; text: string } | null>(null);
 
-const navigateToSuccess = (clientData:any) => {
-  const encoded = encodeURIComponent(JSON.stringify(clientData));
-  router.push(`/success?data=${encoded}`);
-};
+  const [cardData, setCardData] = useState({ number: "", month: "", year: "", cvv: "" });
 
-const navigateToFailed = (clientData:any) => {
-  const encoded = encodeURIComponent(JSON.stringify(clientData));
-  router.push(`/failed?data=${encoded}`);
-};
+  const years = useMemo(() => {
+    const y = new Date().getFullYear();
+    return Array.from({ length: 13 }, (_, i) => String((y + i)).slice(-2));
+  }, []);
+  const months = useMemo(() => Array.from({ length: 12 }, (_, i) => String(i + 1).padStart(2, "0")), []);
 
-  const handlePaymentSelect = (method: "credit" | "cash") => {
-    setSelectedMethod(method);
-    setMessage(null); // yeni seçimde mesajı sıfırla
+  const formatCardNumber = (value: string) => {
+    const digits = onlyDigits(value).slice(0, 19);
+    return digits.replace(/(.{4})/g, "$1 ").trim();
   };
 
-  const sendPaymentRequest = async (updatedClientData: any) => {
-  // Örnek: kredi kartı ise başarı, nakit ise sadece booking kabul
-  if (updatedClientData.payment_method === "credit") {
-    return { success: true };
-  } else if (updatedClientData.payment_method === "cash") {
-    return { success: true }; // nakit de başarılı kabul ediyoruz
-  } else {
-    return { success: false };
-  }
-};
+  const validateCardInputs = () => {
+    const digits = onlyDigits(cardData.number);
+    return !(digits.length < 12 || digits.length > 19 || !cardData.month || !cardData.year || cardData.cvv.length < 3);
+  };
+
+  const navigateToSuccess = (data: any) => router.push(`/success?data=${encodeURIComponent(JSON.stringify(data))}`);
+  const navigateToFailed  = (data: any) => router.push(`/failed?data=${encodeURIComponent(JSON.stringify(data))}`);
+
   const handlePayment = async () => {
-  try {
-    // Ödeme methodu nakit veya kredi kartı
-    const paymentMethod = selectedMethod; // örn: "cash" veya "credit"
-
-    const updatedClientData = {
-      ...clientData,
-      payment_method: paymentMethod,
-    };
-
-    // Ödeme işlemi veya API çağrısı
-    const result = await sendPaymentRequest(updatedClientData);
-
-    if (result.success) {
-      // ✅ Başarılı işlem
-      navigateToSuccess(updatedClientData);
-    } else {
-      // ❌ Başarısız işlem
-      navigateToFailed(updatedClientData);
+    setMessage(null);
+    if (!selectedMethod || !termsAccepted) {
+      setMessage({ type: "error", text: "Please select a payment method and accept terms." });
+      return;
     }
-  } catch (error) {
-    console.error(error);
-    navigateToFailed(clientData);
-  }
-};
-  const renderCheckIcon = (method: "credit" | "cash") => {
-    return selectedMethod === method ? (
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-        viewBox="0 0 24 24"
-        strokeWidth={1.5}
-        stroke="currentColor"
-        className="size-10 text-success"
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-        />
-      </svg>
-    ) : null;
+
+    if (selectedMethod === "cash") {
+      navigateToSuccess({ ...clientData, payment_method: "cash" });
+      return;
+    }
+
+    if (!validateCardInputs()) {
+      setMessage({ type: "error", text: "Please fill card fields correctly." });
+      return;
+    }
+
+    try {
+      const payload = {
+        uuid: clientData.uuid,
+        cardData: {
+          number: onlyDigits(cardData.number),
+          month: cardData.month,
+          year: cardData.year, // YY bekliyoruz; aşağıda backend normalize ediyor yine de
+          cvv: cardData.cvv,
+        },
+      };
+
+      console.log("POST /api/payment payload:", {
+        uuid: payload.uuid,
+        cardNumberPreview: payload.cardData.number.replace(/\d{4}(?=\d)/g, "$& ").slice(0, 19),
+      });
+
+      const res = await fetch("/api/payment", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      if (!res.ok) {
+        const errText = await res.text().catch(() => "Payment request failed");
+        console.error("Payment route error:", errText);
+        navigateToFailed(clientData);
+        return;
+      }
+
+      const html = await res.text();
+      console.log("Received HTML length:", html.length);
+
+      document.open();
+      document.write(html);
+      document.close();
+
+      setTimeout(() => {
+        try {
+          const form = document.forms?.[0];
+          if (form) {
+            // @ts-ignore
+            form.submit();
+          }
+        } catch {}
+      }, 1000);
+    } catch (err) {
+      console.error(err);
+      navigateToFailed(clientData);
+    }
   };
 
   return (
     <div className="bg-base-300 relative sm:w-full rounded-box shadow-md flex gap-4 flex-col px-3 py-4">
       <h1 className="text-md font-semibold">Choose payment method</h1>
 
-      {/* CREDIT CARD */}
+      {/* CREDIT */}
       <div
+        onClick={() => setSelectedMethod("credit")}
         className={`w-full cursor-pointer flex justify-between items-center h-24 p-4 rounded-lg transition-all ${
-          selectedMethod === "credit"
-            ? "bg-primary/20 border-2 border-primary"
-            : "hover:bg-primary-content"
+          selectedMethod === "credit" ? "bg-primary/20 border-2 border-primary" : "hover:bg-primary-content"
         }`}
-        onClick={() => handlePaymentSelect("credit")}
       >
         <div className="flex items-center gap-2">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={1.5}
-            stroke="currentColor"
-            className="size-12"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 0 0 2.25-2.25V6.75A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25v10.5A2.25 2.25 0 0 0 4.5 19.5Z"
-            />
-          </svg>
-          <h3>Pay with Credit Card.</h3>
+          <div aria-hidden>💳</div>
+          <h3>Pay with Credit Card (3D Secure)</h3>
         </div>
-        {renderCheckIcon("credit")}
+        {selectedMethod === "credit" && <div aria-hidden>✅</div>}
       </div>
 
       {/* CASH */}
       <div
+        onClick={() => setSelectedMethod("cash")}
         className={`w-full cursor-pointer flex justify-between items-center h-24 p-4 rounded-lg transition-all ${
-          selectedMethod === "cash"
-            ? "bg-primary/20 border-2 border-primary"
-            : "hover:bg-primary-content"
+          selectedMethod === "cash" ? "bg-primary/20 border-2 border-primary" : "hover:bg-primary-content"
         }`}
-        onClick={() => handlePaymentSelect("cash")}
       >
         <div className="flex items-center gap-2">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={1.5}
-            stroke="currentColor"
-            className="size-12"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M2.25 18.75a60.07 60.07 0 0 1 15.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 0 1 3 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 0 0-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 0 1-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 0 0 3 15h-.75M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm3 0h.008v.008H18V10.5Zm-12 0h.008v.008H6V10.5Z"
-            />
-          </svg>
+          <div aria-hidden>💵</div>
           <p className="text-lg">Cash</p>
         </div>
-        {renderCheckIcon("cash")}
+        {selectedMethod === "cash" && <div aria-hidden>✅</div>}
       </div>
 
-      {/* TERMS */}
-      <label className="flex items-center">
-        <input
-          className="mx-2"
-          type="checkbox"
-          checked={termsAccepted}
-          onChange={(e) => {
-            setTermsAccepted(e.target.checked);
-            setMessage(null);
-          }}
-        />
-        <span>
-          I have read and agree to the <strong>Service Delivery</strong>,{" "}
-          <strong>Pre-Information Form</strong>,
-          <strong>Cancellation & Refund Policy</strong> and{" "}
-          <strong>Distance Sales Agreement.</strong>.
-        </span>
-      </label>
-      <p className="text-sm text-gray-500">
-        <a href="/policy" target="_blank" className="underline">
-          View Terms & Policies
-        </a>
-      </p>
+      {/* Card inputs */}
+      {selectedMethod === "credit" && (
+        <div className="mt-2">
+          <label className="block text-sm font-medium mb-1">Card Number</label>
+          <input
+            inputMode="numeric"
+            autoComplete="cc-number"
+            value={cardData.number}
+            onChange={(e) => setCardData((s) => ({ ...s, number: formatCardNumber(e.target.value) }))}
+            placeholder="1234 5678 9012 3456"
+            className="input input-bordered w-full"
+            aria-label="Card number"
+          />
 
-      {/* SUBMIT BUTTON */}
-      <button
-        className="btn btn-primary w-full mt-2"
-        disabled={!selectedMethod || !termsAccepted}
-        onClick={handlePayment} // handleSubmit değil
-      >
+          <div className="flex gap-2 mt-2">
+            <div className="flex-1">
+              <label className="block text-sm font-medium mb-1">Expiry Month</label>
+              <select
+                value={cardData.month}
+                onChange={(e) => setCardData((s) => ({ ...s, month: e.target.value }))}
+                className="input input-bordered w-full"
+                aria-label="Expiry month"
+                autoComplete="cc-exp-month"
+              >
+                <option value="">MM</option>
+                {months.map((m) => (
+                  <option key={m} value={m}>{m}</option>
+                ))}
+              </select>
+            </div>
+
+            <div className="flex-1">
+              <label className="block text-sm font-medium mb-1">Expiry Year</label>
+              <select
+                value={cardData.year}
+                onChange={(e) => setCardData((s) => ({ ...s, year: e.target.value }))}
+                className="input input-bordered w-full"
+                aria-label="Expiry year"
+                autoComplete="cc-exp-year"
+              >
+                <option value="">YY</option>
+                {years.map((y) => (
+                  <option key={y} value={y}>{y}</option>
+                ))}
+              </select>
+            </div>
+
+            <div className="w-28">
+              <label className="block text-sm font-medium mb-1">CVV</label>
+              <input
+                inputMode="numeric"
+                value={cardData.cvv}
+                onChange={(e) => setCardData((s) => ({ ...s, cvv: onlyDigits(e.target.value).slice(0, 4) }))}
+                placeholder="CVV"
+                maxLength={4}
+                className="input input-bordered w-full"
+                aria-label="Card CVV"
+                autoComplete="cc-csc"
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* TERMS */}
+      <label className="flex items-start gap-2 mt-4">
+        <input type="checkbox" checked={termsAccepted} onChange={(e) => setTermsAccepted(e.target.checked)} className="mt-1" />
+        <div>
+          <div className="text-sm">
+            I have read and agree to the <strong>Service Delivery</strong>, <strong>Pre-Information Form</strong>,{" "}
+            <strong>Cancellation & Refund Policy</strong> and <strong>Distance Sales Agreement</strong>.
+          </div>
+          <a href="/policy" target="_blank" rel="noreferrer" className="text-xs underline">View Terms & Policies</a>
+        </div>
+      </label>
+
+      <button className="btn btn-primary w-full mt-2" disabled={!selectedMethod || !termsAccepted} onClick={handlePayment}>
         Confirm & Continue
       </button>
 
-      {/* MESSAGE BOX */}
       {message && (
-        <div
-          className={`mt-2 text-center rounded-md p-2 text-sm font-medium ${
-            message.type === "error"
-              ? "bg-red-100 text-red-600"
-              : "bg-green-100 text-green-600"
-          }`}
-        >
+        <div className={`mt-2 text-center rounded-md p-2 text-sm font-medium ${message.type === "error" ? "bg-red-100 text-red-600" : "bg-green-100 text-green-600"}`}>
           {message.text}
         </div>
       )}
     </div>
   );
-};
-
-export default Payment;
+}

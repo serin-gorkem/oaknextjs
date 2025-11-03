@@ -4,7 +4,7 @@ import FailedContent from "./components/FailedContent";
 import FallbackLoader from "../../components/FallbackLoader";
 
 
-export default function DetailsPage() {
+export default function FailedPage() {
   return (
     <Suspense fallback={<FallbackLoader />}>
       <FailedContent />
