@@ -4,7 +4,11 @@ import { query } from "../../../lib/db";
 
 // === Helpers ===
 const sha1HexUpper = (s: string) =>
-  crypto.createHash("sha1").update(Buffer.from(s, "utf8")).digest("hex").toUpperCase();
+  crypto
+    .createHash("sha1")
+    .update(Buffer.from(s, "utf8"))
+    .digest("hex")
+    .toUpperCase();
 
 async function parseForm(req: Request) {
   const ct = req.headers.get("content-type") || "";
@@ -22,7 +26,9 @@ async function parseForm(req: Request) {
 
 // === Main Handler ===
 export async function POST(req: Request) {
-  console.log("\n==================== Garanti Unified CALLBACK ====================\n");
+  console.log(
+    "\n==================== Garanti Unified CALLBACK ====================\n"
+  );
   try {
     const payload = await parseForm(req);
     const orderId = payload.oid || payload.orderid || payload.ORDERID;
@@ -50,7 +56,8 @@ export async function POST(req: Request) {
     const responseField = String(payload.response || "").toLowerCase();
 
     // --- Approval logic ---
-    const ok3d = ["1", "2", "3", "4"].includes(mdstatus) || (isTest && mdstatus === "0");
+    const ok3d =
+      ["1", "2", "3", "4"].includes(mdstatus) || (isTest && mdstatus === "0");
     const approved =
       ok3d &&
       (prc === "00" || (isTest && (!prc || responseField === "approved"))) &&
@@ -84,9 +91,39 @@ export async function POST(req: Request) {
 
     // --- Redirect to frontend ---
     const base = process.env.NEXT_PUBLIC_BASE_URL!;
+    // === Approval logic sonrası ===
+    let errorCode = "GENERIC_ERROR";
+    let errorMessage = "Transaction declined";
+    if (!approved) {
+      console.warn("❌ PAYMENT FAILED", {
+        orderId,
+        errorCode,
+        errorMessage,
+        mdstatus: payload.mdstatus,
+        procreturncode: payload.procreturncode,
+        response: payload.response,
+      });
+    }
+    if (payload.procreturncode) {
+      errorCode = `PRC_${payload.procreturncode}`;
+      errorMessage =
+        payload.ErrMsg ||
+        payload.mdErrorMsg ||
+        payload.response ||
+        errorMessage;
+    } else if (
+      payload.mdstatus &&
+      !["1", "2", "3", "4"].includes(String(payload.mdstatus))
+    ) {
+      errorCode = `MD_${payload.mdstatus}`;
+      errorMessage = payload.mdErrorMsg || "3D authentication failed";
+    }
+
     const redirectUrl = approved
-      ? `${base}/success?order=${orderId}&status=paid`
-      : `${base}/failed?order=${orderId}&status=failed`;
+      ? `${base}/success?uuid=${orderId}&status=paid`
+      : `${base}/failed?uuid=${orderId}&status=failed&code=${errorCode}&error=${encodeURIComponent(
+          errorMessage
+        )}`;
 
     const html = `
       <html><head>

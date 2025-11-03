@@ -238,7 +238,7 @@ const Details = memo(function () {
 
                 <fieldset className="fieldset flex focus-within:outline-0">
                   <legend className="font-bold text-sm lg:text-base">
-                    Email
+                    Email <span className="text-warning">*</span>
                   </legend>
                   <input
                     type="email"
@@ -252,7 +252,7 @@ const Details = memo(function () {
 
                 <fieldset>
                   <legend className="font-bold">
-                    Message <span className="text-warning">*</span>
+                    Message
                   </legend>
                   <textarea
                     className="bg-base-300 h-32 w-full p-2 shadow-sm lg:text-base"

@@ -177,7 +177,7 @@ export default function BookingContent() {
 
   return (
     <main className="flex relative flex-col mt-30 justify-between lg:block xl:max-w-9/12 lg:max-w-11/12 mx-auto">
-      <section className="flex lg:justify-between flex-col lg:flex-row-reverse gap-4 ">
+      <section className="flex p-2 md:p-6 lg:p-2 lg:justify-between flex-col lg:flex-row-reverse gap-4 ">
         {/* Right Sidebar */}
         <aside className="flex flex-col gap-3  xl:w-4/12 lg:w-3/12">
           <div className="lg:hidden block">
@@ -192,7 +192,7 @@ export default function BookingContent() {
         </aside>
 
         {/* Main Content */}
-        <div className="w-3/4 flex flex-col gap-4">
+        <div className="lg:w-3/4 flex flex-col gap-4">
           <div className="hidden lg:block">
             <PageIndicator activeStep="booking" />
           </div>
