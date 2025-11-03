@@ -41,7 +41,7 @@ export default function Payment() {
     }
 
     if (selectedMethod === "cash") {
-      navigateToSuccess({ ...clientData, payment_method: "cash" });
+      router.push(`/success?order=${clientData.uuid}&status=cash`);
       return;
     }
 

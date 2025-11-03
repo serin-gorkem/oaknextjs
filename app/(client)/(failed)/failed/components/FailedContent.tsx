@@ -40,7 +40,7 @@ const FailedPage = () => {
 
       <div className="flex gap-3">
         <button
-          onClick={() => router.push(`/summary${uuid ? `?id=${uuid}` : ""}`)}
+          onClick={() => router.push(`/summary${uuid ? `?uuid=${uuid}` : ""}`)}
           className="btn btn-outline btn-error"
         >
           Try Again
