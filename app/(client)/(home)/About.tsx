@@ -42,7 +42,7 @@ const About = memo(function () {
                 whileInView={{ y: 0, opacity: 1 }}
                 transition={{ duration: 0.7, ease: "easeOut" }}
                 viewport={{ once: true }}
-                className="text-xl title lg:text-xl text-warning font-bold leading-tight"
+                className="text-xl title lg:text-xl text-warning lg:text-left text-center font-bold leading-tight"
               >
                 About Us
               </motion.p>
@@ -52,7 +52,7 @@ const About = memo(function () {
                 whileInView={{ y: 0, opacity: 1 }}
                 transition={{ duration: 0.9, ease: "easeOut", delay: 0.1 }}
                 viewport={{ once: true }}
-                className="text-3xl lg:text-6xl w-5/6 leading-tight"
+                className="text-3xl lg:text-6xl lg:w-5/6 lg:text-left text-center w-full leading-tight"
               >
                 We are <br /> Airport to Hotels
               </motion.h1>
@@ -63,7 +63,7 @@ const About = memo(function () {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
               viewport={{ once: true }}
-              className="text-base lg:text-xl opacity-85 w-5/6 leading-tight"
+              className="text-base lg:text-xl opacity-85 lg:w-5/6 w-full  leading-tight"
             >
               At Airport to Hotels, we specialize in providing seamless,
               reliable, and comfortable transfers directly from airports to your
