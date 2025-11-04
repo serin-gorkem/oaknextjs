@@ -1,5 +1,7 @@
 import Image from "next/image";
 import { memo } from "react";
+import { motion } from "framer-motion";
+
 
 const Steps = memo(function () {
   return (
@@ -54,7 +56,11 @@ type StepProps = {
 
 function Step(props: StepProps) {
   return (
-    <div
+    <motion.div
+      initial={{ opacity: 0, y: 40 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6, ease: "easeOut" }}
+      viewport={{ once: true, amount: 0.3 }}
       className={`w-full flex flex-col md:flex-row ${props.direction} justify-between gap-8 xl:gap-32`}
     >
       <Image
@@ -62,14 +68,14 @@ function Step(props: StepProps) {
         height={500}
         src={props.svg}
         loading="lazy"
-        alt="Fill out the Form"
+        alt={props.title}
         className="h-64 lg:h-64 xl:h-96"
       />
       <div className="flex flex-col gap-4">
         <h2 className="font-bold title text-2xl xl:text-3xl">{props.title}</h2>
         <p className="text-xl lg:text-2xl">{props.text}</p>
       </div>
-    </div>
+    </motion.div>
   );
 }
 

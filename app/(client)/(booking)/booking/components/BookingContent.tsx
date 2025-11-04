@@ -8,6 +8,7 @@ import DirectionsMap from "./DirectionsMap";
 import SessionExpiredFallback from "@/app/(client)/components/SessionExpiredFallback";
 import "@splidejs/react-splide/css";
 import { Splide, SplideSlide } from "@splidejs/react-splide";
+import { motion } from "framer-motion"; // ✅ sadece bu eklendi
 
 import { useGetData } from "../../../components/GetData";
 import { UpdateData } from "../../../components/UpdateData";
@@ -177,9 +178,15 @@ export default function BookingContent() {
 
   return (
     <main className="flex relative flex-col mt-30 justify-between lg:block xl:max-w-9/12 lg:max-w-11/12 mx-auto">
-      <section className="flex p-2 md:p-6 lg:p-2 lg:justify-between flex-col lg:flex-row-reverse gap-4 ">
-        {/* Right Sidebar */}
-        <aside className="flex flex-col gap-3  xl:w-4/12 lg:w-3/12">
+      {/* === Ana Bölüm === */}
+      <motion.section
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1.2, ease: "easeOut" }}
+        className="flex p-2 md:p-6 lg:p-2 lg:justify-between flex-col lg:flex-row-reverse gap-4"
+      >
+        {/* === Sidebar === */}
+        <aside className="flex flex-col gap-3 xl:w-4/12 lg:w-3/12">
           <div className="lg:hidden block">
             <PageIndicator activeStep="booking" />
           </div>
@@ -191,69 +198,86 @@ export default function BookingContent() {
           />
         </aside>
 
-        {/* Main Content */}
+        {/* === Main Content === */}
         <div className="lg:w-3/4 flex flex-col gap-4">
           <div className="hidden lg:block">
             <PageIndicator activeStep="booking" />
           </div>
 
           {/* Map */}
-          <div className="w-full h-96 mb-10">
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            transition={{ duration: 1.0, ease: "easeOut" }}
+            viewport={{ once: true }}
+            className="w-full h-96 mb-10"
+          >
             <DirectionsMap
               origin={clientData?.pickup_location}
               destination={clientData?.drop_off_location}
               onRouteInfo={setRouteInfo}
             />
-          </div>
+          </motion.div>
+
+          {/* Vehicles Carousel */}
           {mergedVehicles?.length > 0 && (
-            <Splide
-              aria-label="My Favorite Images"
-              className="overflow-hidden"
-              options={{
-                type: "loop",
-                gap: "1rem",
-                autoplay: true,
-                pauseOnHover: true,
-                resetProgress: false,
-                perPage,
-                speed: 800,
-                rewind: true,
-                rewindByDrag: true,
-                rewindSpeed: 1000,
-                height: "100%",
-              }}
+            <motion.div
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              transition={{ duration: 1.0, ease: "easeOut", delay: 0.2 }}
+              viewport={{ once: true }}
             >
-              {mergedVehicles.map((vehicle, index) => (
-                <SplideSlide key={index}>
-                  <VehicleFeaturesCard
-                    key={`${vehicle.id}-${currencyIndex}`}
-                    img={vehicle.image_url}
-                    vehicleName={vehicle.name}
-                    person={vehicle.capacity_person}
-                    bags={vehicle.capacity_bags}
-                    features={vehicle.features}
-                    totalPrice={vehicle.total_price}
-                    currency={symbol}
-                    loadExtrasPage={() =>
-                      loadExtrasPage(
-                        vehicle.name,
-                        vehicle.id,
-                        vehicle.total_price,
-                        vehicle.image_url
-                      )
-                    }
-                  />
-                </SplideSlide>
-              ))}
-            </Splide>
+              <Splide
+                aria-label="Vehicle Carousel"
+                options={{
+                  type: "loop",
+                  gap: "1rem",
+                  autoplay: false,
+                  pauseOnHover: true,
+                  perPage,
+                  speed: 800,
+                  rewind: true,
+                  height: "100%",
+                }}
+              >
+                {mergedVehicles.map((vehicle, index) => (
+                  <SplideSlide key={index}>
+                    <VehicleFeaturesCard
+                      key={`${vehicle.id}-${currencyIndex}`}
+                      img={vehicle.image_url}
+                      vehicleName={vehicle.name}
+                      person={vehicle.capacity_person}
+                      bags={vehicle.capacity_bags}
+                      features={vehicle.features}
+                      totalPrice={vehicle.total_price}
+                      currency={symbol}
+                      loadExtrasPage={() =>
+                        loadExtrasPage(
+                          vehicle.name,
+                          vehicle.id,
+                          vehicle.total_price,
+                          vehicle.image_url
+                        )
+                      }
+                    />
+                  </SplideSlide>
+                ))}
+              </Splide>
+            </motion.div>
           )}
         </div>
-      </section>
+      </motion.section>
 
       {/* Steps Footer */}
-      <div className="[&>section]:max-w-full">
+      <motion.div
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        transition={{ duration: 1.2, ease: "easeOut", delay: 0.3 }}
+        viewport={{ once: true }}
+        className="[&>section]:max-w-full"
+      >
         <Steps />
-      </div>
+      </motion.div>
     </main>
   );
 }

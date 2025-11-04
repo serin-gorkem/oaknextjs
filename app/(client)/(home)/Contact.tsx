@@ -1,5 +1,6 @@
 "use client";
 import { memo, useState } from "react";
+import { motion } from "framer-motion";
 
 const Contact = memo(function () {
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
@@ -26,29 +27,38 @@ const Contact = memo(function () {
         setStatusMessage("Failed to send message.");
         setStatusType("error");
       }
-    } catch (err) {
+    } catch {
       setStatusMessage("An error occurred. Please try again.");
       setStatusType("error");
     }
   }
 
   return (
-    <section
+    <motion.section
       id="Contact"
+      initial={{ opacity: 0 }}
+      whileInView={{ opacity: 1 }}
+      transition={{ duration: 0.8, ease: "easeOut" }}
+      viewport={{ once: true, amount: 0.2 }}
       className="h-fit mt-16 px-2 pb-8 flex flex-col lg:p-0 xl:max-w-9/12 lg:max-w-11/12 mx-auto gap-8 lg:gap-16"
     >
       <figure className="flex flex-col gap-2.5">
         <figcaption className="text-xl title lg:text-2xl text-warning font-bold font-heading leading-tight">
           Contact
         </figcaption>
-        <h1 className="text-2xl lg:text-4xl font-bold opacity-85">
-          Talk To Us
-        </h1>
+        <h1 className="text-2xl lg:text-4xl font-bold opacity-85">Talk To Us</h1>
       </figure>
 
       <div className="flex flex-col lg:flex-row gap-6">
         {/* Form */}
-        <form className="flex flex-col gap-2 lg:w-1/2" onSubmit={handleSubmit}>
+        <motion.form
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
+          viewport={{ once: true }}
+          className="flex flex-col gap-2 lg:w-1/2"
+          onSubmit={handleSubmit}
+        >
           <fieldset className="fieldset flex focus-within:outline-0">
             <legend className="font-bold text-sm lg:text-base">
               First Name <span className="text-warning">*</span>
@@ -133,17 +143,22 @@ const Contact = memo(function () {
               {statusMessage}
             </p>
           )}
-        </form>
+        </motion.form>
 
         {/* Legal & Contact Info + Map */}
-        <div className="flex flex-col gap-6 lg:w-1/2">
-          {/* Phone + Map */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
+          viewport={{ once: true }}
+          className="flex flex-col gap-6 lg:w-1/2"
+        >
           <div className="flex flex-col gap-4">
             <div>
               <h2 className="text-xl lg:text-2xl font-bold">Call Us</h2>
               <div className="flex items-center justify-between text-base">
                 <p className="w-1/2 lg:text-base">
-                  Call our team Mon-Fri From 8am to 5pm
+                  Call our team Mon–Fri, 8am–5pm
                 </p>
                 <div className="flex gap-2">
                   <svg
@@ -162,7 +177,7 @@ const Contact = memo(function () {
                   </svg>
                   <a
                     href={`tel:${process.env.NEXT_PUBLIC_WHATSAPP_PHONE_NUMBER}`}
-                    className="text-base lg:text-base"
+                    className="text-base"
                   >
                     {process.env.NEXT_PUBLIC_WHATSAPP_PHONE_NUMBER}
                   </a>
@@ -173,22 +188,29 @@ const Contact = memo(function () {
             <div>
               <h2 className="text-xl lg:text-2xl font-bold">Join Us</h2>
               <p className="text-base lg:text-base">
-                Our office is located in Turkey / Kusadasi
+                Our office is located in Turkey / Kuşadası
               </p>
               <iframe
                 loading="lazy"
                 allowFullScreen
                 title="location-map"
-                className="w-full h-64 lg:h-64 mt-2 rounded-lg shadow-md"
+                className="w-full h-64 mt-2 rounded-lg shadow-md"
                 referrerPolicy="no-referrer-when-downgrade"
                 src={`https://www.google.com/maps/embed/v1/place?q=place_id:ChIJ9eNRs4OpvhQREf4JZnlssoQ&key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`}
               ></iframe>
             </div>
           </div>
-        </div>
+        </motion.div>
       </div>
+
       {/* Legal Info */}
-      <div className="bg-base-200 p-4 rounded-lg shadow-md flex flex-col gap-4">
+      <motion.div
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
+        viewport={{ once: true }}
+        className="bg-base-200 p-4 rounded-lg shadow-md flex flex-col gap-4"
+      >
         <h2 className="text-xl lg:text-2xl title font-bold">
           Legal & Contact Information
         </h2>
@@ -196,30 +218,32 @@ const Contact = memo(function () {
         <section>
           <h3 className="font-semibold">A) Business / Trade Info</h3>
           <p>
-            OAK TURİZM SEYH. ACENTECİLİĞİ OTELCİLİK VE İNŞAAT LTD ŞTİ.,{" "}
-            <br></br> MERSİS numarası : 0632 1006 6690 0001 Vergi Dairesi: Kuşadası.
+            OAK TURİZM SEYH. ACENTECİLİĞİ OTELCİLİK VE İNŞAAT LTD ŞTİ.
             <br />
-            Vergi No : 6321006669,
-            <br></br>Cumhuriyet Mahallesi Muhammer Ülgen Sok. Samsara Plaza Kat : 4 Daire :401 Kuşadası/Aydın
+            MERSİS No: 0632 1006 6690 0001 — Vergi Dairesi: Kuşadası
+            <br />
+            Vergi No: 6321006669
+            <br />
+            Cumhuriyet Mah. Muhammer Ülgen Sok. Samsara Plaza Kat: 4 Daire: 401
+            Kuşadası / Aydın
           </p>
         </section>
 
         <section>
           <h3 className="font-semibold">B) Communication Info</h3>
           <p>
-            KEP adresi: ,<br></br> Mail: info@airporttohotels.com,<br></br>
+            Mail: info@airporttohotels.com
+            <br />
             Tel: {process.env.NEXT_PUBLIC_WHATSAPP_PHONE_NUMBER}
           </p>
         </section>
 
         <section>
           <h3 className="font-semibold">C) Professional Info</h3>
-          <p>
-            Meslek Odası: TÜRSAB
-          </p>
+          <p>Meslek Odası: TÜRSAB</p>
         </section>
-      </div>
-    </section>
+      </motion.div>
+    </motion.section>
   );
 });
 

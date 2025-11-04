@@ -8,17 +8,29 @@ const onlyDigits = (s: string) => s.replace(/\D/g, "");
 export default function Payment() {
   const router = useRouter();
   const { clientData } = useGetData();
-  const [selectedMethod, setSelectedMethod] = useState<"credit" | "cash" | null>(null);
+  const [selectedMethod, setSelectedMethod] = useState<
+    "credit" | "cash" | null
+  >(null);
   const [termsAccepted, setTermsAccepted] = useState(false);
-  const [message, setMessage] = useState<{ type: "error" | "success"; text: string } | null>(null);
-
-  const [cardData, setCardData] = useState({ number: "", month: "", year: "", cvv: "" });
+  const [message, setMessage] = useState<{
+    type: "error" | "success";
+    text: string;
+  } | null>(null);
+  const [cardData, setCardData] = useState({
+    number: "",
+    month: "",
+    year: "",
+    cvv: "",
+  });
 
   const years = useMemo(() => {
     const y = new Date().getFullYear();
-    return Array.from({ length: 13 }, (_, i) => String((y + i)).slice(-2));
+    return Array.from({ length: 13 }, (_, i) => String(y + i).slice(-2));
   }, []);
-  const months = useMemo(() => Array.from({ length: 12 }, (_, i) => String(i + 1).padStart(2, "0")), []);
+  const months = useMemo(
+    () => Array.from({ length: 12 }, (_, i) => String(i + 1).padStart(2, "0")),
+    []
+  );
 
   const formatCardNumber = (value: string) => {
     const digits = onlyDigits(value).slice(0, 19);
@@ -27,16 +39,27 @@ export default function Payment() {
 
   const validateCardInputs = () => {
     const digits = onlyDigits(cardData.number);
-    return !(digits.length < 12 || digits.length > 19 || !cardData.month || !cardData.year || cardData.cvv.length < 3);
+    return !(
+      digits.length < 12 ||
+      digits.length > 19 ||
+      !cardData.month ||
+      !cardData.year ||
+      cardData.cvv.length < 3
+    );
   };
 
-  const navigateToSuccess = (data: any) => router.push(`/success?data=${encodeURIComponent(JSON.stringify(data))}`);
-  const navigateToFailed  = (data: any) => router.push(`/failed?data=${encodeURIComponent(JSON.stringify(data))}`);
+  const navigateToSuccess = (data: any) =>
+    router.push(`/success?data=${encodeURIComponent(JSON.stringify(data))}`);
+  const navigateToFailed = (data: any) =>
+    router.push(`/failed?data=${encodeURIComponent(JSON.stringify(data))}`);
 
   const handlePayment = async () => {
     setMessage(null);
     if (!selectedMethod || !termsAccepted) {
-      setMessage({ type: "error", text: "Please select a payment method and accept terms." });
+      setMessage({
+        type: "error",
+        text: "Please select a payment method and accept terms.",
+      });
       return;
     }
 
@@ -56,14 +79,16 @@ export default function Payment() {
         cardData: {
           number: onlyDigits(cardData.number),
           month: cardData.month,
-          year: cardData.year, // YY bekliyoruz; aşağıda backend normalize ediyor yine de
+          year: cardData.year,
           cvv: cardData.cvv,
         },
       };
 
       console.log("POST /api/payment payload:", {
         uuid: payload.uuid,
-        cardNumberPreview: payload.cardData.number.replace(/\d{4}(?=\d)/g, "$& ").slice(0, 19),
+        cardNumberPreview: payload.cardData.number
+          .replace(/\d{4}(?=\d)/g, "$& ")
+          .slice(0, 19),
       });
 
       const res = await fetch("/api/payment", {
@@ -80,8 +105,6 @@ export default function Payment() {
       }
 
       const html = await res.text();
-      console.log("Received HTML length:", html.length);
-
       document.open();
       document.write(html);
       document.close();
@@ -89,10 +112,7 @@ export default function Payment() {
       setTimeout(() => {
         try {
           const form = document.forms?.[0];
-          if (form) {
-            // @ts-ignore
-            form.submit();
-          }
+          if (form) form.submit();
         } catch {}
       }, 1000);
     } catch (err) {
@@ -102,95 +122,119 @@ export default function Payment() {
   };
 
   return (
-    <div className="bg-base-300 relative sm:w-full rounded-box shadow-md flex gap-4 flex-col px-3 py-4">
-      <h1 className="text-md font-semibold">Choose payment method</h1>
+    <div className="bg-base-100 border border-base-300 sm:w-full rounded-2xl shadow-lg flex flex-col gap-5 px-4 py-6 transition-all duration-300 hover:shadow-xl">
+      <h1 className="text-lg font-semibold text-base-content">
+        Payment Method
+      </h1>
 
       {/* CREDIT */}
       <div
         onClick={() => setSelectedMethod("credit")}
-        className={`w-full cursor-pointer flex justify-between items-center h-24 p-4 rounded-lg transition-all ${
-          selectedMethod === "credit" ? "bg-primary/20 border-2 border-primary" : "hover:bg-primary-content"
+        className={`cursor-pointer flex justify-between items-center h-20 p-4 rounded-xl border transition-all duration-300 ${
+          selectedMethod === "credit"
+            ? "bg-primary/10 border-primary text-primary"
+            : "border-base-300 hover:bg-base-200"
         }`}
       >
-        <div className="flex items-center gap-2">
-          <div aria-hidden>💳</div>
-          <h3>Pay with Credit Card (3D Secure)</h3>
+        <div className="flex items-center gap-3">
+          <span className="text-2xl">💳</span>
+          <span className="font-medium">Credit / Debit Card (3D Secure)</span>
         </div>
-        {selectedMethod === "credit" && <div aria-hidden>✅</div>}
+        {selectedMethod === "credit" && <span className="text-xl">✅</span>}
       </div>
 
       {/* CASH */}
       <div
         onClick={() => setSelectedMethod("cash")}
-        className={`w-full cursor-pointer flex justify-between items-center h-24 p-4 rounded-lg transition-all ${
-          selectedMethod === "cash" ? "bg-primary/20 border-2 border-primary" : "hover:bg-primary-content"
+        className={`cursor-pointer flex justify-between items-center h-20 p-4 rounded-xl border transition-all duration-300 ${
+          selectedMethod === "cash"
+            ? "bg-primary/10 border-primary text-primary"
+            : "border-base-300 hover:bg-base-200"
         }`}
       >
-        <div className="flex items-center gap-2">
-          <div aria-hidden>💵</div>
-          <p className="text-lg">Cash</p>
+        <div className="flex items-center gap-3">
+          <span className="text-2xl">💵</span>
+          <span className="font-medium">Cash on Arrival</span>
         </div>
-        {selectedMethod === "cash" && <div aria-hidden>✅</div>}
+        {selectedMethod === "cash" && <span className="text-xl">✅</span>}
       </div>
 
       {/* Card inputs */}
+      {/* Card inputs */}
       {selectedMethod === "credit" && (
-        <div className="mt-2">
-          <label className="block text-sm font-medium mb-1">Card Number</label>
+        <div className="mt-3 bg-base-200/40 p-4 rounded-xl border border-base-300">
+          <label className="block text-sm font-semibold mb-1">
+            Card Number
+          </label>
           <input
             inputMode="numeric"
             autoComplete="cc-number"
             value={cardData.number}
-            onChange={(e) => setCardData((s) => ({ ...s, number: formatCardNumber(e.target.value) }))}
+            onChange={(e) =>
+              setCardData((s) => ({
+                ...s,
+                number: formatCardNumber(e.target.value),
+              }))
+            }
             placeholder="1234 5678 9012 3456"
-            className="input input-bordered w-full"
-            aria-label="Card number"
+            className="input input-bordered w-full mb-3"
           />
 
-          <div className="flex gap-2 mt-2">
-            <div className="flex-1">
-              <label className="block text-sm font-medium mb-1">Expiry Month</label>
+          <div className="flex flex-wrap gap-3">
+            <div className="flex-1 min-w-[100px]">
+              <label className="block text-sm font-semibold mb-1">
+                Expiry Month
+              </label>
               <select
                 value={cardData.month}
-                onChange={(e) => setCardData((s) => ({ ...s, month: e.target.value }))}
-                className="input input-bordered w-full"
-                aria-label="Expiry month"
-                autoComplete="cc-exp-month"
+                onChange={(e) =>
+                  setCardData((s) => ({ ...s, month: e.target.value }))
+                }
+                className="select select-bordered w-full"
               >
                 <option value="">MM</option>
                 {months.map((m) => (
-                  <option key={m} value={m}>{m}</option>
+                  <option key={m} value={m}>
+                    {m}
+                  </option>
                 ))}
               </select>
             </div>
 
-            <div className="flex-1">
-              <label className="block text-sm font-medium mb-1">Expiry Year</label>
+            <div className="flex-1 min-w-[100px]">
+              <label className="block text-sm font-semibold mb-1">
+                Expiry Year
+              </label>
               <select
                 value={cardData.year}
-                onChange={(e) => setCardData((s) => ({ ...s, year: e.target.value }))}
-                className="input input-bordered w-full"
-                aria-label="Expiry year"
-                autoComplete="cc-exp-year"
+                onChange={(e) =>
+                  setCardData((s) => ({ ...s, year: e.target.value }))
+                }
+                className="select select-bordered w-full"
               >
                 <option value="">YY</option>
                 {years.map((y) => (
-                  <option key={y} value={y}>{y}</option>
+                  <option key={y} value={y}>
+                    {y}
+                  </option>
                 ))}
               </select>
             </div>
 
-            <div className="w-28">
-              <label className="block text-sm font-medium mb-1">CVV</label>
+            <div className="flex-[0.7] min-w-[90px]">
+              <label className="block text-sm font-semibold mb-1">CVV</label>
               <input
                 inputMode="numeric"
                 value={cardData.cvv}
-                onChange={(e) => setCardData((s) => ({ ...s, cvv: onlyDigits(e.target.value).slice(0, 4) }))}
+                onChange={(e) =>
+                  setCardData((s) => ({
+                    ...s,
+                    cvv: onlyDigits(e.target.value).slice(0, 4),
+                  }))
+                }
                 placeholder="CVV"
                 maxLength={4}
                 className="input input-bordered w-full"
-                aria-label="Card CVV"
-                autoComplete="cc-csc"
               />
             </div>
           </div>
@@ -198,23 +242,46 @@ export default function Payment() {
       )}
 
       {/* TERMS */}
-      <label className="flex items-start gap-2 mt-4">
-        <input type="checkbox" checked={termsAccepted} onChange={(e) => setTermsAccepted(e.target.checked)} className="mt-1" />
-        <div>
-          <div className="text-sm">
-            I have read and agree to the <strong>Service Delivery</strong>, <strong>Pre-Information Form</strong>,{" "}
-            <strong>Cancellation & Refund Policy</strong> and <strong>Distance Sales Agreement</strong>.
-          </div>
-          <a href="/policy" target="_blank" rel="noreferrer" className="text-xs underline">View Terms & Policies</a>
+      <label className="flex items-start gap-2 mt-2 cursor-pointer">
+        <input
+          type="checkbox"
+          checked={termsAccepted}
+          onChange={(e) => setTermsAccepted(e.target.checked)}
+          className="checkbox checkbox-primary mt-1"
+        />
+        <div className="text-sm leading-tight">
+          I have read and agree to the <strong>Service Delivery</strong>,{" "}
+          <strong>Pre-Information Form</strong>,{" "}
+          <strong>Cancellation & Refund Policy</strong> and{" "}
+          <strong>Distance Sales Agreement</strong>.
+          <br />
+          <a
+            href="/policy"
+            target="_blank"
+            rel="noreferrer"
+            className="text-xs underline text-primary"
+          >
+            View Terms & Policies
+          </a>
         </div>
       </label>
 
-      <button className="btn btn-primary w-full mt-2" disabled={!selectedMethod || !termsAccepted} onClick={handlePayment}>
+      <button
+        className="btn btn-primary w-full mt-3"
+        disabled={!selectedMethod || !termsAccepted}
+        onClick={handlePayment}
+      >
         Confirm & Continue
       </button>
 
       {message && (
-        <div className={`mt-2 text-center rounded-md p-2 text-sm font-medium ${message.type === "error" ? "bg-red-100 text-red-600" : "bg-green-100 text-green-600"}`}>
+        <div
+          className={`mt-3 text-center rounded-lg py-2 text-sm font-medium transition-all duration-300 ${
+            message.type === "error"
+              ? "bg-red-100 text-red-700 border border-red-300"
+              : "bg-green-100 text-green-700 border border-green-300"
+          }`}
+        >
           {message.text}
         </div>
       )}

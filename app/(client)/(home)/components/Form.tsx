@@ -3,7 +3,6 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { DayPicker } from "react-day-picker";
 import "react-day-picker/style.css";
-
 import { v4 as uuidv4 } from "uuid";
 import AutocompleteInput from "./AutocompleteInput";
 import LoadGoogleMaps from "@/components/LoadGoogleMaps";
@@ -159,47 +158,44 @@ export default function Form() {
     cleanupData();
   }
 
-const handlePickupChange = async (selectedId: string) => {
-  const sel = airports.find((a) => a.id === selectedId);
-  if (!sel) {
-    setPickupLocation(null);
-    setIsPickupLocationValid(false);
-    return;
-  }
+  const handlePickupChange = async (selectedId: string) => {
+    const sel = airports.find((a) => a.id === selectedId);
+    if (!sel) {
+      setPickupLocation(null);
+      setIsPickupLocationValid(false);
+      return;
+    }
 
-  // Reset drop-off completely
-  setDropOffLocation(null);
-  setDropOffInput("");
-  setIsDropOffLocationValid(false);
+    setDropOffLocation(null);
+    setDropOffInput("");
+    setIsDropOffLocationValid(false);
 
-  const freshPlaceId = await getFreshPlaceId(sel.query);
-  if (!freshPlaceId) {
-    setMessage("Could not resolve Place ID for " + sel.name);
-    setIsPickupLocationValid(false);
-    return;
-  }
+    const freshPlaceId = await getFreshPlaceId(sel.query);
+    if (!freshPlaceId) {
+      setMessage("Could not resolve Place ID for " + sel.name);
+      setIsPickupLocationValid(false);
+      return;
+    }
 
-  const info = await fetchPlaceDetails(freshPlaceId, sel.query);
-  if (!info) {
-    setMessage("Invalid airport selection.");
-    setIsPickupLocationValid(false);
-    return;
-  }
+    const info = await fetchPlaceDetails(freshPlaceId, sel.query);
+    if (!info) {
+      setMessage("Invalid airport selection.");
+      setIsPickupLocationValid(false);
+      return;
+    }
 
-  // ✅ Update pickup location
-  setPickupLocation({
-    id: sel.id,
-    name: sel.name,
-    query: sel.query,
-    placeId: freshPlaceId,
-    lat: info.lat,
-    lng: info.lng,
-    address: info.address,
-  });
-  setIsPickupLocationValid(true);
-  setMessage("");
-};
-
+    setPickupLocation({
+      id: sel.id,
+      name: sel.name,
+      query: sel.query,
+      placeId: freshPlaceId,
+      lat: info.lat,
+      lng: info.lng,
+      address: info.address,
+    });
+    setIsPickupLocationValid(true);
+    setMessage("");
+  };
 
   const togglePickupDateMenu = () => setIsPickupOpen((prev) => !prev);
   const handlePickupTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => setPickupHour(e.target.value);
@@ -207,16 +203,24 @@ const handlePickupChange = async (selectedId: string) => {
 
   return (
     <form
-      className="bg-base-300 w-full rounded-box p-5 flex flex-col justify-between h-fit gap-3 shadow-xl"
+      className="bg-base-100 border border-base-300 rounded-2xl p-6 flex flex-col gap-5 shadow-lg transition-all duration-300 hover:shadow-xl"
       onSubmit={handleSubmit}
     >
       <LoadGoogleMaps />
-      <p className="font-semibold text-red-500">{message}</p>
+
+      {message && (
+        <p className="font-medium text-sm px-3 py-2 rounded-md bg-error/10 text-error border border-error/30 transition-all duration-300">
+          {message}
+        </p>
+      )}
 
       {/* Pickup Location */}
       <fieldset className="fieldset">
+        <legend className="font-semibold text-sm mb-1 text-base-content/80">
+          From (We only operate in Turkey)
+        </legend>
         <select
-          className="p-4 bg-base-100 border-r-16 border-transparent text-black"
+          className="select select-bordered w-full bg-base-200 focus:outline-none focus:ring-2 focus:ring-primary"
           value={pickupLocation?.id || ""}
           onChange={(e) => handlePickupChange(e.target.value)}
         >
@@ -227,33 +231,23 @@ const handlePickupChange = async (selectedId: string) => {
             </option>
           ))}
         </select>
-        <legend className="font-semibold text-sm">
-          From (We only operate in Turkey.)
-        </legend>
       </fieldset>
 
       {/* Drop Off Location */}
       <fieldset className="fieldset">
-        <legend className="font-semibold text-sm">
-          To (We only operate in Turkey.)
+        <legend className="font-semibold text-sm mb-1 text-base-content/80">
+          To (We only operate in Turkey)
         </legend>
-        <label
-          htmlFor="drop_off_location"
-          className="input focus-within:outline-0 w-full"
-        >
+        <label htmlFor="drop_off_location" className="input input-bordered flex items-center gap-2 bg-base-200">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
             strokeWidth="1.5"
             stroke="currentColor"
-            className="w-6 opacity-80"
+            className="w-6 text-primary/70"
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
-            />
+            <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
             <path
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -267,8 +261,6 @@ const handlePickupChange = async (selectedId: string) => {
               setIsDropOffLocationValid(false);
             }}
             onPlaceSelected={async (place) => {
-              console.log("Selected place:", pickupLocation);
-              
               if (!pickupLocation) {
                 setMessage("Please select a pickup location first.");
                 setDropOffLocation(null);
@@ -283,7 +275,6 @@ const handlePickupChange = async (selectedId: string) => {
               );
 
               const maxRadius = airportRadiusKm[pickupLocation.name] || 50;
-
               if (!result) {
                 setMessage("Could not calculate driving distance. Try again.");
                 setDropOffLocation(null);
@@ -294,13 +285,9 @@ const handlePickupChange = async (selectedId: string) => {
 
               if (result.distanceKm > maxRadius) {
                 setMessage(
-                  `Selected drop-off (${
-                    place.name
-                  }) is ${result.distanceKm.toFixed(
+                  `Selected drop-off (${place.name}) is ${result.distanceKm.toFixed(
                     1
-                  )}km away by car. Max allowed is ${maxRadius}km from ${
-                    pickupLocation.name
-                  }.`
+                  )} km away. Max allowed: ${maxRadius} km from ${pickupLocation.name}.`
                 );
                 setDropOffLocation(null);
                 setIsDropOffLocationValid(false);
@@ -317,10 +304,7 @@ const handlePickupChange = async (selectedId: string) => {
             bounds={
               pickupLocation
                 ? new google.maps.Circle({
-                    center: new google.maps.LatLng(
-                      pickupLocation.lat,
-                      pickupLocation.lng
-                    ),
+                    center: new google.maps.LatLng(pickupLocation.lat, pickupLocation.lng),
                     radius: (airportRadiusKm[pickupLocation.name] || 50) * 1000,
                   }).getBounds() || undefined
                 : undefined
@@ -330,62 +314,62 @@ const handlePickupChange = async (selectedId: string) => {
       </fieldset>
 
       {/* Pickup Date & Time */}
-      <fieldset className="fieldset flex">
-        <div className="w-full border border-base-300 rounded-box">
-          <div
-            className="collapse-title text-sm font-semibold bg-base-100 cursor-pointer"
-            onClick={togglePickupDateMenu}
-          >
-            Pickup Date and Time
-          </div>
-          {isPickupOpen && (
-            <div className="md:p-4 bg-base-200 rounded-b-box">
-              <DayPicker
-                mode="single"
-                required
-                disabled={{ before: new Date() }}
-                selected={pickupDate}
-                onSelect={handlePickupDaySelect}
-                className="bg-base-300 rounded-box md:p-3 mb-4 w-full flex flex-col items-center"
-                footer={
-                  pickupDate
-                    ? `Pickup Date: ${pickupDate.toString().slice(0, 15)}`
-                    : ""
-                }
-              />
-              <input
-                type="time"
-                name="pickupHour"
-                required
-                className="input focus-within:outline-0 w-full text-primary"
-                value={pickupHour}
-                onChange={handlePickupTimeChange}
-              />
-            </div>
-          )}
+      <fieldset className="fieldset border border-base-300 rounded-xl">
+        <legend className="font-semibold text-sm mb-1 text-base-content/80">
+          Pickup Date and Time
+        </legend>
+        <div
+          className="collapse-title text-sm font-semibold bg-base-200 rounded-t-xl cursor-pointer px-4 py-2 hover:bg-base-300 transition-all"
+          onClick={() => setIsPickupOpen((prev) => !prev)}
+        >
+          {pickupDate
+            ? `📅 ${pickupDate.toDateString()} — ⏰ ${pickupHour}`
+            : "Select pickup date & time"}
         </div>
+
+        {isPickupOpen && (
+          <div className="bg-base-100 p-4 rounded-b-xl border-t border-base-300">
+            <DayPicker
+              mode="single"
+              required
+              disabled={{ before: new Date() }}
+              selected={pickupDate}
+              onSelect={setPickupDate}
+              className="bg-base-200 rounded-lg p-3 mb-4 w-full flex flex-col items-center"
+              footer={pickupDate ? `Pickup Date: ${pickupDate.toString().slice(0, 15)}` : ""}
+            />
+            <input
+              type="time"
+              name="pickupHour"
+              required
+              className="input input-bordered w-full text-primary"
+              value={pickupHour}
+              onChange={(e) => setPickupHour(e.target.value)}
+            />
+          </div>
+        )}
       </fieldset>
 
       {/* Passenger Count */}
-      <fieldset className="fieldset flex focus-within:outline-0">
-        <legend className="font-semibold text-sm">
+      <fieldset className="fieldset flex flex-col gap-2">
+        <legend className="font-semibold text-sm text-base-content/80">
           Passenger Count (Max - 45)
         </legend>
         <input
           type="number"
-          className="input validator focus-within:outline-0 w-full"
-          placeholder="Passengers (1-45)"
+          className="input input-bordered w-full text-center"
+          placeholder="Passengers (1–45)"
           min="1"
           max="45"
-          title="Passenger Count"
           value={passengerCount}
           onChange={(e) => setPassengerCount(parseInt(e.target.value))}
         />
       </fieldset>
 
+      {/* Submit */}
       <button
         type="submit"
-        className="btn btn-primary w-full hover:bg-gray-200 hover:text-black"
+        className="btn btn-primary w-full mt-2 text-base-100 hover:bg-primary/80 transition-all duration-300"
       >
         Search
       </button>

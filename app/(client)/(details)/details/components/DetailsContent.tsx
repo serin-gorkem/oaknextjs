@@ -1,22 +1,17 @@
 "use client";
-{
-  /* React imports */
-}
+/* React imports */
 import { lazy, memo, Suspense, useEffect, useState } from "react";
+import { motion } from "framer-motion"; // ✅ sade fade-in için eklendi
 import { useGetData } from "../../../components/GetData";
 import { UpdateData } from "../../../components/UpdateData";
 import { useRouter } from "next/navigation";
 import SessionExpiredFallback from "@/app/(client)/components/SessionExpiredFallback";
 import FallbackLoader from "@/app/(client)/components/FallbackLoader";
 
-{
-  /* Lazy Loadings */
-}
+/* Lazy Loadings */
 const Steps = lazy(() => import("../../../components/Steps"));
 const PageIndicator = lazy(() => import("../../../components/PageIndicator"));
-const SummaryCard = lazy(
-  () => import("../../../components/SummaryCard")
-);
+const SummaryCard = lazy(() => import("../../../components/SummaryCard"));
 
 type FormData = {
   name: string;
@@ -53,6 +48,7 @@ function validateForm(data: FormData) {
   } else if (!phoneRegex.test(sanitizedPhone)) {
     errors.phone = "Invalid phone number format.";
   }
+
   if (!data.email.trim()) {
     errors.email = "Email is required.";
   } else if (!emailRegex.test(data.email.trim())) {
@@ -82,6 +78,7 @@ const Details = memo(function () {
   const [isFormValid, setIsFormValid] = useState<any>("");
 
   const router = useRouter();
+
   function handleNavigateToExtras() {
     router.push(`/extras?uuid=${clientData.uuid}`);
   }
@@ -95,7 +92,6 @@ const Details = memo(function () {
       flightNumber,
       email,
     });
-
 
     if (validation.isValid) {
       updateClientData({
@@ -127,7 +123,6 @@ const Details = memo(function () {
   useEffect(() => {
     if (!clientData || !clientData.uuid) return;
     UpdateData({ clientData });
-    console.log("clientData updated:", clientData);
   }, [clientData]);
 
   useEffect(() => {
@@ -140,17 +135,22 @@ const Details = memo(function () {
       setMessage(clientData.details.message);
     }
   }, [clientData]);
-  
+
   if (error || !clientData) {
     return <SessionExpiredFallback error={error} clientData={clientData} />;
   }
+
   return (
     <Suspense fallback={<FallbackLoader />}>
-      <div className="flex relative flex-col mt-20 sm:mt-24 justify-between lg:block xl:max-w-9/12 lg:max-w-11/12 mx-auto">
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1.2, ease: "easeOut" }} // ✅ basit fade-in
+        className="flex relative flex-col mt-20 sm:mt-24 justify-between lg:block xl:max-w-9/12 lg:max-w-11/12 mx-auto"
+      >
         <section className="p-4 md:px-4 flex justify-between flex-col-reverse lg:flex-row-reverse gap-4 w-full lg:px-0 ">
           <aside className="flex flex-col gap-3 xl:w-4/12 lg:w-5/12">
             <SummaryCard clientData={clientData} />
-            {/* Navigation Buttons */}
             <div className="flex md:flex-wrap gap-2 justify-between w-full">
               <button
                 onClick={handleNavigateToExtras}
@@ -174,10 +174,10 @@ const Details = memo(function () {
               </button>
             </div>
           </aside>
+
           <div className="lg:w-full flex flex-col gap-4">
-            <div className=" lg:flex lg:flex-col lg:gap-4">
-              {/*For page indicator active functionality, later.*/}
-              <PageIndicator activeStep="details"  />
+            <div className="lg:flex lg:flex-col lg:gap-4">
+              <PageIndicator activeStep="details" />
               <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
                 <div className="md:flex md:justify-between gap-2 ">
                   <fieldset className="fieldset w-full flex focus-within:outline-0">
@@ -193,6 +193,7 @@ const Details = memo(function () {
                       onChange={(e) => setFirstName(e.target.value)}
                     />
                   </fieldset>
+
                   <fieldset className="fieldset w-full flex focus-within:outline-0">
                     <legend className="font-bold text-sm lg:text-base">
                       Last Name <span className="text-warning">*</span>
@@ -207,6 +208,7 @@ const Details = memo(function () {
                     />
                   </fieldset>
                 </div>
+
                 <fieldset className="fieldset flex focus-within:outline-0">
                   <legend className="font-bold text-sm lg:text-base">
                     Phone Number <span className="text-warning">*</span>
@@ -251,9 +253,7 @@ const Details = memo(function () {
                 </fieldset>
 
                 <fieldset>
-                  <legend className="font-bold">
-                    Message
-                  </legend>
+                  <legend className="font-bold">Message</legend>
                   <textarea
                     className="bg-base-300 h-32 w-full p-2 shadow-sm lg:text-base"
                     placeholder="Leave us a message..."
@@ -284,10 +284,11 @@ const Details = memo(function () {
             </div>
           </div>
         </section>
+
         <div className="[&>section]:max-w-full">
           <Steps />
         </div>
-      </div>
+      </motion.div>
     </Suspense>
   );
 });
