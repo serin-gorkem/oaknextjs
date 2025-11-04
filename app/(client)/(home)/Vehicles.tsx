@@ -31,7 +31,7 @@ const Vehicles = memo(function () {
       viewBox="0 0 24 24"
       strokeWidth={1.5}
       stroke="currentColor"
-      className="size-6 text-warning"
+      className="size-6 text-warning shrink-0"
     >
       <path
         strokeLinecap="round"
@@ -56,9 +56,16 @@ const Vehicles = memo(function () {
       whileInView={{ opacity: 1 }}
       transition={{ duration: 0.8, ease: [0.42, 0, 0.58, 1] }}
       viewport={{ once: true, amount: 0.2 }}
-      className="h-fit mt-16 px-2 pb-8 flex flex-col lg:p-0 xl:max-w-9/12 lg:max-w-11/12 mx-auto flex-wrap gap-4"
+      className="h-fit mt-16 px-2 pb-8 flex flex-col lg:p-0 xl:max-w-9/12 lg:max-w-11/12 mx-auto gap-6"
     >
-      <figure className="flex flex-col gap-2.5 h-fit text-center lg:text-left">
+      {/* === Title === */}
+      <motion.figure
+        initial={{ y: 30, opacity: 0 }}
+        whileInView={{ y: 0, opacity: 1 }}
+        transition={{ duration: 1, ease: "easeOut" }}
+        viewport={{ once: true, amount: 0.3 }}
+        className="flex flex-col gap-2.5 text-center lg:text-left"
+      >
         <figcaption className="text-xl title lg:text-2xl text-warning font-bold font-heading leading-tight">
           Our Vehicles
         </figcaption>
@@ -68,122 +75,129 @@ const Vehicles = memo(function () {
         <h2 className="text-xl font-medium opacity-70">
           Licensed vehicles, professional drivers
         </h2>
-      </figure>
+      </motion.figure>
 
-      <Splide
-        aria-label="Vehicle Carousel"
-        className="overflow-hidden"
-        options={{
-          type: "loop",
-          gap: "1rem",
-          autoplay: true,
-          width: "100%",
-          pauseOnHover: true,
-          perPage,
-          speed: 800,
-          rewind: true,
-          rewindSpeed: 1000,
-        }}
+      {/* === Slider (Splide) === */}
+      {typeof window !== "undefined" && (
+        <Splide
+          aria-label="Vehicle Carousel"
+          className="overflow-hidden"
+          options={{
+            type: "loop",
+            gap: "1rem",
+            autoplay: true,
+            width: "100%",
+            pauseOnHover: true,
+            perPage,
+            speed: 800,
+            rewind: true,
+            rewindSpeed: 1000,
+          }}
+        >
+          {vehicles?.map((vehicle, index) => (
+            <SplideSlide key={index}>
+              <VehicleCard
+                img={vehicle.image_url}
+                text={vehicle.name}
+                personCount={vehicle.capacity_person}
+                bagsCount={vehicle.capacity_bags}
+                specs={vehicle.features}
+                base_price={vehicle.base_price}
+              />
+            </SplideSlide>
+          ))}
+        </Splide>
+      )}
+
+      {/* === Price Section === */}
+      <motion.div
+        initial={{ opacity: 0, y: 50 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
+        viewport={{ once: true, amount: 0.3 }}
+        className="bg-white rounded-box p-5 shadow-md border border-base-300"
       >
-        {vehicles?.map((vehicle, index) => (
-          <SplideSlide key={index}>
-            <VehicleCard
-              img={vehicle.image_url}
-              text={vehicle.name}
-              personCount={vehicle.capacity_person}
-              bagsCount={vehicle.capacity_bags}
-              specs={vehicle.features}
-              base_price={vehicle.base_price}
-            />
-          </SplideSlide>
-        ))}
-      </Splide>
-
-      <div className="bg-white rounded-box p-4 shadow-sm">
-        <h2 className="text-2xl my-2 title">Prices Include</h2>
+        <h2 className="text-2xl my-2 title font-semibold">Prices Include</h2>
         <ul className="flex flex-col justify-between gap-2 text-base opacity-80">
           {items.map((text) => (
-            <li key={text} className="flex items-center gap-2">
+            <li key={text} className="flex items-center gap-3">
               {checkIcon}
               <span>{text}</span>
             </li>
           ))}
         </ul>
-      </div>
+      </motion.div>
 
-<motion.figure
-  initial={{ opacity: 0, y: 80 }}
-  whileInView={{ opacity: 1, y: 0 }}
-  transition={{ duration: 1, ease: [0.42, 0, 0.58, 1] }}
-  viewport={{ once: true, amount: 0.3 }}
-  className="flex flex-col text-center w-full mt-8 lg:mt-24 gap-5 h-fit"
->
-  <figcaption className="text-2xl lg:text-4xl font-bold opacity-85">
-    A SOLUTION FOR EVERY DESTINATION
-  </figcaption>
-  <h2 className="text-xl font-medium opacity-70">
-    Discover our private Jet and Helicopter choices.
-  </h2>
+      {/* === Jet & Helicopter Section === */}
+      <motion.figure
+        initial={{ opacity: 0, y: 80 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ duration: 1, ease: [0.42, 0, 0.58, 1] }}
+        viewport={{ once: true, amount: 0.3 }}
+        className="flex flex-col text-center w-full mt-8 lg:mt-20 gap-5 h-fit"
+      >
+        <figcaption className="text-2xl lg:text-4xl font-bold opacity-85">
+          A SOLUTION FOR EVERY DESTINATION
+        </figcaption>
+        <h2 className="text-xl font-medium opacity-70">
+          Discover our private Jet and Helicopter choices.
+        </h2>
 
-  <Image
-    src="/images/helicopter-jet.webp"
-    alt="Helicopter and Jet"
-    width={1920}
-    height={1080}
-    className="w-full h-96 rounded-lg object-cover"
-    priority
-  />
+        <Image
+          src="/images/helicopter-jet.webp"
+          alt="Helicopter and Jet"
+          width={1920}
+          height={1080}
+          loading="lazy"
+          className="w-full h-56 sm:h-72 md:h-80 lg:h-96 rounded-lg object-cover"
+        />
 
-  {/* Jet */}
-  <div className="w-full flex flex-col lg:flex-row justify-between">
-    <div className="flex flex-col gap-8 lg:flex-row justify-between">
-      <Image
-        src="/images/private-jet.webp"
-        alt="Private Jet"
-        width={1920}
-        height={1080}
-        className="h-96 lg:w-1/2 rounded-lg object-cover"
-        priority
-      />
-      <div className="text-left flex mt-2 lg:w-1/2 flex-col gap-2.5 lg:pl-2">
-        <h3 className="text-2xl title lg:text-4xl font-bold opacity-85">
-          Private Jet
-        </h3>
-        <p className="text-xl font-medium opacity-70 lg:w-10/12">
-          Enjoy exclusive helicopter transfers for a VIP experience.
-          Available at Istanbul, Sabiha Gökçen, Dalaman, Bodrum, İzmir,
-          and Antalya Airports. Contact us via WhatsApp for pricing and
-          booking.
-        </p>
-      </div>
-    </div>
-  </div>
+        {/* === Private Jet === */}
+        <div className="collapse collapse-plus bg-base-200 rounded-box shadow-sm">
+          <input type="checkbox" />
+          <div className="collapse-title text-lg lg:text-xl font-semibold">
+            Private Jet
+          </div>
+          <div className="collapse-content">
+            <Image
+              src="/images/private-jet.webp"
+              alt="Private Jet"
+              width={1920}
+              height={1080}
+              loading="lazy"
+              className="h-56 sm:h-72 md:h-80 lg:h-96 w-full rounded-lg object-cover mb-4"
+            />
+            <p className="text-base lg:text-lg opacity-80 leading-relaxed text-left">
+              Enjoy exclusive jet transfers for a VIP experience. Available at
+              Istanbul, Sabiha Gökçen, Dalaman, Bodrum, İzmir, and Antalya
+              Airports. Contact us via WhatsApp for pricing and booking.
+            </p>
+          </div>
+        </div>
 
-  {/* Helicopter */}
-  <div className="w-full flex flex-col lg:flex-row justify-between">
-    <div className="flex flex-col-reverse gap-8 lg:flex-row justify-between">
-      <div className="text-left flex mt-2 lg:w-1/2 flex-col gap-2.5 lg:pr-2">
-        <h3 className="text-2xl title lg:text-4xl font-bold opacity-85">
-          Private Helicopter
-        </h3>
-        <p className="text-xl font-medium opacity-70 lg:w-10/12">
-          Enjoy exclusive helicopter transfers for a VIP experience.
-          Available at Istanbul, Sabiha Gökçen, Dalaman, Bodrum, İzmir,
-          and Antalya Airports. Contact us via WhatsApp for pricing and
-          booking.
-        </p>
-      </div>
-      <Image
-        src="/images/helicopter.webp"
-        alt="Private Helicopter"
-        width={1920}
-        height={1080}
-        className="h-96 lg:w-1/2 rounded-lg object-cover"
-        priority
-      />
-    </div>
-  </div>
-</motion.figure>
+        {/* === Private Helicopter === */}
+        <div className="collapse collapse-plus bg-base-200 rounded-box shadow-sm">
+          <input type="checkbox" />
+          <div className="collapse-title text-lg lg:text-xl font-semibold">
+            Private Helicopter
+          </div>
+          <div className="collapse-content">
+            <Image
+              src="/images/helicopter.webp"
+              alt="Private Helicopter"
+              width={1920}
+              height={1080}
+              loading="lazy"
+              className="h-56 sm:h-72 md:h-80 lg:h-96 w-full rounded-lg object-cover mb-4"
+            />
+            <p className="text-base lg:text-lg opacity-80 leading-relaxed text-left">
+              Enjoy exclusive helicopter transfers for a VIP experience.
+              Available at Istanbul, Sabiha Gökçen, Dalaman, Bodrum, İzmir, and
+              Antalya Airports. Contact us via WhatsApp for pricing and booking.
+            </p>
+          </div>
+        </div>
+      </motion.figure>
     </motion.section>
   );
 });
