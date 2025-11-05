@@ -2,6 +2,8 @@
 import React, { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useGetData } from "@/app/(client)/components/GetData";
+import { useCurrency } from "@/app/(client)/context/CurrencyContext";
+
 
 const onlyDigits = (s: string) => s.replace(/\D/g, "");
 
@@ -22,6 +24,8 @@ export default function Payment() {
     year: "",
     cvv: "",
   });
+  const { symbol } = useCurrency();
+
 
   const years = useMemo(() => {
     const y = new Date().getFullYear();
@@ -70,6 +74,7 @@ export default function Payment() {
       const payload = {
         uuid: clientData.uuid,
         payment_method: selectedMethod,
+        symbol: symbol,
         cardData: {
           number: onlyDigits(cardData.number),
           month: cardData.month,

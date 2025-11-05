@@ -307,7 +307,6 @@ function DesktopNav() {
 
 // ---------------------- BookingNav ----------------------
 function BookingNav({ showCurrency }: { showCurrency: boolean }) {
-  console.log("Show Currency: ", showCurrency);
   return (
     <nav className="flex flex-col z-20 lg:px-0 sm:px-4 xl:max-w-9/12 lg:max-w-11/12 mx-auto">
       <div>
