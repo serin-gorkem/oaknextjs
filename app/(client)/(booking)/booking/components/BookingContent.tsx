@@ -89,7 +89,7 @@ export default function BookingContent() {
             rawPrice *= 2;
           }
 
-          const converted = await convertPrice(rawPrice, "USD");
+          const converted = await convertPrice(rawPrice);
 
           return {
             ...vehicle,

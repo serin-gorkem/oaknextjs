@@ -68,7 +68,7 @@ export async function POST(req: Request) {
       );
       return NextResponse.redirect(
         `${
-          process.env.NEXT_PUBLIC_BASE_URL || "https://airporttohotels.com"
+          process.env.NEXT_PUBLIC_BASE_URL || "https://www.airporttohotels.com"
         }/success?order=${uuid}&status=cash`,
         302
       );

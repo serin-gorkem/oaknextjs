@@ -110,9 +110,13 @@ export const CurrencyProvider = ({ children }: { children: ReactNode }) => {
 
   async function convertPrice(price: number, base: string = "USD") {
     const target = currencyList[currencyIndex].name;
-    if (target === base) return price; // no conversion needed
+    if (target === base) return price;
+
+    // ✅ Converter'ı her dönüşümde oluştur
+    const freshConverter = new Converter();
+
     try {
-      return await converter.convert(price, base, target);
+      return await freshConverter.convert(price, base, target);
     } catch (err) {
       console.error("Currency conversion failed:", err);
       return price;

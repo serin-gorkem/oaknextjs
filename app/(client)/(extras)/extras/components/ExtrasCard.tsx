@@ -26,7 +26,7 @@ const ExtrasCard = memo(function (props: ExtrasCardProps) {
         return;
       }
       const prices = await Promise.all(
-        props.extras.map(extra => props.convertPrice(extra.price, "USD"))
+        props.extras.map(extra => props.convertPrice(extra.price))
       );
       setConvertedPrices(prices.map(p => Math.round(p)));
     }
