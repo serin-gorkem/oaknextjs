@@ -136,6 +136,10 @@ export async function POST(req: Request) {
         ? "https://sanalposprov.garanti.com.tr/servlet/gt3dengine"
         : "https://sanalposprovtest.garantibbva.com.tr/servlet/gt3dengine";
 
+    const clientIP = String(
+      req.headers.get("x-forwarded-for")?.split(",")[0] || "176.41.63.106"
+    );
+
     // --- Form alanları ---
     const formFields: Record<string, string> = {
       mode: GARANTI_MODE,
@@ -155,11 +159,13 @@ export async function POST(req: Request) {
       txntype,
       txninstallmentcount: installment,
       lang: "tr",
-      CustomerIPAddress: req.headers.get("x-forwarded-for")?.split(",")[0] || "127.0.0.1",
       cardnumber: cardData.number.replace(/\D/g, ""),
       cardexpiredatemonth: pad2(cardData.month),
       cardexpiredateyear: pad2(cardData.year).slice(-2),
       cardcvv2: String(cardData.cvv),
+
+      // 💡 Zorunlu alan en sonda olmalı ve string olmalı
+      CustomerIPAddress: clientIP,
     };
     // console.log("📦 Form Fields (512):", formFields);
 

@@ -6,13 +6,13 @@ export async function UpdateData({ clientData }: { clientData: any }) {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        uuid: clientData.uuid,
-        return_data: clientData.return_data,
-        booking: clientData.booking,
-        extras: clientData.extras,
-        details: clientData.details,
-        price: clientData.price,
-        base_price: clientData.base_price,
+        uuid: clientData?.uuid,
+        return_data: clientData?.return_data,
+        booking: clientData?.booking,
+        extras: clientData?.extras,
+        details: clientData?.details,
+        price: clientData?.price,
+        base_price: clientData?.base_price,
       }),
     });
 
