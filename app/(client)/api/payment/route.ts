@@ -155,6 +155,7 @@ export async function POST(req: Request) {
       txntype,
       txninstallmentcount: installment,
       lang: "tr",
+      CustomerIPAddress: req.headers.get("x-forwarded-for")?.split(",")[0] || "127.0.0.1",
       cardnumber: cardData.number.replace(/\D/g, ""),
       cardexpiredatemonth: pad2(cardData.month),
       cardexpiredateyear: pad2(cardData.year).slice(-2),

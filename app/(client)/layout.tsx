@@ -35,7 +35,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Airport To Hotels – Private Airport Transfers",
     description: "Luxury and reliable airport to hotel transfers across Turkey. Book online for fast and comfortable rides.",
-    url: "https://airporttohotels.com",
+    url: "https://www.airporttohotels.com",
     siteName: "Airport To Hotels",
     images: [
       {
