@@ -7,6 +7,7 @@ import { v4 as uuidv4 } from "uuid";
 import AutocompleteInput from "./AutocompleteInput";
 import LoadGoogleMaps from "@/components/LoadGoogleMaps";
 import { getDrivingDistance } from "./CalculateDistance";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface Location {
   lat: number;
@@ -197,10 +198,6 @@ export default function Form() {
     setMessage("");
   };
 
-  const togglePickupDateMenu = () => setIsPickupOpen((prev) => !prev);
-  const handlePickupTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => setPickupHour(e.target.value);
-  const handlePickupDaySelect = (date: Date) => setPickupDate(date);
-
   return (
     <form
       className="bg-base-100 border border-base-300 rounded-2xl p-6 flex flex-col gap-5 shadow-lg transition-all duration-300 hover:shadow-xl"
@@ -314,12 +311,12 @@ export default function Form() {
       </fieldset>
 
       {/* Pickup Date & Time */}
-      <fieldset className="fieldset border border-base-300 rounded-xl">
+      <fieldset className="fieldset gap-0 rounded-xl">
         <legend className="font-semibold text-sm mb-1 text-base-content/80">
           Pickup Date and Time
         </legend>
         <div
-          className="collapse-title text-sm font-semibold bg-base-200 rounded-t-xl cursor-pointer px-4 py-2 hover:bg-base-300 transition-all"
+          className="collapse-title text-sm font-semibold bg-base-200 mb-0 rounded-t-xl cursor-pointer px-4 hover:bg-base-300 transition-all"
           onClick={() => setIsPickupOpen((prev) => !prev)}
         >
           {pickupDate
@@ -327,27 +324,35 @@ export default function Form() {
             : "Select pickup date & time"}
         </div>
 
-        {isPickupOpen && (
-          <div className="bg-base-100 p-4 rounded-b-xl border-t border-base-300">
-            <DayPicker
-              mode="single"
-              required
-              disabled={{ before: new Date() }}
-              selected={pickupDate}
-              onSelect={setPickupDate}
-              className="bg-base-200 rounded-lg p-3 mb-4 w-full flex flex-col items-center"
-              footer={pickupDate ? `Pickup Date: ${pickupDate.toString().slice(0, 15)}` : ""}
-            />
-            <input
-              type="time"
-              name="pickupHour"
-              required
-              className="input input-bordered w-full text-primary"
-              value={pickupHour}
-              onChange={(e) => setPickupHour(e.target.value)}
-            />
-          </div>
-        )}
+        <AnimatePresence>
+          {isPickupOpen && (
+            <motion.div
+              className="bg-base-100 rounded-b-xl overflow-hidden"
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.4, ease: "easeInOut" }}
+            >
+              <DayPicker
+                mode="single"
+                required
+                disabled={{ before: new Date() }}
+                selected={pickupDate}
+                onSelect={setPickupDate}
+                className="bg-base-200 rounded-b-lg p-3 mb-4 w-full flex flex-col items-center"
+                footer={pickupDate ? `Pickup Date: ${pickupDate.toString().slice(0, 15)}` : ""}
+              />
+              <input
+                type="time"
+                name="pickupHour"
+                required
+                className="input input-bordered w-full text-primary"
+                value={pickupHour}
+                onChange={(e) => setPickupHour(e.target.value)}
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
       </fieldset>
 
       {/* Passenger Count */}

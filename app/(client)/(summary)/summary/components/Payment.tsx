@@ -9,7 +9,7 @@ export default function Payment() {
   const router = useRouter();
   const { clientData } = useGetData();
   const [selectedMethod, setSelectedMethod] = useState<
-    "credit" | "cash" | null
+    "card" | "cash" | null
   >(null);
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [message, setMessage] = useState<{
@@ -48,8 +48,6 @@ export default function Payment() {
     );
   };
 
-  const navigateToSuccess = (data: any) =>
-    router.push(`/success?data=${encodeURIComponent(JSON.stringify(data))}`);
   const navigateToFailed = (data: any) =>
     router.push(`/failed?data=${encodeURIComponent(JSON.stringify(data))}`);
 
@@ -62,13 +60,8 @@ export default function Payment() {
       });
       return;
     }
-
-    if (selectedMethod === "cash") {
-      router.push(`/success?order=${clientData.uuid}&status=cash`);
-      return;
-    }
-
-    if (!validateCardInputs()) {
+    
+    if (!validateCardInputs() && selectedMethod === "card") {
       setMessage({ type: "error", text: "Please fill card fields correctly." });
       return;
     }
@@ -76,6 +69,7 @@ export default function Payment() {
     try {
       const payload = {
         uuid: clientData.uuid,
+        payment_method: selectedMethod,
         cardData: {
           number: onlyDigits(cardData.number),
           month: cardData.month,
@@ -83,14 +77,6 @@ export default function Payment() {
           cvv: cardData.cvv,
         },
       };
-
-      console.log("POST /api/payment payload:", {
-        uuid: payload.uuid,
-        cardNumberPreview: payload.cardData.number
-          .replace(/\d{4}(?=\d)/g, "$& ")
-          .slice(0, 19),
-      });
-
       const res = await fetch("/api/payment", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -108,7 +94,12 @@ export default function Payment() {
       document.open();
       document.write(html);
       document.close();
-
+      
+      if (selectedMethod === "cash") {
+        router.push(`/success?order=${clientData.uuid}&status=cash`);
+        return;
+      }
+          
       setTimeout(() => {
         try {
           const form = document.forms?.[0];
@@ -127,11 +118,11 @@ export default function Payment() {
         Payment Method
       </h1>
 
-      {/* CREDIT */}
+      {/* card */}
       <div
-        onClick={() => setSelectedMethod("credit")}
+        onClick={() => setSelectedMethod("card")}
         className={`cursor-pointer flex justify-between items-center h-20 p-4 rounded-xl border transition-all duration-300 ${
-          selectedMethod === "credit"
+          selectedMethod === "card"
             ? "bg-primary/10 border-primary text-primary"
             : "border-base-300 hover:bg-base-200"
         }`}
@@ -140,7 +131,7 @@ export default function Payment() {
           <span className="text-2xl">💳</span>
           <span className="font-medium">Credit / Debit Card (3D Secure)</span>
         </div>
-        {selectedMethod === "credit" && <span className="text-xl">✅</span>}
+        {selectedMethod === "card" && <span className="text-xl">✅</span>}
       </div>
 
       {/* CASH */}
@@ -160,8 +151,7 @@ export default function Payment() {
       </div>
 
       {/* Card inputs */}
-      {/* Card inputs */}
-      {selectedMethod === "credit" && (
+      {selectedMethod === "card" && (
         <div className="mt-3 bg-base-200/40 p-4 rounded-xl border border-base-300">
           <label className="block text-sm font-semibold mb-1">
             Card Number

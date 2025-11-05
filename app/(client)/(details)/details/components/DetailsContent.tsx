@@ -262,7 +262,7 @@ const Details = memo(function () {
                   />
                 </fieldset>
 
-                <button type="submit" className="btn btn-primary w-36">
+                <button type="submit" className="btn text-white btn-warning w-36">
                   Submit
                 </button>
 

@@ -4,33 +4,80 @@ import { query } from "../../lib/db";
 
 // --- Utils ---
 const sha1HexUpper = (s: string) =>
-  crypto.createHash("sha1").update(Buffer.from(s, "utf8")).digest("hex").toUpperCase();
+  crypto
+    .createHash("sha1")
+    .update(Buffer.from(s, "utf8"))
+    .digest("hex")
+    .toUpperCase();
 
 const sha512HexUpper = (s: string) =>
-  crypto.createHash("sha512").update(Buffer.from(s, "utf8")).digest("hex").toUpperCase();
+  crypto
+    .createHash("sha512")
+    .update(Buffer.from(s, "utf8"))
+    .digest("hex")
+    .toUpperCase();
 
 const escapeHtml = (s: string) =>
-  s.replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  s
+    .replace(/&/g, "&amp;")
+    .replace(/"/g, "&quot;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
 
 const pad2 = (v: string | number) => String(v).padStart(2, "0");
 
 export async function POST(req: Request) {
-  console.log("\n==================== Garanti Payment INIT (512) ====================\n");
+  console.log(
+    "\n==================== Garanti Payment INIT (512) ====================\n"
+  );
   try {
     const body = await req.json().catch(() => ({}));
-    const { uuid, cardData } = body || {};
+    const { uuid, payment_method, cardData } = body || {};
     console.log("Received body:", body);
 
+    if (!payment_method)
+      return new NextResponse("Missing payment_method", { status: 400 });
+
     if (!uuid) return new NextResponse("Missing uuid", { status: 400 });
-    if (!cardData?.number || !cardData?.month || !cardData?.year || !cardData?.cvv)
-      return new NextResponse("Missing cardData", { status: 400 });
 
     // --- Booking kontrolü ---
-    const result = await query("SELECT price FROM bookings WHERE uuid = $1", [uuid]);
+    const result = await query("SELECT price FROM bookings WHERE uuid = $1", [
+      uuid,
+    ]);
     if (!result.rows.length)
       return new NextResponse("Booking not found", { status: 404 });
     const dbPrice = result.rows[0].price;
     console.log("✅ Booking found:", { uuid, dbPrice });
+
+    // --- payment_method güncelle ---
+    await query("UPDATE bookings SET payment_method = $1 WHERE uuid = $2", [
+      payment_method,
+      uuid,
+    ]);
+    console.log(`💾 payment_method updated to '${payment_method}'`);
+
+    // Eğer ödeme yöntemi 'cash' ise, 3D yönlendirmeye gerek yok
+    if (payment_method === "cash") {
+      console.log("💰 Cash payment detected — redirecting to success page.");
+
+        await query(
+          "UPDATE bookings SET status = $1, paid_at = NOW() WHERE uuid = $2",
+          ["pending", uuid]
+        );
+      return NextResponse.redirect(
+        `${process.env.NEXT_PUBLIC_BASE_URL || "https://airporttohotels.com"}/success?order=${uuid}&status=cash`,
+        302
+      );
+    }
+    // 💳 CREDIT Ödemesi için kart kontrolü
+    if (
+      !cardData?.number ||
+      !cardData?.month ||
+      !cardData?.year ||
+      !cardData?.cvv
+    ) {
+      return new NextResponse("Missing cardData", { status: 400 });
+    }
 
     // --- ENV değişkenleri ---
     const terminalId = process.env.GARANTI_TERMINAL_ID!;
@@ -53,7 +100,7 @@ export async function POST(req: Request) {
     const amountKurus = Math.round(Number(dbPrice) * 100).toString();
     const currency = "949";
     const txntype = "sales";
-    const installment = "0";
+    const installment = "";
 
     // --- Hash (SHA512) ---
     const hashedPassword = sha1HexUpper(provPass + "0" + terminalId);
@@ -82,7 +129,7 @@ export async function POST(req: Request) {
     const formFields: Record<string, string> = {
       mode: GARANTI_MODE,
       apiversion: "512",
-      secure3dsecuritylevel: "3D",
+      secure3dsecuritylevel: "3D_PAY",
       terminalprovuserid: provUser,
       terminaluserid: provUser,
       terminalmerchantid: merchantId,
@@ -106,19 +153,19 @@ export async function POST(req: Request) {
 
     // --- HTML redirect ---
     const html = `<!doctype html>
-<html>
-<head><meta charset="utf-8"><title>Redirecting...</title></head>
-<body onload="document.forms[0].submit();">
-<form method="post" action="${endpoint}">
-${Object.entries(formFields)
-  .map(
-    ([k, v]) => `<input type="hidden" name="${k}" value="${escapeHtml(v)}" />`
-  )
-  .join("\n")}
-<noscript><button type="submit">Continue</button></noscript>
-</form>
-<script>setTimeout(()=>{try{document.forms[0].submit()}catch(e){}},1200)</script>
-</body></html>`;
+  <html>
+  <head><meta charset="utf-8"><title>Redirecting...</title></head>
+  <body onload="document.forms[0].submit();">
+  <form method="post" action="${endpoint}">
+  ${Object.entries(formFields)
+    .map(
+      ([k, v]) => `<input type="hidden" name="${k}" value="${escapeHtml(v)}" />`
+    )
+    .join("\n")}
+  <noscript><button type="submit">Continue</button></noscript>
+  </form>
+  <script>setTimeout(()=>{try{document.forms[0].submit()}catch(e){}},1200)</script>
+  </body></html>`;
 
     console.log(
       "\n==================== Redirecting to Garanti 3D Secure ====================\n"

@@ -31,7 +31,11 @@ export default function SuccessPage() {
   const [loading, setLoading] = useState(true);
 
   const orderId = searchParams.get("order");
-  const status = searchParams.get("status");
+  
+  if(clientData?.status === "accepted"){
+    alert("You already reserved.")
+    router.push("/");
+  }
 
   useEffect(() => {
     if (!orderId) return;
@@ -56,21 +60,35 @@ export default function SuccessPage() {
   // ✅ Tüm veriler geldiyse gösterilecek koşul
   const isReady = !loading && clientData && finalPrice !== null;
 
-  const handleConfirm = async () => {
-    setSending(true);
-    try {
-      const res = await fetch("/api/send-booking-mail", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...clientData, price: finalPrice, symbol }),
-      });
-      const result = await res.json();
-      console.log("Mail sent:", result);
-    } catch (err) {
-      console.error("Mail error:", err);
-    }
-    router.push("/");
-  };
+const handleConfirm = async () => {
+  setSending(true);
+  try {
+    // 1️⃣ Mail gönder
+    const mailRes = await fetch("/api/send-booking-mail", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ...clientData, price: finalPrice, symbol }),
+    });
+
+    const mailResult = await mailRes.json();
+    console.log("Mail sent:", mailResult);
+
+    // 2️⃣ Status 'accepted' olarak güncelle
+    const updateRes = await fetch("/api/update-payment-status", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ uuid: clientData.uuid, status: "accepted" }),
+    });
+
+    const updateResult = await updateRes.json();
+    console.log("Payment status updated:", updateResult);
+  } catch (err) {
+    console.error("Mail or update error:", err);
+  }
+
+  // 3️⃣ Anasayfaya yönlendir
+  router.push("/");
+};
 
   const extrasList =
     clientData?.extras &&
@@ -94,7 +112,7 @@ export default function SuccessPage() {
     );
   }
 
-  const isCard = status === "paid" || clientData.payment_method === "credit";
+  const isCard = clientData.status === "paid" || clientData.payment_method === "card";
 
   return (
     <div className="min-h-[70vh] my-24 lg:m-0 flex flex-col items-center justify-center bg-base-200 rounded-box shadow-md p-8 text-center animate-fade-in">
@@ -174,14 +192,23 @@ export default function SuccessPage() {
           </li>
         </ul>
       </div>
-
-      <button
-        onClick={handleConfirm}
-        className="btn btn-primary mt-8"
-        disabled={sending}
-      >
-        {sending ? "Sending..." : "Confirm & Send Mail"}
-      </button>
+      {isCard ? (
+        <button
+          onClick={() => router.push("/")}
+          className="btn btn-primary mt-8"
+          disabled={sending}
+        >
+          Homepage
+        </button>
+      ) : (
+        <button
+          onClick={handleConfirm}
+          className="btn btn-primary mt-8"
+          disabled={sending}
+        >
+          {sending ? "Sending..." : "Confirm & Send Mail"}
+        </button>
+      )}
     </div>
   );
 }

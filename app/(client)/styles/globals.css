@@ -46,3 +46,13 @@ html{
 .title{
   font-family: var(--font-merriweather);
 }
+
+.perspective {
+  perspective: 1000px;
+}
+.preserve-3d {
+  transform-style: preserve-3d;
+}
+.backface-hidden {
+  backface-visibility: hidden;
+}
