@@ -67,7 +67,7 @@ const Extras = memo(function () {
   }, [clientData?.extras]);
 
   useEffect(() => {
-    if (!clientData || clientData.basePrice != null || extras.length === 0)
+    if (!clientData || extras.length === 0)
       return;
     const totalPrice = Number(clientData.price ?? 0);
     const currentBase = Number(clientData.base_price ?? 0);

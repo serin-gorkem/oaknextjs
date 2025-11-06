@@ -89,11 +89,12 @@ export default function BookingContent() {
             rawPrice *= 2;
           }
 
-          const converted = await convertPrice(rawPrice);
-
+          // rawPrice USD (DB’den geldiği gibi); sadece ekranda çevireceğiz
+          const display = await convertPrice(rawPrice);
           return {
             ...vehicle,
-            total_price: converted.toFixed(2),
+            total_price: display.toFixed(2), // sadece gösterim
+            total_price_usd: rawPrice, // state/flow için KANONİK değer (USD)
           };
         })
       );
@@ -134,7 +135,7 @@ export default function BookingContent() {
   function loadExtrasPage(
     vehicleName: string,
     vehicleId: number,
-    price: number,
+    priceUSD: number,
     imageURL: string
   ) {
     if (!clientData) return;
@@ -150,7 +151,6 @@ export default function BookingContent() {
         },
       }));
     }
-
     setClientData((prev: any) => ({
       ...prev,
       booking: {
@@ -159,8 +159,8 @@ export default function BookingContent() {
         vehicle_id: vehicleId,
         image_url: imageURL,
       },
-      price: price,
-      base_price: price,
+      price: priceUSD,
+      base_price: priceUSD,
       extras: {
         childSeat: 0,
         flowers: 0,
@@ -255,7 +255,7 @@ export default function BookingContent() {
                         loadExtrasPage(
                           vehicle.name,
                           vehicle.id,
-                          vehicle.total_price,
+                          vehicle.total_price_usd,
                           vehicle.image_url
                         )
                       }
