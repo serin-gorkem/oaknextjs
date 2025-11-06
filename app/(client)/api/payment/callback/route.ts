@@ -56,12 +56,9 @@ export async function POST(req: Request) {
     const responseField = String(payload.response || "").toLowerCase();
 
     // --- Approval logic ---
-    const ok3d =
-      ["1", "2", "3", "4"].includes(mdstatus) || (isTest && mdstatus === "0");
     const approved =
-      ok3d &&
-      (prc === "00" || (isTest && (!prc || responseField === "approved"))) &&
-      (hashMatch || isTest);
+      ["1", "2", "3", "4"].includes(mdstatus) &&
+      (prc === "00" || responseField.includes("approved"));
 
     console.log("🧾 Garanti unified callback details:", {
       orderId,
