@@ -5,6 +5,7 @@ import Footer from "./components/Footer";
 import Navbar from "./components/Navbar";
 import CurrencyProvider from "./components/CurrencyWrapper";
 import VehicleProvider from "./components/VehicleWrapper";
+import Head from "next/head";
 
 const merriweather = Merriweather({
   variable: "--font-merriweather",
@@ -53,13 +54,6 @@ export const metadata: Metadata = {
     description: "Private airport to hotel transfer in Istanbul, Izmir, Antalya, and across Turkey. Fast, safe, and comfortable.",
     images: ["/images/og-image.png"],
   },
-    other: {
-    // ✅ metadata.other kullanarak custom tag ekle
-    "link:preconnect:maps": "https://maps.googleapis.com",
-    "link:dns-prefetch:maps": "https://maps.googleapis.com",
-    "link:preconnect:fonts": "https://fonts.gstatic.com",
-    "link:preload:hero": "/images/homepage.webp",
-  },
 };
 
 
@@ -74,6 +68,9 @@ export default function RootLayout({
       className={` ${merriweather.variable} ${lato.variable} antialiased`}
       data-theme="base"
     >
+      <Head>
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
       <body className="font-lato">
         <VehicleProvider>
           <CurrencyProvider>
