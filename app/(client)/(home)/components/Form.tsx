@@ -48,7 +48,7 @@ export default function Form() {
     { id: "ASR", name: "Kayseri Erkilet Airport", query: "Kayseri Erkilet Airport, Turkey" },
     { id: "NAV", name: "Nevşehir Kapadokya Airport", query: "Nevşehir Kapadokya Airport, Turkey" },
     { id: "ESB", name: "Esenboğa International Airport", query: "Esenboğa International Airport, Ankara, Turkey" },
-    { id: "ADA", name: "Adana Şakirpaşa Airport", query: "Adana Şakirpaşa Airport, Turkey" },
+    { id: "DNZ", name: "Denizli Çardak Airport", query: "Denizli Çardak Airport, Turkey" },
     { id: "GAP", name: "Şanlıurfa GAP Airport", query: "Şanlıurfa GAP Airport, Turkey" },
     { id: "TZX", name: "Trabzon Airport", query: "Trabzon Airport, Turkey" },
   ];
@@ -63,7 +63,7 @@ export default function Form() {
     "Kayseri Erkilet Airport": 150,
     "Nevşehir Kapadokya Airport": 70,
     "Esenboğa International Airport": 70,
-    "Adana Şakirpaşa Airport": 50,
+    "Denizli Çardak Airport": 50,
     "Şanlıurfa GAP Airport": 50,
     "Trabzon Airport": 50,
   };
