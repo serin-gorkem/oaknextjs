@@ -80,7 +80,7 @@ const About = memo(function () {
               className="btn w-48 h-12 bg-primary text-white hover:bg-warning hover:border-warning hover:shadow-none hover:text-base-100"
             >
               <a href="/about" className="w-full" aria-label="Go to book now.">
-                Learn More
+                Learn More About Us
               </a>
             </motion.button>
           </div>

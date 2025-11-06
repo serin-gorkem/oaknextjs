@@ -213,9 +213,9 @@ export default function Form() {
 
       {/* Pickup Location */}
       <fieldset className="fieldset">
-        <legend className="font-semibold text-sm mb-1 text-base-content/80">
+        <label className="font-semibold text-sm mb-1 text-base-content/80">
           From (We only operate in Turkey)
-        </legend>
+        </label>
         <select
           className="select select-bordered w-full bg-base-200 focus:outline-none focus:ring-2 focus:ring-primary"
           value={pickupLocation?.id || ""}
