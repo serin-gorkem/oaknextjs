@@ -4,10 +4,15 @@ import { useState } from "react";
 import { DayPicker } from "react-day-picker";
 import "react-day-picker/style.css";
 import { v4 as uuidv4 } from "uuid";
-import AutocompleteInput from "./AutocompleteInput";
 import LoadGoogleMaps from "@/components/LoadGoogleMaps";
 import { getDrivingDistance } from "./CalculateDistance";
 import { motion, AnimatePresence } from "framer-motion";
+import dynamic from "next/dynamic";
+
+const AutocompleteInput = dynamic(() => import("./AutocompleteInput"), {
+  ssr: false,
+  loading: () => <p className="text-sm text-base-content/60">Loading location input...</p>,
+});
 
 interface Location {
   lat: number;
