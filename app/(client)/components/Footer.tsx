@@ -7,7 +7,6 @@ const Footer = memo(function () {
   return (
     <footer className="bg-info-content pt-12 pb-2 relative">
       <div className="footer sm:footer-horizontal xl:max-w-9/12 lg:max-w-11/12 lg:px-0 sm:px-4 px-2 mx-auto text-neutral-content">
-
         {/* Sol taraf - Logo ve açıklama */}
         <motion.div
           initial={{ opacity: 0, y: 60 }}
@@ -24,8 +23,9 @@ const Footer = memo(function () {
           />
           <p className="w-10/12 text-sm sm:text-base mt-2">
             Located in Turkey / Kuşadası; we provide reliable and comfortable
-            airport transfers. With transparent pricing and professional drivers,
-            we ensure a smooth and stress-free journey all around Turkey.
+            airport transfers. With transparent pricing and professional
+            drivers, we ensure a smooth and stress-free journey all around
+            Turkey.
           </p>
         </motion.div>
 
@@ -65,7 +65,7 @@ const Footer = memo(function () {
             {menuItem("Privacy Policy", "/privacy")}
             {menuItem("Our Vehicles", "/#vehicles")}
             {menuItem("Tours of You", "https://www.toursofyou.com/")}
-            {menuItem("TURSAB Digital Verification System", "/")}
+            {menuItem("TURSAB Digital Verification System", "https://www.tursab.org.tr/tr/ddsv")}
           </ul>
         </motion.nav>
 
@@ -84,7 +84,9 @@ const Footer = memo(function () {
               <div className="flex items-center gap-2">
                 <PhoneIcon />
                 <a
-                  href={`tel:${process.env.NEXT_PUBLIC_WHATSAPP_PHONE_NUMBER ?? ""}`}
+                  href={`tel:${
+                    process.env.NEXT_PUBLIC_WHATSAPP_PHONE_NUMBER ?? ""
+                  }`}
                   className="text-base lg:text-base"
                 >
                   {process.env.NEXT_PUBLIC_WHATSAPP_PHONE_NUMBER}
@@ -114,6 +116,15 @@ const Footer = memo(function () {
         viewport={{ once: true }}
         className="text-white w-full flex-col gap-4 my-6 flex items-center justify-center"
       >
+        <a href="https://www.tursab.org.tr/tr/ddsv" aria-label="tursab logo">
+          <Image
+            src="/images/tursab/tursab-en.webp"
+            alt="About Us"
+            width={1920}
+            height={1080}
+            className="rounded-box w-fit "
+          ></Image>
+        </a>
         <p className="text-sm">
           © {new Date().getFullYear()} All rights reserved to OAK Travel Group
         </p>
@@ -130,12 +141,14 @@ const Footer = memo(function () {
             <p className="text-white pl-2 opacity-70 text-xs font-light">
               OAK TRAVEL AGENCY
             </p>
-            <p className="text-white pl-2 opacity-70 text-xs font-light">12849</p>
+            <p className="text-white pl-2 opacity-70 text-xs font-light">
+              12849
+            </p>
           </div>
         </div>
 
         <a className="text-sm" href="https://gorkemserin.com/">
-          Website Designed by Crehera Web Agency - Görkem Serin
+          Website Designed by | Crehera Web Agency - Görkem Serin
         </a>
 
         <Image

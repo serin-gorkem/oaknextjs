@@ -194,7 +194,7 @@ const Contact = memo(function () {
                 loading="lazy"
                 allowFullScreen
                 title="location-map"
-                className="w-full h-64 mt-2 rounded-lg shadow-md"
+                className="w-full h-100 mt-2 rounded-lg shadow-md"
                 referrerPolicy="no-referrer-when-downgrade"
                 src={`https://www.google.com/maps/embed/v1/place?q=place_id:ChIJ9eNRs4OpvhQREf4JZnlssoQ&key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`}
               ></iframe>
