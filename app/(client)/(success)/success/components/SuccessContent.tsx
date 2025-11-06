@@ -30,7 +30,7 @@ export default function SuccessPage() {
   const [clientData, setClientData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
-  const orderId = searchParams.get("order");
+  const orderId = searchParams.get("uuid");
   
   if(clientData?.status === "accepted"){
     alert("You already reserved.")
