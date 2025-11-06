@@ -26,7 +26,7 @@ export default function BookContent() {
             Reliable <span className=" text-warning ">Airport Travels.</span>
             Travel with Confidence and Luxury at Great Prices.
           </h1>
-          <h2 className="font-paragraph xl:pb-8 text-base font-light text-white opacity-80 sm:w-full md:w-full sm:text-sm  xl:text-xl xl:w-8/12 w-fit leading-relaxed tracking-tighter">
+          <h2 rel="preload" className="font-paragraph xl:pb-8 text-base font-light text-white opacity-80 sm:w-full md:w-full sm:text-sm  xl:text-xl xl:w-8/12 w-fit leading-relaxed tracking-tighter">
             At Airport to Hotels, we specialize in providing seamless, reliable, and comfortable transfers directly from airports to your hotel. Our mission is to make your arrival and departure effortless, allowing you to start and end your trip with ease.
           </h2>
         </div>

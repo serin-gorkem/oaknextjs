@@ -213,10 +213,11 @@ export default function Form() {
 
       {/* Pickup Location */}
       <fieldset className="fieldset">
-        <label className="font-semibold text-sm mb-1 text-base-content/80">
+        <label htmlFor="pickupAirport" className="font-semibold text-sm mb-1 text-base-content/80">
           From (We only operate in Turkey)
         </label>
         <select
+          id="pickupAirport"
           className="select select-bordered w-full bg-base-200 focus:outline-none focus:ring-2 focus:ring-primary"
           value={pickupLocation?.id || ""}
           onChange={(e) => handlePickupChange(e.target.value)}
