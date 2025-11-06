@@ -5,6 +5,15 @@ const nextConfig: NextConfig = {
   compress: true,
   swcMinify: true,
 
+  // ✅ Modern image formats ve CSS optimizasyon
+  images: {
+    formats: ["image/avif", "image/webp"],
+  },
+  experimental: {
+    optimizeCss: true,
+  },
+
+  // ✅ Cache headers
   async headers() {
     return [
       {
@@ -16,7 +25,10 @@ const nextConfig: NextConfig = {
       {
         source: "/(.*)\\.(html|json)$",
         headers: [
-          { key: "Cache-Control", value: "public, max-age=60, stale-while-revalidate=300" },
+          {
+            key: "Cache-Control",
+            value: "public, max-age=60, stale-while-revalidate=300",
+          },
         ],
       },
     ];

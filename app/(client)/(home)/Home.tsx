@@ -20,6 +20,9 @@ export default function Home() {
           className="object-center object-cover w-full h-full brightness-40"
           alt="Airport transfer background"
           priority
+          decoding="async" // ✅ Görseli asenkron çöz, render blocking kalkar
+          quality={70} // ✅ Görsel sıkıştırma
+          sizes="(max-width: 768px) 100vw, (max-width: 1280px) 70vw, 1920px" // ✅ Responsive
         />
       </div>
 

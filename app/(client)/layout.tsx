@@ -70,6 +70,11 @@ export default function RootLayout({
     >
       <Head>
         <link rel="icon" href="/favicon.ico" />
+        {/* ✅ Performans için preconnect ve preload ekledik */}
+        <link rel="preconnect" href="https://maps.googleapis.com" />
+        <link rel="dns-prefetch" href="https://maps.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
+        <link rel="preload" href="/images/homepage.webp" as="image" />
       </Head>
       <body className="font-lato">
         <VehicleProvider>
