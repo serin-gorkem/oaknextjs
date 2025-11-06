@@ -20,9 +20,9 @@ export default function Home() {
           className="object-center object-cover w-full h-full brightness-40"
           alt="Airport transfer background"
           priority
-          decoding="async" // ✅ Görseli asenkron çöz, render blocking kalkar
-          quality={70} // ✅ Görsel sıkıştırma
-          sizes="(max-width: 768px) 100vw, (max-width: 1280px) 70vw, 1920px" // ✅ Responsive
+          decoding="async"
+          quality={70}
+          sizes="(max-width: 768px) 100vw, (max-width: 1280px) 70vw, 1920px"
         />
       </div>
 
@@ -35,7 +35,7 @@ export default function Home() {
         className="relative z-10 flex flex-col justify-between gap-4 p-2 my-24 sm:my-48 md:px-4 lg:flex-row lg:px-0 xl:max-w-9/12 lg:max-w-11/12 mx-auto"
       >
         {/* Left Side */}
-        <div className="flex flex-col gap-4 fade-in-fast">
+        <div className="flex flex-col gap-4">
           <h1 className="title font-bold tracking-tight leading-snug text-2xl sm:text-4xl xl:text-5xl text-base-100 lg:leading-tight xl:w-9/12">
             Reliable <span className="text-warning">Airport Travels. </span>
             Travel with Confidence and Luxury at Great Prices.
@@ -51,7 +51,7 @@ export default function Home() {
           <a href="/#steps">
             <button
               aria-label="How to book your ride page navigator button"
-              className="btn btn-md lg:btn-lg hover:bg-primary hover:border-primary hover:text-base-100 font-paragraph font-light self-baseline transition-all duration-200"
+              className="btn btn-md lg:btn-lg hover:bg-primary hover:border-primary hover:text-base-100 font-paragraph font-light self-baseline"
             >
               How to book your ride
             </button>
@@ -59,7 +59,7 @@ export default function Home() {
         </div>
 
         {/* Right Side (Form) */}
-        <div className="relative sm:max-w-96 h-fit w-full slide-up">
+        <div className="relative sm:max-w-96 h-fit w-full">
           <CurrencyWrapper>
             <Form />
           </CurrencyWrapper>
