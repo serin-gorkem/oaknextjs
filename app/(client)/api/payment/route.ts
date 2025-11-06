@@ -167,7 +167,7 @@ export async function POST(req: Request) {
       CustomerEmailAddress: body.email || "noreply@airporttohotels.com",
       CustomerPhoneNumber:
         body.number?.replace(/\D/g, "")?.slice(-10) || "0000000000",
-      CustomerIPAddress: clientIP,
+      CustomerIPAddress: Buffer.from(clientIP, "utf8").toString("utf8"),
     };
     // console.log("📦 Form Fields (512):", formFields);
 
@@ -176,7 +176,7 @@ export async function POST(req: Request) {
   <html>
   <head><meta charset="utf-8"><title>Redirecting...</title></head>
   <body onload="document.forms[0].submit();">
-  <form method="post" action="${endpoint}">
+  <form method="post" action="${endpoint}" enctype="application/x-www-form-urlencoded">
   ${Object.entries(formFields)
     .map(
       ([k, v]) => `<input type="hidden" name="${k}" value="${escapeHtml(v)}" />`
