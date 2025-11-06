@@ -136,9 +136,9 @@ export async function POST(req: Request) {
         ? "https://sanalposprov.garanti.com.tr/servlet/gt3dengine"
         : "https://sanalposprovtest.garantibbva.com.tr/servlet/gt3dengine";
 
-    const clientIP = (
-      req.headers.get("x-forwarded-for")?.split(",")[0] || "176.41.63.106"
-    ).trim();
+    const clientIPRaw = req.headers.get("x-forwarded-for")?.split(",")[0] || "";
+    const clientIP =
+      clientIPRaw.match(/\b\d{1,3}(\.\d{1,3}){3}\b/)?.[0] || "176.41.63.106";
     // --- Form alanları ---
     const formFields: Record<string, string> = {
       mode: GARANTI_MODE,
