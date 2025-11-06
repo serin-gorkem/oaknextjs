@@ -19,7 +19,7 @@ const VehicleCard = memo(function (props: {
 
   return (
     <motion.article
-      className="relative w-full h-[50rem] perspective bg-transparent"
+      className="relative w-full h-[45rem] perspective bg-transparent"
     >
       <motion.div
         className="relative w-full h-full preserve-3d"

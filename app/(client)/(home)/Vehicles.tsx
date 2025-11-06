@@ -7,70 +7,59 @@ import "@splidejs/react-splide/css";
 import { Splide, SplideSlide } from "@splidejs/react-splide";
 import { useVehicle } from "../context/VehicleContext";
 import Image from "next/image";
+import { motion } from "framer-motion";
 
 const Vehicles = memo(function () {
   const [perPage, setPerPage] = useState(2);
-  type Vehicle = {
-    id: number;
-    name: string;
-    image_url: string;
-    capacity_person: number;
-    capacity_bags: number;
-    features: string[];
-    base_price: number;
-  };
   const { vehicles } = useVehicle();
 
   useEffect(() => {
     const updatePerPage = () => {
       const width = window.innerWidth;
-      if (width < 640) {
-        setPerPage(1); // mobile: <640px
-      } else if (width < 1024) {
-        setPerPage(2); // tablet: 640px–1023px
-      } else {
-        setPerPage(3); // desktop: >=1024px
-      }
+      if (width < 640) setPerPage(1);
+      else if (width < 1024) setPerPage(2);
+      else setPerPage(3);
     };
-    updatePerPage(); // Run once on mount
+    updatePerPage();
     window.addEventListener("resize", updatePerPage);
-
-    return () => {
-      window.removeEventListener("resize", updatePerPage);
-    };
+    return () => window.removeEventListener("resize", updatePerPage);
   }, []);
 
-const checkIcon = (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    fill="none"
-    viewBox="0 0 24 24"
-    strokeWidth={1.5}
-    stroke="currentColor"
-    className="size-6 text-warning"
-  >
-    <path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      d="M9 12.75 11.25 15 15 9.75m-3-7.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285Z"
-    />
-  </svg>
-);
+  const checkIcon = (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      strokeWidth={1.5}
+      stroke="currentColor"
+      className="size-6 text-warning"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M9 12.75 11.25 15 15 9.75m-3-7.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285Z"
+      />
+    </svg>
+  );
 
-const items = [
-  "Taxes and Tolls",
-  "Flight Monitoring",
-  "Waiting Time and Parking",
-  "Free Amendments",
-  "Free Cancellations",
-];
-
+  const items = [
+    "Taxes and Tolls",
+    "Flight Monitoring",
+    "Waiting Time and Parking",
+    "Free Amendments",
+    "Free Cancellations",
+  ];
 
   return (
     <>
-      <section
+      {/* 🔹 Section tamamına animasyon */}
+      <motion.section
         id="vehicles"
-        className="h-fit mt-16 px-2 pb-8 flex flex-col lg:p-0 xl:max-w-9/12 lg:max-w-11/12 mx-auto flex-wrap gap-4"
+        className="h-fit my-16 px-2 pb-8 flex flex-col lg:p-0 xl:max-w-9/12 lg:max-w-11/12 mx-auto flex-wrap gap-4"
+        initial={{ opacity: 0, y: 80 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
+        viewport={{ once: true, amount: 0.2 }}
       >
         <figure className="flex flex-col gap-2.5 h-fit">
           <figcaption className="text-xl title lg:text-2xl text-warning font-bold font-heading leading-tight">
@@ -86,7 +75,7 @@ const items = [
 
         <Splide
           aria-label="Vehicle Carousel"
-          className="overflow-hidden"
+          className="overflow-hidden pb-16"
           options={{
             type: "loop",
             gap: "1rem",
@@ -115,7 +104,8 @@ const items = [
             </SplideSlide>
           ))}
         </Splide>
-        <div className="bg-white  rounded-box p-4">
+
+        <div className="bg-white rounded-box p-4">
           <h2 className="text-2xl my-2 title">Prices Include</h2>
           <ul className="flex flex-col justify-between gap-2 text-base opacity-80">
             {items.map((text) => (
@@ -126,8 +116,15 @@ const items = [
             ))}
           </ul>
         </div>
-        {/* Helicopter and Jet Section.  */}
-        <figure className="flex flex-col text-center w-full mt-8 lg:mt-24 gap-5 h-fit">
+
+        {/* 🔹 Jet & Helicopter bölümü ayrı animasyon */}
+        <motion.figure
+          className="flex flex-col text-center w-full mt-8 lg:mt-24 gap-5 h-fit"
+          initial={{ opacity: 0, y: 60 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
+          viewport={{ once: true, amount: 0.3 }}
+        >
           <figcaption className="text-2xl lg:text-4xl font-bold opacity-85">
             A SOLUTION FOR EVERY DESTINATION
           </figcaption>
@@ -142,6 +139,7 @@ const items = [
             className="w-full h-96 rounded-lg object-cover"
             priority
           ></Image>
+
           <div className="w-full flex flex-col lg:flex-row justify-between">
             <div className="flex flex-col gap-8 lg:flex-row justify-between ">
               <Image
@@ -164,8 +162,8 @@ const items = [
                 </p>
               </div>
             </div>
-            <div></div>
           </div>
+
           <div className="w-full flex flex-col lg:flex-row justify-between">
             <div className="flex flex-col-reverse gap-8 lg:flex-row justify-between ">
               <div className="text-left flex mt-2 lg:w-1/2 flex-col gap-2.5 lg:pr-2">
@@ -188,10 +186,9 @@ const items = [
                 priority
               ></Image>
             </div>
-            <div></div>
           </div>
-        </figure>
-      </section>
+        </motion.figure>
+      </motion.section>
     </>
   );
 });

@@ -3,7 +3,6 @@ import { memo, useState } from "react";
 import { motion } from "framer-motion";
 import Stars from "./components/Stars";
 
-// === Heroicons SVG'ler ===
 const LeftIcon = (
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -45,9 +44,14 @@ const Reviews = memo(function () {
   ];
 
   return (
-    <section
+    // 🔹 Animasyon buraya eklendi
+    <motion.section
       id="reviews"
       className="h-fit px-2 flex flex-col flex-wrap gap-4 lg:p-0 xl:max-w-9/12 lg:max-w-11/12 mx-auto sm:gap-8"
+      initial={{ opacity: 0, y: 80 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.8, ease: "easeOut" }}
+      viewport={{ once: true, amount: 0.2 }}
     >
       {/* Başlık */}
       <figure className="flex flex-col gap-2.5 sm:gap-4 pb-8 text-center lg:text-left">
@@ -155,13 +159,12 @@ const Reviews = memo(function () {
           Review Us On Tripadvisor
         </button>
       </div>
-    </section>
+    </motion.section>
   );
 });
 
 export default Reviews;
 
-// === Veriler ===
 const reviewInfo = [
   {
     id: 0,
