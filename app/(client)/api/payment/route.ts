@@ -164,6 +164,9 @@ export async function POST(req: Request) {
       cardcvv2: String(cardData.cvv),
 
       // 💡 Zorunlu alan en sonda olmalı ve string olmalı
+      CustomerEmailAddress: body.email || "noreply@airporttohotels.com",
+      CustomerPhoneNumber:
+        body.number?.replace(/\D/g, "")?.slice(-10) || "0000000000",
       CustomerIPAddress: clientIP,
     };
     // console.log("📦 Form Fields (512):", formFields);

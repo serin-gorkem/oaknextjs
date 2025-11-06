@@ -75,6 +75,8 @@ export default function Payment() {
         uuid: clientData.uuid,
         payment_method: selectedMethod,
         symbol: symbol,
+        email: clientData.details.email,
+        number: clientData.details.phone,
         cardData: {
           number: onlyDigits(cardData.number),
           month: cardData.month,
