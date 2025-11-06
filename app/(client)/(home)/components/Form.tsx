@@ -63,7 +63,7 @@ export default function Form() {
     "Kayseri Erkilet Airport": 150,
     "Nevşehir Kapadokya Airport": 70,
     "Esenboğa International Airport": 70,
-    "Denizli Çardak Airport": 50,
+    "Denizli Çardak Airport": 100,
     "Şanlıurfa GAP Airport": 50,
     "Trabzon Airport": 50,
   };
