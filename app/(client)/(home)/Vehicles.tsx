@@ -1,31 +1,34 @@
 "use client";
-import { lazy, memo, useEffect, useState } from "react";
 
+import { lazy, memo, useEffect, useState } from "react";
+import { motion } from "framer-motion";
+import { Splide, SplideSlide } from "@splidejs/react-splide";
+import "@splidejs/react-splide/css";
+import Image from "next/image";
+import { useVehicle } from "../context/VehicleContext";
+
+// === Lazy Import ===
 const VehicleCard = lazy(() => import("./components/VehicleCard"));
 
-import "@splidejs/react-splide/css";
-import { Splide, SplideSlide } from "@splidejs/react-splide";
-import { useVehicle } from "../context/VehicleContext";
-import Image from "next/image";
-import { motion } from "framer-motion";
-
-const Vehicles = memo(function () {
+const Vehicles = memo(function Vehicles() {
   const [perPage, setPerPage] = useState(2);
   const { vehicles } = useVehicle();
 
+  // === Responsive perPage setting ===
   useEffect(() => {
-    const updatePerPage = () => {
+    const handleResize = () => {
       const width = window.innerWidth;
       if (width < 640) setPerPage(1);
       else if (width < 1024) setPerPage(2);
       else setPerPage(3);
     };
-    updatePerPage();
-    window.addEventListener("resize", updatePerPage);
-    return () => window.removeEventListener("resize", updatePerPage);
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const checkIcon = (
+  // === Check Icon ===
+  const CheckIcon = (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
@@ -42,7 +45,7 @@ const Vehicles = memo(function () {
     </svg>
   );
 
-  const items = [
+  const includedItems = [
     "Taxes and Tolls",
     "Flight Monitoring",
     "Waiting Time and Parking",
@@ -51,145 +54,145 @@ const Vehicles = memo(function () {
   ];
 
   return (
-    <>
-      {/* 🔹 Section tamamına animasyon */}
+    <motion.section
+      id="vehicles"
+      initial={{ opacity: 0, y: 80 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.8, ease: "easeOut" }}
+      viewport={{ once: true, amount: 0.2 }}
+      className="h-fit my-16 px-2 pb-8 flex flex-col xl:max-w-6xl lg:max-w-5xl mx-auto gap-10"
+    >
+      {/* === Section Header === */}
+      <header className="flex flex-col gap-2 text-center lg:text-left">
+        <h2 className="text-xl lg:text-2xl text-warning font-bold uppercase">
+          Our Vehicles
+        </h2>
+        <h3 className="text-2xl lg:text-4xl font-bold text-base-content/90">
+          Maximum Comfort and Safety for Your Trip
+        </h3>
+        <p className="text-lg font-medium text-base-content/70">
+          Licensed vehicles, professional drivers.
+        </p>
+      </header>
+
+      {/* === Vehicle Carousel === */}
+      <Splide
+        aria-label="Vehicle Carousel"
+        options={{
+          type: "loop",
+          gap: "1rem",
+          autoplay: true,
+          interval: 5000,
+          pauseOnHover: true,
+          perPage,
+          speed: 800,
+          rewind: true,
+          pagination: true,
+          drag: "free",
+        }}
+        className="overflow-hidden pb-12"
+      >
+        {vehicles?.map((vehicle) => (
+          <SplideSlide key={vehicle.id ?? vehicle.name}>
+            <VehicleCard
+              img={vehicle.image_url}
+              text={vehicle.name}
+              personCount={vehicle.capacity_person}
+              bagsCount={vehicle.capacity_bags}
+              specs={vehicle.features}
+              base_price={vehicle.base_price}
+            />
+          </SplideSlide>
+        ))}
+      </Splide>
+
+      {/* === Price Includes Section === */}
+      <div className="bg-white rounded-box p-6 shadow-sm">
+        <h4 className="text-2xl mb-3 font-semibold text-base-content">
+          Prices Include
+        </h4>
+        <ul className="flex flex-col gap-2 text-base text-base-content/80">
+          {includedItems.map((text) => (
+            <li key={text} className="flex items-center gap-2">
+              {CheckIcon}
+              <span>{text}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      {/* === Jet & Helicopter Section === */}
       <motion.section
-        id="vehicles"
-        className="h-fit my-16 px-2 pb-8 flex flex-col lg:p-0 xl:max-w-9/12 lg:max-w-11/12 mx-auto flex-wrap gap-4"
-        initial={{ opacity: 0, y: 80 }}
+        initial={{ opacity: 0, y: 60 }}
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, ease: "easeOut" }}
-        viewport={{ once: true, amount: 0.2 }}
+        viewport={{ once: true, amount: 0.3 }}
+        className="flex flex-col items-center text-center gap-8 mt-8 lg:mt-24"
       >
-        <figure className="flex flex-col gap-2.5 h-fit">
-          <figcaption className="text-xl title lg:text-2xl text-warning font-bold font-heading leading-tight">
-            Our Vehicles
-          </figcaption>
-          <h1 className="text-2xl lg:text-4xl font-bold opacity-85">
-            Maximum Confort and safety for your trip
-          </h1>
-          <h2 className=" text-xl font-medium opacity-70">
-            Licensed vehicles, professional drivers
-          </h2>
-        </figure>
+        <header>
+          <h3 className="text-3xl lg:text-4xl font-bold text-base-content/90">
+            A Solution for Every Destination
+          </h3>
+          <p className="text-lg font-medium text-base-content/70">
+            Discover our private Jet and Helicopter options.
+          </p>
+        </header>
 
-        <Splide
-          aria-label="Vehicle Carousel"
-          className="overflow-hidden pb-16"
-          options={{
-            type: "loop",
-            gap: "1rem",
-            autoplay: true,
-            width: "100%",
-            pauseOnHover: true,
-            resetProgress: false,
-            perPage,
-            speed: 800,
-            rewind: true,
-            rewindByDrag: true,
-            rewindSpeed: 1000,
-            height: "100%",
-          }}
-        >
-          {vehicles?.map((vehicle, index) => (
-            <SplideSlide key={index}>
-              <VehicleCard
-                img={vehicle.image_url}
-                text={vehicle.name}
-                personCount={vehicle.capacity_person}
-                bagsCount={vehicle.capacity_bags}
-                specs={vehicle.features}
-                base_price={vehicle.base_price}
-              />
-            </SplideSlide>
-          ))}
-        </Splide>
+        <Image
+          src="/images/helicopter-jet.webp"
+          alt="Helicopter and Jet view"
+          width={1920}
+          height={1080}
+          loading="lazy"
+          className="w-full h-96 rounded-lg object-cover"
+        />
 
-        <div className="bg-white rounded-box p-4">
-          <h2 className="text-2xl my-2 title">Prices Include</h2>
-          <ul className="flex flex-col justify-between gap-2 text-base opacity-80">
-            {items.map((text) => (
-              <li key={text} className="flex items-center gap-2">
-                {checkIcon}
-                <span>{text}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        {/* 🔹 Jet & Helicopter bölümü ayrı animasyon */}
-        <motion.figure
-          className="flex flex-col text-center w-full mt-8 lg:mt-24 gap-5 h-fit"
-          initial={{ opacity: 0, y: 60 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
-          viewport={{ once: true, amount: 0.3 }}
-        >
-          <figcaption className="text-2xl lg:text-4xl font-bold opacity-85">
-            A SOLUTION FOR EVERY DESTINATION
-          </figcaption>
-          <h2 className=" text-xl font-medium opacity-70">
-            Discover our private Jet and Helicopter choices.
-          </h2>
+        {/* === Private Jet Section === */}
+        <div className="flex flex-col lg:flex-row justify-between items-center gap-8">
           <Image
-            src="/images/helicopter-jet.webp"
-            alt="Helicopter and Jet"
+            src="/images/private-jet.webp"
+            alt="Private Jet"
             width={1920}
             height={1080}
-            className="w-full h-96 rounded-lg object-cover"
-            priority
-          ></Image>
-
-          <div className="w-full flex flex-col lg:flex-row justify-between">
-            <div className="flex flex-col gap-8 lg:flex-row justify-between ">
-              <Image
-                src="/images/private-jet.webp"
-                alt="Private Jet"
-                width={1920}
-                height={1080}
-                className="h-96 lg:w-1/2 rounded-lg object-cover"
-                priority
-              ></Image>
-              <div className="text-left flex mt-2 lg:w-1/2 flex-col gap-2.5 lg:pl-2">
-                <h3 className="text-2xl title lg:text-4xl font-bold opacity-85">
-                  Private Jet
-                </h3>
-                <p className="text-xl font-medium opacity-70 lg:w-10/12">
-                  Enjoy exclusive helicopter transfers for a VIP experience.
-                  Available at Istanbul, Sabiha Gökçen, Dalaman, Bodrum, İzmir,
-                  and Antalya Airports. Contact us via WhatsApp for pricing and
-                  booking.
-                </p>
-              </div>
-            </div>
+            loading="lazy"
+            className="h-96 lg:w-1/2 rounded-lg object-cover"
+          />
+          <div className="flex flex-col gap-3 text-left lg:w-1/2">
+            <h4 className="text-2xl lg:text-3xl font-bold text-base-content/90">
+              Private Jet
+            </h4>
+            <p className="text-lg text-base-content/70 leading-relaxed lg:w-10/12">
+              Experience true exclusivity with our private jet transfers,
+              available from Istanbul, Sabiha Gökçen, Dalaman, Bodrum, İzmir,
+              and Antalya Airports. Contact us via WhatsApp for pricing and
+              availability.
+            </p>
           </div>
+        </div>
 
-          <div className="w-full flex flex-col lg:flex-row justify-between">
-            <div className="flex flex-col-reverse gap-8 lg:flex-row justify-between ">
-              <div className="text-left flex mt-2 lg:w-1/2 flex-col gap-2.5 lg:pr-2">
-                <h3 className="text-2xl title lg:text-4xl font-bold opacity-85">
-                  Private Helicopter
-                </h3>
-                <p className="text-xl font-medium opacity-70 lg:w-10/12">
-                  Enjoy exclusive helicopter transfers for a VIP experience.
-                  Available at Istanbul, Sabiha Gökçen, Dalaman, Bodrum, İzmir,
-                  and Antalya Airports. Contact us via WhatsApp for pricing and
-                  booking.
-                </p>
-              </div>
-              <Image
-                src="/images/helicopter.webp"
-                alt="Private Jet"
-                width={1920}
-                height={1080}
-                className="h-96 lg:w-1/2 rounded-lg object-cover "
-                priority
-              ></Image>
-            </div>
+        {/* === Private Helicopter Section === */}
+        <div className="flex flex-col-reverse lg:flex-row justify-between items-center gap-8">
+          <div className="flex flex-col gap-3 text-left lg:w-1/2">
+            <h4 className="text-2xl lg:text-3xl font-bold text-base-content/90">
+              Private Helicopter
+            </h4>
+            <p className="text-lg text-base-content/70 leading-relaxed lg:w-10/12">
+              Enjoy breathtaking aerial transfers for a VIP experience.
+              Available at Istanbul, Sabiha Gökçen, Dalaman, Bodrum, İzmir, and
+              Antalya Airports. Contact us via WhatsApp for charter options.
+            </p>
           </div>
-        </motion.figure>
+          <Image
+            src="/images/helicopter.webp"
+            alt="Private Helicopter"
+            width={1920}
+            height={1080}
+            loading="lazy"
+            className="h-96 lg:w-1/2 rounded-lg object-cover"
+          />
+        </div>
       </motion.section>
-    </>
+    </motion.section>
   );
 });
 
