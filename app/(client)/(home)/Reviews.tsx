@@ -1,8 +1,11 @@
 "use client";
+
 import { memo, useState } from "react";
 import { motion } from "framer-motion";
+import Image from "next/image";
 import Stars from "./components/Stars";
 
+// === Icons ===
 const LeftIcon = (
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -29,13 +32,12 @@ const RightIcon = (
   </svg>
 );
 
-const Reviews = memo(function () {
+// === Component ===
+const Reviews = memo(function Reviews() {
   const [index, setIndex] = useState(0);
 
-  const prev = () =>
-    setIndex((prev) => (prev === 0 ? reviewInfo.length - 1 : prev - 1));
-  const next = () =>
-    setIndex((prev) => (prev + 1) % reviewInfo.length);
+  const prev = () => setIndex((prev) => (prev === 0 ? reviewInfo.length - 1 : prev - 1));
+  const next = () => setIndex((prev) => (prev + 1) % reviewInfo.length);
 
   const visible = [
     (index + reviewInfo.length - 1) % reviewInfo.length,
@@ -44,37 +46,44 @@ const Reviews = memo(function () {
   ];
 
   return (
-    // 🔹 Animasyon buraya eklendi
     <motion.section
       id="reviews"
-      className="h-fit px-2 flex flex-col flex-wrap gap-4 lg:p-0 xl:max-w-9/12 lg:max-w-11/12 mx-auto sm:gap-8"
+      className="h-fit px-2 flex flex-col flex-wrap gap-4 xl:max-w-6xl lg:max-w-5xl mx-auto sm:gap-8"
       initial={{ opacity: 0, y: 80 }}
       whileInView={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.8, ease: "easeOut" }}
       viewport={{ once: true, amount: 0.2 }}
+      aria-labelledby="reviews-heading"
     >
-      {/* Başlık */}
-      <figure className="flex flex-col gap-2.5 sm:gap-4 pb-8 text-center lg:text-left">
-        <figcaption className="text-xl title lg:text-2xl text-warning font-bold font-heading leading-tight">
+      {/* === Section Header === */}
+      <header className="flex flex-col gap-3 text-center lg:text-left mb-8">
+        <h2
+          id="reviews-heading"
+          className="text-xl lg:text-2xl text-warning font-bold uppercase tracking-wide"
+        >
           Reviews
-        </figcaption>
-        <h1 className="text-2xl lg:text-4xl font-bold opacity-85">
-          See what our customers said
-        </h1>
-      </figure>
+        </h2>
+        <h3 className="text-2xl lg:text-4xl font-bold text-base-content/90">
+          See What Our Customers Say
+        </h3>
+      </header>
 
-      {/* Carousel */}
-      <div className="relative flex justify-center items-center h-[16rem] perspective-[1600px] overflow-hidden">
-        {/* Sol ok */}
+      {/* === Review Carousel === */}
+      <div
+        className="relative flex justify-center items-center h-[18rem] perspective-[1600px] overflow-hidden"
+        aria-live="polite"
+      >
+        {/* Left button */}
         <button
           onClick={prev}
           className="absolute left-0 z-20 bg-base-300 hover:bg-warning text-base-content hover:text-white p-3 rounded-full shadow-lg transition-all duration-200"
           aria-label="Previous review"
+          aria-controls="review-carousel"
         >
           {LeftIcon}
         </button>
 
-        {/* Kartlar */}
+        {/* Review cards */}
         {visible.map((i, pos) => {
           const isCenter = pos === 1;
           const offsetX = pos === 0 ? -320 : pos === 2 ? 320 : 0;
@@ -85,18 +94,14 @@ const Reviews = memo(function () {
           const rotateY = pos === 0 ? 8 : pos === 2 ? -8 : 0;
 
           return (
-            <motion.div
+            <motion.article
               key={i}
+              itemScope
+              itemType="https://schema.org/Review"
               className={`absolute ${
                 isCenter ? "z-20 shadow-2xl" : "z-10"
-              } rounded-box p-8 w-[24rem] sm:w-[28rem] backdrop-blur-sm transition-all duration-500`}
-              animate={{
-                x: offsetX,
-                z,
-                scale,
-                opacity,
-                rotateY,
-              }}
+              } rounded-box p-8 w-[22rem] sm:w-[26rem] backdrop-blur-sm`}
+              animate={{ x: offsetX, z, scale, opacity, rotateY }}
               transition={{ duration: 0.8, ease: [0.42, 0, 0.58, 1] }}
               style={{
                 transformOrigin: "center center",
@@ -110,54 +115,68 @@ const Reviews = memo(function () {
               {isCenter && (
                 <div className="absolute inset-0 bg-gradient-to-b from-white/70 to-white/0 pointer-events-none rounded-box" />
               )}
-              <h3 className="font-bold text-warning mb-3 text-lg relative z-10">
+              <h4
+                itemProp="name"
+                className="font-bold text-warning mb-3 text-lg relative z-10"
+              >
                 {reviewInfo[i].title}
-              </h3>
-              <p className="text-base opacity-90 leading-relaxed relative z-10">
+              </h4>
+              <p
+                itemProp="reviewBody"
+                className="text-base text-base-content/80 leading-relaxed relative z-10"
+              >
                 {reviewInfo[i].review}
               </p>
-              <p className="mt-4 text-sm opacity-75 font-medium relative z-10">
+              <p
+                itemProp="author"
+                className="mt-4 text-sm opacity-75 font-medium relative z-10"
+              >
                 — {reviewInfo[i].name}, {reviewInfo[i].business}
               </p>
-            </motion.div>
+              <meta itemProp="reviewRating" content="5" />
+            </motion.article>
           );
         })}
 
-        {/* Sağ ok */}
+        {/* Right button */}
         <button
           onClick={next}
           className="absolute right-0 z-20 bg-base-300 hover:bg-warning text-base-content hover:text-white p-3 rounded-full shadow-lg transition-all duration-200"
           aria-label="Next review"
+          aria-controls="review-carousel"
         >
           {RightIcon}
         </button>
       </div>
 
-      {/* Alt kısım (TripAdvisor) */}
+      {/* === Bottom Info (TripAdvisor) === */}
       <div className="bg-base-300 rounded-box shadow-md flex flex-col lg:flex-row lg:items-center lg:justify-between p-4 w-full mt-10">
         <div className="flex flex-col">
-          <h5 className="text-xl">
+          <h4 className="text-xl text-base-content">
             Our customers say
-            <span className="font-bold"> Excellent</span>
-          </h5>
+            <span className="font-bold text-warning"> Excellent</span>
+          </h4>
           <div className="flex items-center">
-            <img
-              src="./images/Tripadvisor-Logo.webp"
-              alt="tripadvisor logo"
+            <Image
+              src="/images/Tripadvisor-Logo.webp"
+              alt="Tripadvisor logo"
+              width={160}
+              height={80}
               loading="lazy"
-              className="w-24 bg-cover bg-center"
+              className="object-contain w-24 h-auto"
             />
-            <div className="flex">
-              <Stars starCount={5} />
-            </div>
+            <Stars starCount={5} />
           </div>
         </div>
-        <button
-          aria-label="tripadvisor site link"
+        <a
+          href="https://www.tripadvisor.com/"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Go to Tripadvisor reviews"
           className="btn btn-primary hover:bg-white hover:text-primary w-64"
         >
-          Review Us On Tripadvisor
-        </button>
+          Review Us on Tripadvisor
+        </a>
       </div>
     </motion.section>
   );
@@ -165,10 +184,11 @@ const Reviews = memo(function () {
 
 export default Reviews;
 
+/* === Static Data === */
 const reviewInfo = [
   {
     id: 0,
-    title: "Always in time",
+    title: "Always on Time",
     name: "Sarah L.",
     business: "Business Traveler",
     review:
