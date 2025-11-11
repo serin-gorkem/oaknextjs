@@ -1,11 +1,10 @@
-  import type { Metadata } from "next";
-import {Merriweather, Lato } from "next/font/google";
+import type { Metadata } from "next";
+import { Merriweather, Lato } from "next/font/google";
 import "./styles/globals.css";
 import Footer from "./components/Footer";
 import Navbar from "./components/Navbar";
 import CurrencyProvider from "./components/CurrencyWrapper";
 import VehicleProvider from "./components/VehicleWrapper";
-import Head from "next/head";
 
 const merriweather = Merriweather({
   variable: "--font-merriweather",
@@ -18,23 +17,32 @@ const lato = Lato({
   weight: ["400", "700"],
 });
 
-
-
 export const metadata: Metadata = {
+  metadataBase: new URL("https://www.airporttohotels.com"),
   title: "Airport To Hotels – Private Airport Transfers in Turkey",
-  description: "Book your private airport to hotel transfer in Istanbul, Izmir, Antalya, and other cities in Turkey. Fast, safe, and comfortable rides.",
+  description:
+    "Book your private airport to hotel transfer in Istanbul, Izmir, Antalya, and other cities in Turkey. Fast, safe, and comfortable rides.",
   keywords: [
-    "airport transfer", "hotel transfer", "private driver", 
-    "Istanbul airport transfer", "Izmir airport transfer", 
-    "Antalya airport transfer", "Turkey transfer service", "VIP transfer"
+    "airport transfer",
+    "hotel transfer",
+    "private driver",
+    "Istanbul airport transfer",
+    "Izmir airport transfer",
+    "Antalya airport transfer",
+    "Turkey transfer service",
+    "VIP transfer",
   ],
   authors: [{ name: "AirportToHotels" }],
-  icons: {
-    icon: "/favicon.ico",
+  icons: { icon: "/favicon.ico" },
+  alternates: { canonical: "/" },
+  robots: {
+    index: true,
+    follow: true,
   },
   openGraph: {
     title: "Airport To Hotels – Private Airport Transfers",
-    description: "Luxury and reliable airport to hotel transfers across Turkey. Book online for fast and comfortable rides.",
+    description:
+      "Luxury and reliable airport to hotel transfers across Turkey. Book online for fast and comfortable rides.",
     url: "https://www.airporttohotels.com",
     siteName: "Airport To Hotels",
     images: [
@@ -51,11 +59,11 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Airport To Hotels – Book Your Transfer Online",
-    description: "Private airport to hotel transfer in Istanbul, Izmir, Antalya, and across Turkey. Fast, safe, and comfortable.",
+    description:
+      "Private airport to hotel transfer in Istanbul, Izmir, Antalya, and across Turkey. Fast, safe, and comfortable.",
     images: ["/images/og-image.png"],
   },
 };
-
 
 export default function RootLayout({
   children,
@@ -68,9 +76,6 @@ export default function RootLayout({
       className={` ${merriweather.variable} ${lato.variable} antialiased`}
       data-theme="base"
     >
-      <Head>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
       <body className="font-lato">
         <VehicleProvider>
           <CurrencyProvider>
