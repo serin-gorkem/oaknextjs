@@ -30,7 +30,7 @@ export default function SuccessPage() {
   const [clientData, setClientData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
-  const orderId = searchParams.get("uuid");
+  const orderId = searchParams.get("order") || searchParams.get("uuid");
   
   if(clientData?.status === "accepted"){
     alert("You already reserved.")
@@ -58,7 +58,7 @@ export default function SuccessPage() {
   const finalPrice = useFinalPrice(clientData);
 
   // ✅ Tüm veriler geldiyse gösterilecek koşul
-  const isReady = !loading && clientData && finalPrice !== null;
+  const isReady = !loading && clientData;
 
 const handleConfirm = async () => {
   setSending(true);

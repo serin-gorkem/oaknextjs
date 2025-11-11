@@ -55,69 +55,90 @@ export default function Payment() {
   const navigateToFailed = (data: any) =>
     router.push(`/failed?data=${encodeURIComponent(JSON.stringify(data))}`);
 
-  const handlePayment = async () => {
-    setMessage(null);
-    if (!selectedMethod || !termsAccepted) {
-      setMessage({
-        type: "error",
-        text: "Please select a payment method and accept terms.",
-      });
-      return;
-    }
-    
-    if (!validateCardInputs() && selectedMethod === "card") {
-      setMessage({ type: "error", text: "Please fill card fields correctly." });
+const handlePayment = async () => {
+  setMessage(null);
+  if (!selectedMethod || !termsAccepted) {
+    setMessage({
+      type: "error",
+      text: "Please select a payment method and accept terms.",
+    });
+    return;
+  }
+
+  if (!validateCardInputs() && selectedMethod === "card") {
+    setMessage({ type: "error", text: "Please fill card fields correctly." });
+    return;
+  }
+
+  try {
+    const payload = {
+      uuid: clientData.uuid,
+      payment_method: selectedMethod,
+      symbol: symbol,
+      email: clientData.details.email,
+      number: clientData.details.phone,
+      cardData: {
+        number: onlyDigits(cardData.number),
+        month: cardData.month,
+        year: cardData.year,
+        cvv: cardData.cvv,
+      },
+    };
+
+    const res = await fetch("/api/payment", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+
+    if (!res.ok) {
+      const errText = await res.text().catch(() => "Payment request failed");
+      console.error("Payment route error:", errText);
+      navigateToFailed(clientData);
       return;
     }
 
-    try {
-      const payload = {
-        uuid: clientData.uuid,
-        payment_method: selectedMethod,
-        symbol: symbol,
-        email: clientData.details.email,
-        number: clientData.details.phone,
-        cardData: {
-          number: onlyDigits(cardData.number),
-          month: cardData.month,
-          year: cardData.year,
-          cvv: cardData.cvv,
-        },
-      };
-      const res = await fetch("/api/payment", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
+    const contentType = res.headers.get("content-type") || "";
 
-      if (!res.ok) {
-        const errText = await res.text().catch(() => "Payment request failed");
-        console.error("Payment route error:", errText);
-        navigateToFailed(clientData);
-        return;
+    if (contentType.includes("application/json")) {
+      // ✅ Cash veya JSON dönen durum
+      const json = await res.json();
+      if (json.redirect) {
+        router.push(json.redirect);
+      } else {
+        router.push(`/success?order=${clientData.uuid}&status=${selectedMethod}`);
       }
+      return;
+    }
 
+    if (contentType.includes("text/html")) {
+      // ✅ Kart ödemesi (Garanti 3D)
       const html = await res.text();
       document.open();
       document.write(html);
       document.close();
-      
-      if (selectedMethod === "cash") {
-        router.push(`/success?order=${clientData.uuid}&status=cash`);
-        return;
-      }
-          
+
       setTimeout(() => {
         try {
           const form = document.forms?.[0];
           if (form) form.submit();
-        } catch {}
+        } catch (e) {
+          console.error("Auto-submit failed:", e);
+        }
       }, 1000);
-    } catch (err) {
-      console.error(err);
-      navigateToFailed(clientData);
+      return;
     }
-  };
+
+    // 👇 Beklenmedik yanıt tipi
+    console.warn("Unexpected response:", contentType);
+    navigateToFailed(clientData);
+
+  } catch (err) {
+    console.error("Payment error:", err);
+    navigateToFailed(clientData);
+  }
+};
+
 
   return (
     <div className="bg-base-100 border border-base-300 sm:w-full rounded-2xl shadow-lg flex flex-col gap-5 px-4 py-6 transition-all duration-300 hover:shadow-xl">

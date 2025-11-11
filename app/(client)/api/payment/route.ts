@@ -66,12 +66,13 @@ export async function POST(req: Request) {
         "UPDATE bookings SET status = $1, paid_at = NOW() WHERE uuid = $2",
         ["pending", uuid]
       );
-      return NextResponse.redirect(
-        `${
+      // return JSON with redirect URL so client can handle
+      return NextResponse.json({
+        success: true,
+        redirect: `${
           process.env.NEXT_PUBLIC_BASE_URL || "https://www.airporttohotels.com"
         }/success?order=${uuid}&status=cash`,
-        302
-      );
+      });
     }
     // 💳 CREDIT Ödemesi için kart kontrolü
     if (
