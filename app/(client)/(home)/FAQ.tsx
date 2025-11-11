@@ -1,59 +1,53 @@
 "use client";
+
 import Image from "next/image";
 import { memo } from "react";
 import { motion } from "framer-motion";
 
-const FAQ = memo(function () {
+/* === Component === */
+const FAQ = memo(function FAQ() {
   return (
     <section
-      id="FAQ"
-      className="h-fit mt-16 px-2 pb-8 flex flex-col lg:p-0 xl:max-w-9/12 lg:max-w-11/12 mx-auto gap-8 lg:gap-16"
+      id="faq"
+      aria-labelledby="faq-heading"
+      className="h-fit mt-16 px-2 pb-8 flex flex-col xl:max-w-6xl lg:max-w-5xl mx-auto gap-12 lg:gap-16"
     >
-      {/* Başlık */}
-      <motion.figure
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
+      {/* === Section Header === */}
+      <motion.header
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, ease: "easeOut" }}
         viewport={{ once: true }}
-        className="flex flex-col gap-2.5"
+        className="flex flex-col gap-2 text-center lg:text-left"
       >
-        <figcaption className="text-xl title lg:text-2xl text-warning font-bold font-heading leading-tight">
+        <h2
+          id="faq-heading"
+          className="text-xl lg:text-2xl text-warning font-bold uppercase tracking-wide"
+        >
           FAQ
-        </figcaption>
-        <h1 className="text-2xl lg:text-4xl font-bold opacity-85">
+        </h2>
+        <h3 className="text-2xl lg:text-4xl font-bold text-base-content/90">
           Frequently Asked Questions
-        </h1>
-      </motion.figure>
+        </h3>
+      </motion.header>
 
-      {/* İçerik */}
-      <div className="flex flex-col lg:flex-row gap-8 lg:gap-4">
+      {/* === FAQ Content === */}
+      <div className="flex flex-col lg:flex-row gap-8 lg:gap-6">
+        {/* Left column: FAQ list */}
         <motion.div
-          className="flex flex-col justify-between flex-1"
+          className="flex flex-col justify-between flex-1 gap-4"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           transition={{ duration: 0.6, ease: "easeOut" }}
           viewport={{ once: true }}
         >
-          <FAQElement
-            title="What is Airport to Hotels and what services do you provide?"
-            text="Airport to Hotels offers private and shared transfers between airports and hotels across Turkey. Our mission is to provide seamless, reliable, and comfortable rides so that your arrival and departure are stress-free. We operate with licensed vehicles and professional drivers."
-          />
-          <FAQElement
-            title="Which airports and destinations do you cover?"
-            text="We currently operate transfers at major Turkish airports including Istanbul Airport, Sabiha Gökçen, İzmir Adnan Menderes, Bodrum Milas, Dalaman, Antalya, Kayseri (Erkilet), Nevşehir Kapadokya, Esenboğa, Adana Şakirpaşa, Şanlıurfa (GAP) and Trabzon. We deliver door-to-door service from airport → hotel or hotel → airport within Turkey."
-          />
-          <FAQElement
-            title="Can I request additional services (child seats, extra luggage, VIP)?"
-            text="Yes. During the booking process you may add optional extras such as child seats, extra luggage space, or a VIP chauffeur service. These options help tailor the ride to your needs."
-          />
-          <FAQElement
-            title="What are your rates, and are there hidden fees?"
-            text="We believe in clear & transparent pricing. The price shown when booking is the total you’ll pay — no hidden fees or surprises."
-          />
+          {faqData.map((item) => (
+            <FAQItem key={item.title} {...item} />
+          ))}
         </motion.div>
 
-        {/* Görsel */}
-        <motion.div
+        {/* Right column: Image */}
+        <motion.figure
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
@@ -62,58 +56,88 @@ const FAQ = memo(function () {
         >
           <Image
             src="/images/faq.webp"
-            alt="FAQ"
+            alt="Customer service representative answering airport transfer questions"
             width={1920}
             height={1080}
             className="rounded-box w-full h-96 object-cover shadow-lg"
+            loading="lazy"
+            quality={75}
           />
-        </motion.div>
+        </motion.figure>
       </div>
 
-      {/* Alt kısım */}
+      {/* === Bottom CTA === */}
       <motion.div
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.7, ease: "easeOut" }}
         viewport={{ once: true }}
-        className="flex flex-col items-center gap-3"
+        className="flex flex-col items-center gap-3 text-center"
       >
-        <h2 className="text-xl md:text-2xl font-bold">
-          Still have questions?
-        </h2>
-        <p className="text-base md:text-lg">
-          Please contact our support team — we’re happy to help!
+        <h4 className="text-xl md:text-2xl font-bold text-base-content">
+          Still Have Questions?
+        </h4>
+        <p className="text-base md:text-lg text-base-content/80">
+          Contact our support team — we’re here 24/7 to assist you.
         </p>
-        <button className="btn btn-outline px-8 btn-lg">Contact Us</button>
+        <a
+          href="/#contact"
+          className="btn btn-outline px-8 btn-lg"
+          aria-label="Navigate to contact section"
+        >
+          Contact Us
+        </a>
       </motion.div>
     </section>
   );
 });
 
-type FAQElementProps = {
+/* === FAQ Item Component (semantic accordion) === */
+type FAQItemProps = {
   title: string;
   text: string;
 };
 
-function FAQElement(props: FAQElementProps) {
+function FAQItem({ title, text }: FAQItemProps) {
   return (
-    <motion.div
+    <motion.details
       initial={{ opacity: 0 }}
       whileInView={{ opacity: 1 }}
       transition={{ duration: 0.5, ease: "easeOut" }}
       viewport={{ once: true }}
-      className="collapse collapse-arrow join-item border-primary border rounded-box"
+      className="border border-primary/40 rounded-xl bg-white/80 backdrop-blur-md shadow-sm p-4 open:shadow-md transition-all"
     >
-      <input
-        aria-label="faq-element"
-        type="radio"
-        name="faq-accordion"
-        defaultChecked={false}
-      />
-      <div className="collapse-title font-semibold">{props.title}</div>
-      <div className="collapse-content text-sm opacity-80">{props.text}</div>
-    </motion.div>
+      <summary
+        className="font-semibold cursor-pointer text-base-content/90 focus:outline-none focus-visible:ring-2 focus-visible:ring-warning rounded-md"
+        aria-expanded="false"
+      >
+        {title}
+      </summary>
+      <p className="mt-3 text-sm lg:text-base text-base-content/70 leading-relaxed">
+        {text}
+      </p>
+    </motion.details>
   );
 }
 
 export default FAQ;
+
+/* === Static FAQ Data === */
+const faqData = [
+  {
+    title: "What is Airport to Hotels and what services do you provide?",
+    text: "Airport to Hotels offers private and shared transfers between airports and hotels across Turkey. We aim to provide seamless, reliable, and comfortable rides with licensed vehicles and professional drivers.",
+  },
+  {
+    title: "Which airports and destinations do you cover?",
+    text: "We currently serve major airports in Turkey, including Istanbul, Sabiha Gökçen, İzmir, Bodrum, Dalaman, Antalya, Kayseri, Cappadocia, Ankara, Adana, Şanlıurfa, and Trabzon. We deliver door-to-door transfers across the country.",
+  },
+  {
+    title: "Can I request additional services like child seats or VIP options?",
+    text: "Yes, during booking you can add extras such as child seats, extra luggage space, or VIP chauffeur service to customize your journey.",
+  },
+  {
+    title: "What are your rates, and are there hidden fees?",
+    text: "All prices are fully transparent. The price shown at checkout is the total you’ll pay — no hidden fees or extra charges.",
+  },
+];
