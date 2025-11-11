@@ -1,91 +1,100 @@
 "use client";
+
 import { memo } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
 
-const About = memo(function () {
+const About = memo(function About() {
   return (
     <section
       id="about"
-      className="relative w-full h-[40rem] xl:max-w-9/12 lg:max-w-11/12 lg:mx-auto overflow-hidden"
+      className="relative w-full h-[40rem] xl:max-w-6xl lg:max-w-5xl mx-auto overflow-hidden"
     >
-      {/* Background image with cinematic motion */}
+      {/* === Background Image with Subtle Motion === */}
       <motion.div
         initial={{ scale: 1.1, opacity: 0 }}
         whileInView={{ scale: 1, opacity: 1 }}
-        transition={{ duration: 1.4, ease: "easeOut" }}
+        transition={{ duration: 1.2, ease: "easeOut" }}
         viewport={{ once: true }}
         className="absolute inset-0 -z-10"
       >
         <Image
           src="/images/about.webp"
-          alt="About Us"
+          alt="Airport To Hotels transfer service background"
           fill
-          className="rounded-box object-cover"
-          priority
+          className="object-cover rounded-box"
+          priority={false}
+          quality={75}
+          sizes="100vw"
         />
+        {/* Overlay for text contrast */}
+        <div className="absolute inset-0 bg-black/30 rounded-box" />
       </motion.div>
 
-      {/* Text content block */}
-      <motion.div
+      {/* === Text Content === */}
+      <motion.article
         initial={{ x: -60, opacity: 0 }}
         whileInView={{ x: 0, opacity: 1 }}
         transition={{ duration: 0.9, ease: "easeOut" }}
         viewport={{ once: true, amount: 0.4 }}
-        className="lg:p-16 p-4 max-w-2xl relative z-10"
+        className="relative z-10 p-4 lg:p-16 max-w-2xl"
       >
-        <div className="bg-base-300 lg:h-[33rem] lg:w-[60rem] rounded-[10px] p-4 lg:p-8 opacity-90 shadow-md">
-          <div className="flex flex-col gap-8">
-            <div className="flex flex-col gap-2">
-              <motion.p
-                initial={{ y: 20, opacity: 0 }}
-                whileInView={{ y: 0, opacity: 1 }}
-                transition={{ duration: 0.7, ease: "easeOut" }}
-                viewport={{ once: true }}
-                className="text-xl title lg:text-xl text-warning lg:text-left text-center font-bold leading-tight"
-              >
-                About Us
-              </motion.p>
-
-              <motion.h1
-                initial={{ y: 20, opacity: 0 }}
-                whileInView={{ y: 0, opacity: 1 }}
-                transition={{ duration: 0.9, ease: "easeOut", delay: 0.1 }}
-                viewport={{ once: true }}
-                className="text-3xl lg:text-6xl lg:w-5/6 lg:text-left text-center w-full leading-tight"
-              >
-                We are <br /> Airport to Hotels
-              </motion.h1>
-            </div>
-
-            <motion.p
-              initial={{ opacity: 0, y: 10 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
+        <div className="bg-base-300/90 backdrop-blur-md rounded-2xl p-6 lg:p-10 shadow-md">
+          {/* === Title & Subtitle === */}
+          <header className="flex flex-col gap-3">
+            <motion.h2
+              initial={{ y: 20, opacity: 0 }}
+              whileInView={{ y: 0, opacity: 1 }}
+              transition={{ duration: 0.7, ease: "easeOut" }}
               viewport={{ once: true }}
-              className="text-base lg:text-xl opacity-85 lg:w-5/6 w-full  leading-tight"
+              className="text-xl lg:text-2xl text-warning font-semibold tracking-wide uppercase text-center lg:text-left"
             >
-              At Airport to Hotels, we specialize in providing seamless,
-              reliable, and comfortable transfers directly from airports to your
-              hotel. Our mission is to make your arrival and departure effortless,
-              allowing you to start and end your trip with ease.
-            </motion.p>
+              About Us
+            </motion.h2>
 
-            <motion.button
-              initial={{ opacity: 0, scale: 0.9 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.6, delay: 0.4, ease: "easeOut" }}
+            <motion.h3
+              initial={{ y: 20, opacity: 0 }}
+              whileInView={{ y: 0, opacity: 1 }}
+              transition={{ duration: 0.9, ease: "easeOut", delay: 0.1 }}
               viewport={{ once: true }}
-              aria-label="Book now button"
-              className="btn w-48 h-12 bg-primary text-white hover:bg-warning hover:border-warning hover:shadow-none hover:text-base-100"
+              className="text-3xl lg:text-5xl font-bold leading-tight text-center lg:text-left text-base-content"
             >
-              <a href="/about" className="w-full" aria-label="Go to book now.">
-                Learn More About Us
-              </a>
-            </motion.button>
-          </div>
+              We Are Airport To Hotels
+            </motion.h3>
+          </header>
+
+          {/* === Description === */}
+          <motion.p
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
+            viewport={{ once: true }}
+            className="mt-6 text-base lg:text-lg text-base-content/90 leading-relaxed"
+          >
+            At Airport To Hotels, we provide seamless, reliable, and comfortable
+            transfers directly from airports to your hotel. Our mission is to
+            make your arrival and departure effortless — allowing you to start
+            and end your trip in total comfort.
+          </motion.p>
+
+          {/* === CTA Button === */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.6, delay: 0.4, ease: "easeOut" }}
+            viewport={{ once: true }}
+            className="mt-8"
+          >
+            <a
+              href="/about"
+              aria-label="Navigate to About page"
+              className="btn w-48 h-12 bg-primary text-white hover:bg-warning hover:border-warning hover:text-base-100 transition-colors"
+            >
+              Learn More About Us
+            </a>
+          </motion.div>
         </div>
-      </motion.div>
+      </motion.article>
     </section>
   );
 });
