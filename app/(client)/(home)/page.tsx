@@ -36,7 +36,7 @@ export default function Landing() {
             </div>
 
             {/* WhatsApp Icon */}
-            <div className="p-4 rounded-full bg-white shadow-md hover:shadow-xl transition-shadow duration-300">
+            <div className="p-4 rounded-full  shadow-md hover:shadow-xl transition-shadow duration-300">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 32 32"
