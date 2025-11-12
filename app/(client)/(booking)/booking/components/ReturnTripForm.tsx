@@ -1,12 +1,14 @@
+"use client";
+
 import { DayPicker } from "react-day-picker";
-import { addDays, parseISO } from "date-fns";
+import { addDays } from "date-fns";
 import "react-day-picker/style.css";
 
 export type ReturnTripFormProps = {
   returnHour: string;
   returnDate: string;
-  pickupDate: string; // "Wed Oct 01 2025"
-  pickupHour: string; // "00:00:00"
+  pickupDate: string; // örn: "Wed Oct 01 2025"
+  pickupHour: string; // örn: "00:00:00"
   handleReturnTrip: () => void;
   handleDaySelect: (date: Date | undefined) => void;
   returnPassengerCount: number;
@@ -27,82 +29,96 @@ export function ReturnTripForm({
   handlePersonCount,
   handleTimeChange,
   confirmReturn,
-  showDateSetError
+  showDateSetError,
 }: ReturnTripFormProps) {
-
-  const pickup = new Date(pickupDate + " " + pickupHour); // "Wed Oct 01 2025 00:00:00"
+  // 🔹 Minimum dönüş tarihi: kalkıştan 1 gün sonrası
+  const pickup = new Date(`${pickupDate} ${pickupHour}`);
   const minReturnDate = addDays(pickup, 1);
+
+  const selectedDate = returnDate ? new Date(returnDate) : undefined;
 
   return (
     <div
       id="return-panel"
-      className="w-full opacity-0 pointer-events-none transition-all gap-3 flex flex-col items-center justify-center top-0 h-screen fixed left-0 z-20"
+      className="fixed top-0 left-0 z-20 flex h-screen w-full flex-col items-center justify-center gap-3 pointer-events-none opacity-0 transition-all"
     >
+      {/* Overlay */}
       <div
         onClick={handleReturnTrip}
-        className="bg-primary h-screen w-full opacity-70 absolute"
-      ></div>
-      <div className="flex flex-col w-fit p-4 gap-2 lg:gap-4 items-center ">
-        <div className="flex flex-col items-center w-full gap-4">
-          <h1 className=" text-base-300 font-bold z-20 self-baseline ">
-            Select pickup date
-          </h1>
+        className="absolute inset-0 h-screen w-full bg-primary opacity-70 cursor-pointer"
+        aria-label="Close return trip selection"
+      />
+
+      {/* İçerik */}
+      <div className="relative z-20 flex w-fit flex-col items-center gap-2 p-4 lg:gap-4">
+        <div className="flex w-full flex-col items-center gap-4">
+          <h1 className="self-baseline font-bold text-base-300">Select pickup date</h1>
+
           <DayPicker
             mode="single"
-            required={true}
+            required
             disabled={{ before: minReturnDate }}
-            selected={returnDate ? new Date(returnDate) : undefined}
+            selected={selectedDate}
             onSelect={handleDaySelect}
-            className={`bg-base-300 rounded-box p-3 lg:px-8 flex flex-col items-center `}
+            className="flex flex-col items-center rounded-box bg-base-300 p-3 lg:px-8"
             footer={returnDate ? `Return Date: ${returnDate}` : ""}
           />
         </div>
+
         <form className="z-20 flex w-full flex-col gap-2">
+          {/* Passenger Count */}
           <fieldset className="fieldset flex focus-within:outline-0">
-            <legend className="font-bold text-base text-base-100">
+            <legend className="text-base font-bold text-base-100">
               Passenger Count (Max - 10)
             </legend>
             <input
               type="number"
-              aria-label="input-passenger-count"
               name="passenger-count"
-              className="input validator focus-within:outline-0 w-full"
+              aria-label="input-passenger-count"
+              className="input validator w-full focus-within:outline-0"
               placeholder="Passengers (1-10)"
-              min="1"
-              max="10"
+              min={1}
+              max={10}
               value={returnPassengerCount}
               onChange={handlePersonCount}
               title="Passenger Count"
             />
           </fieldset>
+
+          {/* Return Time */}
           <fieldset className="fieldset flex focus-within:outline-0">
-            <legend className="font-bold text-base text-base-100">
+            <legend className="text-base font-bold text-base-100">
               Select pickup time:
             </legend>
             <input
               type="time"
-              className="input focus-within:outline-0 w-full text-primary"
+              className="input w-full text-primary focus-within:outline-0"
               value={returnHour}
               onChange={handleTimeChange}
+              aria-label="input-return-hour"
             />
           </fieldset>
+
+          {/* Confirm Button */}
           <button
-            onClick={confirmReturn}
             type="submit"
+            onClick={confirmReturn}
             id="return-btn"
-            aria-label="confirm return trip button"
-            className="btn btn-primary w-1/2  hover:bg-white hover:text-primary"
+            aria-label="confirm return trip"
+            className="btn btn-primary w-1/2 hover:bg-white hover:text-primary"
           >
             CONFIRM
           </button>
         </form>
-        <h1
-          className={`text-base-100 z-10 text-lg transition-all ${
-            showDateSetError === true ? "opacity-100" : "opacity-0"
-          } `}
+
+        {/* Error Text */}
+        <p
+          className={`z-10 text-lg text-base-100 transition-all ${
+            showDateSetError ? "opacity-100" : "opacity-0"
+          }`}
         >
           Please select a return date and time
-        </h1>
+        </p>
       </div>
     </div>
   );

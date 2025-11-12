@@ -19,35 +19,35 @@ interface Props {
   origin: LatLng | null;
   destination: LatLng | null;
   onRouteInfo?: (info: {
-    distanceKm:number;
-    distanceMi:number;
-    durationHours:number;
-    durationMinutes:number;
+    distanceKm: number;
+    distanceMi: number;
+    durationHours: number;
+    durationMinutes: number;
   }) => void;
 }
 
-const containerStyle = {
+const containerStyle: React.CSSProperties = {
   width: "100%",
   height: "400px",
 };
 
-const libraries = ["places"] as Libraries;
+const libraries: Libraries = ["places"];
 
-export default function DirectionsMap({ origin, destination,onRouteInfo }: Props) {
+export default function DirectionsMap({ origin, destination, onRouteInfo }: Props) {
   const { isLoaded } = useJsApiLoader({
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!,
-    libraries: libraries,
+    libraries,
   });
-  const [directions, setDirections] =
-    useState<google.maps.DirectionsResult | null>(null);
+
+  const [directions, setDirections] = useState<google.maps.DirectionsResult | null>(null);
   const [requestRoute, setRequestRoute] = useState(false);
 
+  // 🔹 Rota isteğini başlat
   useEffect(() => {
-    if (origin && destination) {
-      setRequestRoute(true);
-    }
+    if (origin && destination) setRequestRoute(true);
   }, [origin, destination]);
 
+  // 🔹 Google Directions Callback
   const handleDirectionsCallback = (
     result: google.maps.DirectionsResult | null,
     status: google.maps.DirectionsStatus
@@ -56,37 +56,41 @@ export default function DirectionsMap({ origin, destination,onRouteInfo }: Props
       setDirections(result);
       setRequestRoute(false);
 
-        const leg = result.routes[0].legs[0];
-        const meters = leg.distance?.value ?? 0;
-        const seconds = leg.duration?.value ?? 0;
+      const leg = result.routes[0]?.legs[0];
+      if (!leg) return;
 
-        const distanceKm = meters / 1000;
-        const distanceMi = meters / 1609.34;
-        const durationHours = Math.floor(seconds / 3600);
-        const durationMinutes = Math.floor((seconds % 3600) / 60);
+      const meters = leg.distance?.value ?? 0;
+      const seconds = leg.duration?.value ?? 0;
 
-        if(onRouteInfo){
-            onRouteInfo({
-                distanceKm,
-                distanceMi,
-                durationHours,
-                durationMinutes,
-            });
-        }
+      const distanceKm = meters / 1000;
+      const distanceMi = meters / 1609.34;
+      const durationHours = Math.floor(seconds / 3600);
+      const durationMinutes = Math.floor((seconds % 3600) / 60);
+
+      onRouteInfo?.({
+        distanceKm,
+        distanceMi,
+        durationHours,
+        durationMinutes,
+      });
     } else {
-      console.error("Yön bilgisi alınamadı:", status);
+      console.error("Directions request failed:", status);
       setRequestRoute(false);
     }
   };
 
+  // 🔹 Harita ayarları
   const mapOptions: google.maps.MapOptions = {
-    gestureHandling: "greedy", // scroll/drag desteği açık
+    gestureHandling: "greedy",
     scrollwheel: true,
     draggable: true,
     zoomControl: true,
     disableDefaultUI: false,
   };
-  return isLoaded ? (
+
+  if (!isLoaded) return <p>Harita yükleniyor...</p>;
+
+  return (
     <GoogleMap mapContainerStyle={containerStyle} options={mapOptions} zoom={7}>
       {origin && destination && (
         <>
@@ -111,7 +115,5 @@ export default function DirectionsMap({ origin, destination,onRouteInfo }: Props
         </>
       )}
     </GoogleMap>
-  ) : (
-    <p>Harita yükleniyor...</p>
   );
 }

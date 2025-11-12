@@ -8,7 +8,7 @@ import DirectionsMap from "./DirectionsMap";
 import SessionExpiredFallback from "@/app/(client)/components/SessionExpiredFallback";
 import "@splidejs/react-splide/css";
 import { Splide, SplideSlide } from "@splidejs/react-splide";
-import { motion } from "framer-motion"; // ✅ sadece bu eklendi
+import { motion } from "framer-motion";
 
 import { useGetData } from "../../../components/GetData";
 import { UpdateData } from "../../../components/UpdateData";
@@ -20,7 +20,7 @@ const PageIndicator = lazy(() => import("../../../components/PageIndicator"));
 const TransferSummaryCard = lazy(() => import("./TransferSummaryCard"));
 const Steps = lazy(() => import("../../../components/Steps"));
 
-// Types
+// Types (davranışı değiştirmez; sadece okunabilirlik için)
 interface VehiclePrice {
   vehicle_id: number;
   vehicle_name: string;
@@ -42,35 +42,35 @@ export default function BookingContent() {
   const { vehicles } = useVehicle();
 
   const [perPage, setPerPage] = useState(2);
-
   const [vehiclePrices, setVehiclePrices] = useState<VehiclePrice[]>([]);
   const [mergedVehicles, setMergedVehicles] = useState<any[]>([]);
   const [routeInfo, setRouteInfo] = useState<RouteInfo | null>(null);
 
   const router = useRouter();
 
-  // Fetch airport rates
+  // --- API: Havalimanı tarifeleri (aynı mantık) ---
   async function fetchAirportRates(airportId: string, distanceKm: number) {
     const res = await fetch(
       `/api/prices?airportId=${airportId}&distanceKm=${distanceKm}`
     );
     if (!res.ok) throw new Error("Failed to fetch airport rates");
     const data = await res.json();
-    console.log("⬅️ API response:", data);
     return data;
   }
 
   useEffect(() => {
     const airportId = clientData?.pickup_location?.id;
-    if (!airportId || !routeInfo) return; // exit early if route info not ready
+    if (!airportId || !routeInfo) return;
 
     fetchAirportRates(airportId, routeInfo.distanceKm)
       .then((data) => setVehiclePrices(data.rows))
-      .catch((err) => console.error(err));
+      .catch((err) => {
+        // Üretimde log gürültüsünü azaltmak için sadece error yazıyoruz
+        console.error("Airport rates error:", err);
+      });
   }, [clientData?.pickup_location?.id, routeInfo]);
 
-  // Merge vehicles with fetched prices
-
+  // --- Araç + Fiyat birleştirme (aynı mantık) ---
   useEffect(() => {
     if (!vehicles || !vehiclePrices) return;
 
@@ -80,8 +80,7 @@ export default function BookingContent() {
           const price = vehiclePrices.find(
             (p: VehiclePrice) => Number(p.vehicle_id) === Number(vehicle.id)
           );
-
-          if (!price) return null; // Fiyat yoksa null döndür
+          if (!price) return null;
 
           let rawPrice = price.total_price ?? 0;
 
@@ -89,49 +88,50 @@ export default function BookingContent() {
             rawPrice *= 2;
           }
 
-          // rawPrice USD (DB’den geldiği gibi); sadece ekranda çevireceğiz
+          // DB USD -> sadece ekranda çeviri (mantık aynı)
           const display = await convertPrice(rawPrice);
+
           return {
             ...vehicle,
-            total_price: display.toFixed(2), // sadece gösterim
-            total_price_usd: rawPrice, // state/flow için KANONİK değer (USD)
+            total_price: display.toFixed(2),
+            total_price_usd: rawPrice,
           };
         })
       );
 
-      // null olanları filtrele
       setMergedVehicles(merged.filter((v) => v !== null));
     }
 
     updateVehicles();
-  }, [vehicles, vehiclePrices, currencyIndex, clientData]);
+  }, [vehicles, vehiclePrices, currencyIndex, clientData?.return_data?.return_trip]);
 
-  // Sync client data
+  // --- Client verisini senkronize et (aynı mantık) ---
   useEffect(() => {
     if (clientData?.uuid) {
       UpdateData({ clientData });
     }
   }, [clientData]);
 
+  // --- Responsive perPage (aynı eşikler, aynı sonuç) ---
   useEffect(() => {
     const updatePerPage = () => {
+      if (typeof window === "undefined") return;
       const width = window.innerWidth;
       if (width < 640) {
-        setPerPage(1); // mobile: <640px
+        setPerPage(1);
       } else if (width < 1024) {
-        setPerPage(2); // tablet: 640px–1023px
+        setPerPage(2);
       } else {
-        setPerPage(2); // desktop: >=1024px
+        setPerPage(2);
       }
     };
-    updatePerPage(); // Run once on mount
-    window.addEventListener("resize", updatePerPage);
 
-    return () => {
-      window.removeEventListener("resize", updatePerPage);
-    };
+    updatePerPage();
+    window.addEventListener("resize", updatePerPage);
+    return () => window.removeEventListener("resize", updatePerPage);
   }, []);
-  // Navigate to extras page
+
+  // --- Extras sayfasına geçiş (aynı mantık) ---
   function loadExtrasPage(
     vehicleName: string,
     vehicleId: number,
@@ -151,6 +151,7 @@ export default function BookingContent() {
         },
       }));
     }
+
     setClientData((prev: any) => ({
       ...prev,
       booking: {
@@ -193,7 +194,7 @@ export default function BookingContent() {
           <TransferSummaryCard
             clientData={clientData}
             updateClientData={setClientData}
-            totalDistanceKM={routeInfo?.distanceKm.toFixed(0)}
+            totalDistanceKM={routeInfo?.distanceKm?.toFixed(0)}
             drivingDuration={`${routeInfo?.durationHours}h ${routeInfo?.durationMinutes}m`}
           />
         </aside>
@@ -243,7 +244,7 @@ export default function BookingContent() {
                 {mergedVehicles.map((vehicle, index) => (
                   <SplideSlide key={index}>
                     <VehicleFeaturesCard
-                      key={`${vehicle.id}-${currencyIndex}`}
+                      key={`${vehicle.id}-${currencyIndex}`} // mevcut key düzenin aynı kalsın
                       img={vehicle.image_url}
                       vehicleName={vehicle.name}
                       person={vehicle.capacity_person}
