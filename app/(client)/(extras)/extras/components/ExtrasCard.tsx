@@ -1,40 +1,63 @@
-import { memo, useEffect, useState} from "react";
+"use client";
+import { memo, useEffect, useState } from "react";
 
-type ExtrasCardProps = {
+type Extra = {
+  display_name: string;
+  price: number;
+};
+
+interface ExtrasCardProps {
   increase: (type: string) => void;
   decrease: (type: string) => void;
   childSeatNumber: number;
   flowersNumber: number;
   airportAssistance: boolean;
-  convertPrice: (price: number, base?: string) => Promise<number>;
   wait: boolean;
   handleAirportAssistance: () => void;
   handleWait: () => void;
-  extras: Array<{
-    display_name: string;
-    price: number;
-  }>;
+  extras: Extra[];
   symbol: string;
-};
-const ExtrasCard = memo(function (props: ExtrasCardProps) {
+  convertPrice: (price: number, base?: string) => Promise<number>;
+}
+
+const ExtrasCard = memo(function ExtrasCard({
+  increase,
+  decrease,
+  childSeatNumber,
+  flowersNumber,
+  airportAssistance,
+  wait,
+  handleAirportAssistance,
+  handleWait,
+  extras,
+  symbol,
+  convertPrice,
+}: ExtrasCardProps) {
   const [convertedPrices, setConvertedPrices] = useState<number[]>([]);
 
+  // === Convert all prices safely on mount ===
   useEffect(() => {
-    async function convertAll() {
-      if (!props.extras || props.extras.length === 0) {
-        setConvertedPrices([]);
-        return;
-      }
-      const prices = await Promise.all(
-        props.extras.map(extra => props.convertPrice(extra.price))
-      );
-      setConvertedPrices(prices.map(p => Math.round(p)));
+    let active = true;
+    if (!extras || extras.length === 0) {
+      setConvertedPrices([]);
+      return;
     }
-    convertAll();
-  }, [props.extras, props.convertPrice]);
+    (async () => {
+      try {
+        const prices = await Promise.all(extras.map((extra) => convertPrice(extra.price)));
+        if (active) setConvertedPrices(prices.map((p) => Math.round(p)));
+      } catch (err) {
+        console.error("Price conversion error:", err);
+      }
+    })();
+    return () => {
+      active = false;
+    };
+  }, [extras, convertPrice]);
 
   return (
     <article className="bg-base-300 rounded-box shadow-md flex gap-4 flex-col px-3 py-4 ">
+      {/* === Header Section === */}
       <figure className="flex gap-2 lg:gap-4">
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -54,363 +77,252 @@ const ExtrasCard = memo(function (props: ExtrasCardProps) {
           Extras Options
         </figcaption>
       </figure>
+
       <div className="divider my-1 md:hidden"></div>
-      {/* Mobile Form Container */}
+
+      {/* === Mobile Form Section === */}
       <form className="flex flex-col md:hidden justify-between gap-8">
-        <fieldset className="flex flex-col md:justify-between md:items-center md:w-full md:flex-row gap-3">
-          <legend className="font-bold text-[clamp(1rem,0.9142rem+0.3661vw,1.5rem)] ">
-            {props.extras[0]?.display_name} {convertedPrices[0]} {props.symbol}
-          </legend>
-          <label className="md:text-lg">
-            Baby car seat for children aged 0-36 months (max-2)
-          </label>
-          {/*Button Box Container */}
-          <div className="flex flex-col md:flex-row gap-2 md:w-fit justify-between md:items-center">
-            {/* Numbers Box */}
-            <div className="flex justify-between w-full md:w-64 rounded-box h-fit border-2 border-[#B9B9B9]">
-              <div className="p-3">
-                <h3>Number</h3>
-                <p>{props.childSeatNumber}</p>
-              </div>
-              <div>
-                <div
-                  onClick={() => props.increase("child-seat")}
-                  className="border-l-2 cursor-pointer border-b-2 active:bg-base-100 border-[#B9B9B9] p-2"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth={1.5}
-                    stroke="currentColor"
-                    className="size-6 text-success-content"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M12 4.5v15m7.5-7.5h-15"
-                    />
-                  </svg>
-                </div>
-                <div
-                  onClick={() => props.decrease("child-seat")}
-                  className="border-l-2 cursor-pointer active:bg-base-100 border-[#B9B9B9] p-2"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth={1.5}
-                    stroke="currentColor"
-                    className="size-6 text-warning"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M5 12h14"
-                    />
-                  </svg>
-                </div>
-              </div>
-            </div>
-          </div>
-        </fieldset>
-        <fieldset className="flex flex-col md:justify-between md:items-center md:w-full md:flex-row gap-3">
-          <legend className="font-bold text-[clamp(1rem,0.9142rem+0.3661vw,1.5rem)] ">
-            {props.extras[1]?.display_name} {convertedPrices[1]} {props.symbol}
-          </legend>
-          <label className="md:text-lg">
-            A bouquet of seasonal flowers prepared by a local florist (max-3)
-          </label>
-          {/*Button Box Container */}
-          <div className="flex flex-col md:flex-row gap-2 md:w-fit justify-between md:items-center">
-            {/* Numbers Box */}
-            <div className="flex justify-between w-full md:w-64 rounded-box h-fit border-2 border-[#B9B9B9]">
-              <div className="p-3">
-                <h3>Number</h3>
-                <p>{props.flowersNumber}</p>
-              </div>
-              <div>
-                <div
-                  onClick={() => props.increase("flowers")}
-                  className="border-l-2 cursor-pointer border-b-2 border-[#B9B9B9] p-2"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth={1.5}
-                    stroke="currentColor"
-                    className="size-6 text-success-content"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M12 4.5v15m7.5-7.5h-15"
-                    />
-                  </svg>
-                </div>
-                <div
-                  onClick={() => props.decrease("flowers")}
-                  className="border-l-2 cursor-pointer border-[#B9B9B9] p-2"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth={1.5}
-                    stroke="currentColor"
-                    className="size-6 text-warning"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M5 12h14"
-                    />
-                  </svg>
-                </div>
-              </div>
-            </div>
-          </div>
-        </fieldset>
-        <fieldset className="flex flex-col md:justify-between md:items-center md:w-full md:flex-row gap-3">
-          <legend className="font-bold text-[clamp(1rem,0.9142rem+0.3661vw,1.5rem)] ">
-            {props.extras[2]?.display_name} {convertedPrices[2]} {props.symbol}
-          </legend>
-          <label className="md:text-lg">
-            One of our hostesses will accompany you throughout your stay at the
-            airport until the departure of your aircraft
-          </label>
-          {/*Button Box Container */}
-          <div className="flex flex-col md:flex-row gap-2 md:w-fit justify-between md:items-center">
-            {/* Numbers Box */}
-            <button
-              type="button"
-              onClick={props.handleAirportAssistance}
-              className={`btn btn-primary w-1/2 md:w-3/12 px-16 ${
-                props.airportAssistance ? "btn-active" : ""
-              }`}
-            >
-              {props.airportAssistance ? "Selected" : "Select"}
-              <input
-                type="checkbox"
-                checked={props.airportAssistance}
-                readOnly
-                className="hidden" // ya da sadece ikonla gösterim yapılır
-              />
-            </button>
-          </div>
-        </fieldset>
-        <fieldset className="flex flex-col md:justify-between md:items-center md:w-full md:flex-row gap-3">
-          <legend className="font-bold text-[clamp(1rem,0.9142rem+0.3661vw,1.5rem)] ">
-            {props.extras[3]?.display_name} {convertedPrices[3]} {props.symbol}
-          </legend>
-          <label className="md:text-lg">
-            Our vehicle and staff will be on site before you arrive to make sure
-            you don't wait - for the customers don't want to lose time via
-            traffic.
-          </label>
-          {/*Button Box Container */}
-          <div className="flex flex-col md:flex-row gap-2 md:w-fit justify-between md:items-center">
-            {/* Numbers Box */}
-            <button
-              type="button"
-              onClick={props.handleWait}
-              className={`btn btn-primary w-1/2 md:w-3/12 px-16 ${
-                props.wait ? "btn-active" : ""
-              }`}
-            >
-              {props.wait ? "Selected" : "Select"}
-              <input
-                type="checkbox"
-                checked={props.wait}
-                readOnly
-                className="hidden" // ya da sadece ikonla gösterim yapılır
-              />
-            </button>
-          </div>
-        </fieldset>
+        <ExtrasFieldset
+          title={`${extras[0]?.display_name} ${convertedPrices[0] ?? ""} ${symbol}`}
+          desc="Baby car seat for children aged 0-36 months (max-2)"
+          count={childSeatNumber}
+          type="child-seat"
+          increase={increase}
+          decrease={decrease}
+        />
+
+        <ExtrasFieldset
+          title={`${extras[1]?.display_name} ${convertedPrices[1] ?? ""} ${symbol}`}
+          desc="A bouquet of seasonal flowers prepared by a local florist (max-3)"
+          count={flowersNumber}
+          type="flowers"
+          increase={increase}
+          decrease={decrease}
+        />
+
+        <SelectFieldset
+          title={`${extras[2]?.display_name} ${convertedPrices[2] ?? ""} ${symbol}`}
+          desc="One of our hostesses will accompany you throughout your stay at the airport until the departure of your aircraft"
+          active={airportAssistance}
+          onClick={handleAirportAssistance}
+        />
+
+        <SelectFieldset
+          title={`${extras[3]?.display_name} ${convertedPrices[3] ?? ""} ${symbol}`}
+          desc="Our vehicle and staff will be on site before you arrive to make sure you don't wait - for the customers don't want to lose time via traffic."
+          active={wait}
+          onClick={handleWait}
+        />
       </form>
-      {/* Desktop Form Container */}
+
+      {/* === Desktop Form Section === */}
       <form className="hidden md:flex md:flex-col justify-between gap-8">
-        <fieldset className="flex border-y-2 border-[#B9B9B9] items-center justify-between w-full">
-          <div>
-            <h1 className="font-bold text-[clamp(1rem,0.9142rem+0.3661vw,1.5rem)] ">
-            {props.extras[0]?.display_name} {convertedPrices[0]} {props.symbol}
-            </h1>
-            <label className="text-[clamp(0.75rem,0.7071rem+0.1831vw,1rem))]">
-              Baby car seat for children aged 0-36 months (max-2)
-            </label>
-          </div>
-          <div className="flex items-center justify-center gap-4">
-            <div className="border-x-2 border-[#B9B9B9] flex h-full ">
-              <div className="p-3">
-                <h3 className="text-base opacity-70">Number</h3>
-                <p className="text-lg">{props.childSeatNumber}</p>
-              </div>
-              <div className="flex flex-col justify-between">
-                <div
-                  onClick={() => props.increase("child-seat")}
-                  className="border-l-2 cursor-pointer hover:bg-base-100 border-b-2 border-[#B9B9B9] p-2"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth={1.5}
-                    stroke="currentColor"
-                    className="size-6 text-success-content"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M12 4.5v15m7.5-7.5h-15"
-                    />
-                  </svg>
-                </div>
-                <div
-                  onClick={() => props.decrease("child-seat")}
-                  className="border-l-2 cursor-pointer hover:bg-base-100 border-[#B9B9B9] p-2"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth={1.5}
-                    stroke="currentColor"
-                    className="size-6 text-warning"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M5 12h14"
-                    />
-                  </svg>
-                </div>
-              </div>
-            </div>
-          </div>
-        </fieldset>
-        <fieldset className="flex border-y-2 border-[#B9B9B9] items-center justify-between w-full">
-          <div>
-            <h1 className="font-bold text-[clamp(1rem,0.9142rem+0.3661vw,1.5rem)] ">
-            {props.extras[1]?.display_name} {convertedPrices[1]} {props.symbol}            
-            </h1>
-            <label className="text-[clamp(0.75rem,0.7071rem+0.1831vw,1rem))]">
-              A bouquet of seasonal flowers prepared by a local florist (max-3)
-            </label>
-          </div>
-          <div className="flex items-center justify-center gap-4">
-            <div className="border-x-2 border-[#B9B9B9] flex h-full ">
-              <div className="p-3">
-                <h3 className="text-base opacity-70">Number</h3>
-                <p className="text-lg">{props.flowersNumber}</p>
-              </div>
-              <div className="flex flex-col justify-between">
-                <div
-                  onClick={() => props.increase("flowers")}
-                  className="border-l-2 cursor-pointer hover:bg-base-100 border-b-2 border-[#B9B9B9] p-2"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth={1.5}
-                    stroke="currentColor"
-                    className="size-6 text-success-content"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M12 4.5v15m7.5-7.5h-15"
-                    />
-                  </svg>
-                </div>
-                <div
-                  onClick={() => props.decrease("flowers")}
-                  className="border-l-2 cursor-pointer hover:bg-base-100 border-[#B9B9B9] p-2"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth={1.5}
-                    stroke="currentColor"
-                    className="size-6 text-warning"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M5 12h14"
-                    />
-                  </svg>
-                </div>
-              </div>
-            </div>
-          </div>
-        </fieldset>
-        <fieldset className="flex border-y-2 py-4 border-[#B9B9B9] items-center justify-between w-full">
-          <div>
-            <h1 className="font-bold text-[clamp(1rem,0.9142rem+0.3661vw,1.5rem)] ">
-            {props.extras[2]?.display_name} {convertedPrices[2]} {props.symbol}
-            </h1>
-            <label className="text-[clamp(0.75rem,0.7071rem+0.1831vw,1rem))]">
-              One of our hostesses will accompany you throughout your stay at
-              the airport until the departure of your aircraft
-            </label>
-          </div>
-          <div className="flex items-center justify-center gap-4">
-            <div className="divider divider-horizontal"></div>
-            <button
-              type="button"
-              onClick={props.handleAirportAssistance}
-              className={`btn btn-primary hover:bg-base-300 hover:text-primary w-2/12 px-16 ${
-                props.airportAssistance ? "btn-active" : ""
-              }`}
-            >
-              {props.airportAssistance ? "Selected" : "Select"}
-              <input
-                type="checkbox"
-                checked={props.airportAssistance}
-                readOnly
-                className="hidden" // ya da sadece ikonla gösterim yapılır
-              />
-            </button>
-          </div>
-        </fieldset>
-        <fieldset className="flex border-y-2 py-4 border-[#B9B9B9] items-center justify-between w-full">
-          <div>
-            <h1 className="font-bold text-[clamp(1rem,0.9142rem+0.3661vw,1.5rem)] ">
-            {props.extras[3]?.display_name} {convertedPrices[3]} {props.symbol}
-            </h1>
-            <label className="text-[clamp(0.75rem,0.7071rem+0.1831vw,1rem))]">
-              Our vehicle and staff will be on site before you arrive to make
-              sure you don't wait - for the customers don't want to lose time
-              via traffic.
-            </label>
-          </div>
-          <div className="flex items-center justify-center gap-4">
-            <div className="divider divider-horizontal "></div>
-            <button
-              type="button"
-              onClick={props.handleWait}
-              className={`btn btn-primary hover:bg-base-300 hover:text-primary w-2/12 px-16 ${
-                props.wait ? "btn-active" : ""
-              }`}
-            >
-              {props.wait ? "Selected" : "Select"}
-              <input
-                type="checkbox"
-                checked={props.wait}
-                readOnly
-                className="hidden" // ya da sadece ikonla gösterim yapılır
-              />
-            </button>
-          </div>
-        </fieldset>
+        <DesktopFieldset
+          title={`${extras[0]?.display_name} ${convertedPrices[0] ?? ""} ${symbol}`}
+          desc="Baby car seat for children aged 0-36 months (max-2)"
+          count={childSeatNumber}
+          type="child-seat"
+          increase={increase}
+          decrease={decrease}
+        />
+
+        <DesktopFieldset
+          title={`${extras[1]?.display_name} ${convertedPrices[1] ?? ""} ${symbol}`}
+          desc="A bouquet of seasonal flowers prepared by a local florist (max-3)"
+          count={flowersNumber}
+          type="flowers"
+          increase={increase}
+          decrease={decrease}
+        />
+
+        <DesktopSelectFieldset
+          title={`${extras[2]?.display_name} ${convertedPrices[2] ?? ""} ${symbol}`}
+          desc="One of our hostesses will accompany you throughout your stay at the airport until the departure of your aircraft"
+          active={airportAssistance}
+          onClick={handleAirportAssistance}
+        />
+
+        <DesktopSelectFieldset
+          title={`${extras[3]?.display_name} ${convertedPrices[3] ?? ""} ${symbol}`}
+          desc="Our vehicle and staff will be on site before you arrive to make sure you don't wait - for the customers don't want to lose time via traffic."
+          active={wait}
+          onClick={handleWait}
+        />
       </form>
     </article>
   );
 });
 
 export default ExtrasCard;
+
+//
+// === Helper Components (Logic only, style untouched) ===
+//
+
+function ExtrasFieldset({
+  title,
+  desc,
+  count,
+  type,
+  increase,
+  decrease,
+}: {
+  title: string;
+  desc: string;
+  count: number;
+  type: string;
+  increase: (type: string) => void;
+  decrease: (type: string) => void;
+}) {
+  return (
+    <fieldset className="flex flex-col md:justify-between md:items-center md:w-full md:flex-row gap-3">
+      <legend className="font-bold text-[clamp(1rem,0.9142rem+0.3661vw,1.5rem)] ">{title}</legend>
+      <label className="md:text-lg">{desc}</label>
+      <div className="flex flex-col md:flex-row gap-2 md:w-fit justify-between md:items-center">
+        <div className="flex justify-between w-full md:w-64 rounded-box h-fit border-2 border-[#B9B9B9]">
+          <div className="p-3">
+            <h3>Number</h3>
+            <p>{count}</p>
+          </div>
+          <div>
+            <div
+              onClick={() => increase(type)}
+              className="border-l-2 cursor-pointer border-b-2 active:bg-base-100 border-[#B9B9B9] p-2"
+            >
+              <PlusIcon />
+            </div>
+            <div
+              onClick={() => decrease(type)}
+              className="border-l-2 cursor-pointer active:bg-base-100 border-[#B9B9B9] p-2"
+            >
+              <MinusIcon />
+            </div>
+          </div>
+        </div>
+      </div>
+    </fieldset>
+  );
+}
+
+function SelectFieldset({
+  title,
+  desc,
+  active,
+  onClick,
+}: {
+  title: string;
+  desc: string;
+  active: boolean;
+  onClick: () => void;
+}) {
+  return (
+    <fieldset className="flex flex-col md:justify-between md:items-center md:w-full md:flex-row gap-3">
+      <legend className="font-bold text-[clamp(1rem,0.9142rem+0.3661vw,1.5rem)] ">{title}</legend>
+      <label className="md:text-lg">{desc}</label>
+      <div className="flex flex-col md:flex-row gap-2 md:w-fit justify-between md:items-center">
+        <button
+          type="button"
+          onClick={onClick}
+          className={`btn btn-primary w-1/2 md:w-3/12 px-16 ${active ? "btn-active" : ""}`}
+        >
+          {active ? "Selected" : "Select"}
+          <input type="checkbox" checked={active} readOnly className="hidden" />
+        </button>
+      </div>
+    </fieldset>
+  );
+}
+
+function DesktopFieldset({
+  title,
+  desc,
+  count,
+  type,
+  increase,
+  decrease,
+}: {
+  title: string;
+  desc: string;
+  count: number;
+  type: string;
+  increase: (type: string) => void;
+  decrease: (type: string) => void;
+}) {
+  return (
+    <fieldset className="flex border-y-2 border-[#B9B9B9] items-center justify-between w-full">
+      <div>
+        <h1 className="font-bold text-[clamp(1rem,0.9142rem+0.3661vw,1.5rem)] ">{title}</h1>
+        <label className="text-[clamp(0.75rem,0.7071rem+0.1831vw,1rem))]">{desc}</label>
+      </div>
+      <div className="flex items-center justify-center gap-4">
+        <div className="border-x-2 border-[#B9B9B9] flex h-full ">
+          <div className="p-3">
+            <h3 className="text-base opacity-70">Number</h3>
+            <p className="text-lg">{count}</p>
+          </div>
+          <div className="flex flex-col justify-between">
+            <div
+              onClick={() => increase(type)}
+              className="border-l-2 cursor-pointer hover:bg-base-100 border-b-2 border-[#B9B9B9] p-2"
+            >
+              <PlusIcon />
+            </div>
+            <div
+              onClick={() => decrease(type)}
+              className="border-l-2 cursor-pointer hover:bg-base-100 border-[#B9B9B9] p-2"
+            >
+              <MinusIcon />
+            </div>
+          </div>
+        </div>
+      </div>
+    </fieldset>
+  );
+}
+
+function DesktopSelectFieldset({
+  title,
+  desc,
+  active,
+  onClick,
+}: {
+  title: string;
+  desc: string;
+  active: boolean;
+  onClick: () => void;
+}) {
+  return (
+    <fieldset className="flex border-y-2 py-4 border-[#B9B9B9] items-center justify-between w-full">
+      <div>
+        <h1 className="font-bold text-[clamp(1rem,0.9142rem+0.3661vw,1.5rem)] ">{title}</h1>
+        <label className="text-[clamp(0.75rem,0.7071rem+0.1831vw,1rem))]">{desc}</label>
+      </div>
+      <div className="flex items-center justify-center gap-4">
+        <div className="divider divider-horizontal"></div>
+        <button
+          type="button"
+          onClick={onClick}
+          className={`btn btn-primary hover:bg-base-300 hover:text-primary w-2/12 px-16 ${
+            active ? "btn-active" : ""
+          }`}
+        >
+          {active ? "Selected" : "Select"}
+          <input type="checkbox" checked={active} readOnly className="hidden" />
+        </button>
+      </div>
+    </fieldset>
+  );
+}
+
+// === Icon Components ===
+const PlusIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6 text-success-content">
+    <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+  </svg>
+);
+
+const MinusIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6 text-warning">
+    <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14" />
+  </svg>
+);
