@@ -1,244 +1,165 @@
 "use client";
+
 import React, { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useGetData } from "@/app/(client)/components/GetData";
 import { useCurrency } from "@/app/(client)/context/CurrencyContext";
-
 
 const onlyDigits = (s: string) => s.replace(/\D/g, "");
 
 export default function Payment() {
   const router = useRouter();
   const { clientData } = useGetData();
-  const [selectedMethod, setSelectedMethod] = useState<
-    "card" | "cash" | null
-  >(null);
-  const [termsAccepted, setTermsAccepted] = useState(false);
-  const [message, setMessage] = useState<{
-    type: "error" | "success";
-    text: string;
-  } | null>(null);
-  const [cardData, setCardData] = useState({
-    number: "",
-    month: "",
-    year: "",
-    cvv: "",
-  });
   const { symbol } = useCurrency();
 
+  const [selectedMethod, setSelectedMethod] = useState<"card" | "cash" | null>(null);
+  const [termsAccepted, setTermsAccepted] = useState(false);
+  const [message, setMessage] = useState<{ type: "error" | "success"; text: string } | null>(null);
+  const [cardData, setCardData] = useState({ number: "", month: "", year: "", cvv: "" });
 
   const years = useMemo(() => {
     const y = new Date().getFullYear();
     return Array.from({ length: 13 }, (_, i) => String(y + i).slice(-2));
   }, []);
+
   const months = useMemo(
     () => Array.from({ length: 12 }, (_, i) => String(i + 1).padStart(2, "0")),
     []
   );
 
-  const formatCardNumber = (value: string) => {
-    const digits = onlyDigits(value).slice(0, 19);
-    return digits.replace(/(.{4})/g, "$1 ").trim();
-  };
+  const formatCardNumber = (value: string) =>
+    onlyDigits(value).slice(0, 19).replace(/(.{4})/g, "$1 ").trim();
 
   const validateCardInputs = () => {
     const digits = onlyDigits(cardData.number);
-    return !(
-      digits.length < 12 ||
-      digits.length > 19 ||
-      !cardData.month ||
-      !cardData.year ||
-      cardData.cvv.length < 3
+    return (
+      digits.length >= 12 &&
+      digits.length <= 19 &&
+      cardData.month &&
+      cardData.year &&
+      cardData.cvv.length >= 3
     );
   };
 
   const navigateToFailed = (data: any) =>
     router.push(`/failed?data=${encodeURIComponent(JSON.stringify(data))}`);
 
-const handlePayment = async () => {
-  setMessage(null);
-  if (!selectedMethod || !termsAccepted) {
-    setMessage({
-      type: "error",
-      text: "Please select a payment method and accept terms.",
-    });
-    return;
-  }
+  const handlePayment = async () => {
+    setMessage(null);
 
-  if (!validateCardInputs() && selectedMethod === "card") {
-    setMessage({ type: "error", text: "Please fill card fields correctly." });
-    return;
-  }
-
-  try {
-    const payload = {
-      uuid: clientData.uuid,
-      payment_method: selectedMethod,
-      symbol: symbol,
-      email: clientData.details.email,
-      number: clientData.details.phone,
-      cardData: {
-        number: onlyDigits(cardData.number),
-        month: cardData.month,
-        year: cardData.year,
-        cvv: cardData.cvv,
-      },
-    };
-
-    const res = await fetch("/api/payment", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    });
-
-    if (!res.ok) {
-      const errText = await res.text().catch(() => "Payment request failed");
-      console.error("Payment route error:", errText);
-      navigateToFailed(clientData);
+    if (!selectedMethod || !termsAccepted) {
+      setMessage({ type: "error", text: "Please select a payment method and accept terms." });
       return;
     }
 
-    const contentType = res.headers.get("content-type") || "";
+    if (selectedMethod === "card" && !validateCardInputs()) {
+      setMessage({ type: "error", text: "Please fill card fields correctly." });
+      return;
+    }
 
-    if (contentType.includes("application/json")) {
-      // ✅ Cash veya JSON dönen durum
-      const json = await res.json();
-      if (json.redirect) {
-        router.push(json.redirect);
-      } else {
-        router.push(`/success?order=${clientData.uuid}&status=${selectedMethod}`);
+    try {
+      const payload = {
+        uuid: clientData.uuid,
+        payment_method: selectedMethod,
+        symbol,
+        email: clientData.details.email,
+        number: clientData.details.phone,
+        cardData: {
+          number: onlyDigits(cardData.number),
+          month: cardData.month,
+          year: cardData.year,
+          cvv: cardData.cvv,
+        },
+      };
+
+      const res = await fetch("/api/payment", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      if (!res.ok) {
+        navigateToFailed(clientData);
+        return;
       }
-      return;
+
+      const contentType = res.headers.get("content-type") || "";
+
+      if (contentType.includes("application/json")) {
+        const json = await res.json();
+        router.push(json.redirect ?? `/success?order=${clientData.uuid}&status=${selectedMethod}`);
+        return;
+      }
+
+      if (contentType.includes("text/html")) {
+        const html = await res.text();
+        document.open();
+        document.write(html);
+        document.close();
+        setTimeout(() => document.forms?.[0]?.submit(), 1000);
+        return;
+      }
+
+      navigateToFailed(clientData);
+    } catch (err) {
+      console.error("Payment error:", err);
+      navigateToFailed(clientData);
     }
-
-    if (contentType.includes("text/html")) {
-      // ✅ Kart ödemesi (Garanti 3D)
-      const html = await res.text();
-      document.open();
-      document.write(html);
-      document.close();
-
-      setTimeout(() => {
-        try {
-          const form = document.forms?.[0];
-          if (form) form.submit();
-        } catch (e) {
-          console.error("Auto-submit failed:", e);
-        }
-      }, 1000);
-      return;
-    }
-
-    // 👇 Beklenmedik yanıt tipi
-    console.warn("Unexpected response:", contentType);
-    navigateToFailed(clientData);
-
-  } catch (err) {
-    console.error("Payment error:", err);
-    navigateToFailed(clientData);
-  }
-};
-
+  };
 
   return (
-    <div className="bg-base-100 border border-base-300 sm:w-full rounded-2xl shadow-lg flex flex-col gap-5 px-4 py-6 transition-all duration-300 hover:shadow-xl">
-      <h1 className="text-lg font-semibold text-base-content">
-        Payment Method
-      </h1>
+    <article className="relative flex flex-col gap-5 px-3 py-5 sm:w-full rounded-box bg-base-300 shadow-md transition-all duration-300 hover:shadow-lg">
+      {/* Header */}
+      <header className="flex justify-between items-center border-b border-base-content/20 pb-3">
+        <h1 className="text-xl font-bold">Payment Method</h1>
+      </header>
 
-      {/* card */}
-      <div
-        onClick={() => setSelectedMethod("card")}
-        className={`cursor-pointer flex justify-between items-center h-20 p-4 rounded-xl border transition-all duration-300 ${
-          selectedMethod === "card"
-            ? "bg-primary/10 border-primary text-primary"
-            : "border-base-300 hover:bg-base-200"
-        }`}
-      >
-        <div className="flex items-center gap-3">
-          <span className="text-2xl">💳</span>
-          <span className="font-medium">Credit / Debit Card (3D Secure)</span>
-        </div>
-        {selectedMethod === "card" && <span className="text-xl">✅</span>}
+      {/* Payment Options */}
+      <div className="flex flex-col gap-3">
+        <PaymentOption
+          icon="💳"
+          label="Credit / Debit Card (3D Secure)"
+          active={selectedMethod === "card"}
+          onClick={() => setSelectedMethod("card")}
+        />
+        <PaymentOption
+          icon="💵"
+          label="Cash on Arrival"
+          active={selectedMethod === "cash"}
+          onClick={() => setSelectedMethod("cash")}
+        />
       </div>
 
-      {/* CASH */}
-      <div
-        onClick={() => setSelectedMethod("cash")}
-        className={`cursor-pointer flex justify-between items-center h-20 p-4 rounded-xl border transition-all duration-300 ${
-          selectedMethod === "cash"
-            ? "bg-primary/10 border-primary text-primary"
-            : "border-base-300 hover:bg-base-200"
-        }`}
-      >
-        <div className="flex items-center gap-3">
-          <span className="text-2xl">💵</span>
-          <span className="font-medium">Cash on Arrival</span>
-        </div>
-        {selectedMethod === "cash" && <span className="text-xl">✅</span>}
-      </div>
-
-      {/* Card inputs */}
+      {/* Card Details */}
       {selectedMethod === "card" && (
-        <div className="mt-3 bg-base-200/40 p-4 rounded-xl border border-base-300">
-          <label className="block text-sm font-semibold mb-1">
-            Card Number
-          </label>
+        <div className="mt-3 bg-base-200/40 p-4 rounded-box border border-base-content/10 space-y-4">
+          <label className="block text-sm font-semibold mb-1">Card Number</label>
           <input
             inputMode="numeric"
             autoComplete="cc-number"
             value={cardData.number}
             onChange={(e) =>
-              setCardData((s) => ({
-                ...s,
-                number: formatCardNumber(e.target.value),
-              }))
+              setCardData((s) => ({ ...s, number: formatCardNumber(e.target.value) }))
             }
             placeholder="1234 5678 9012 3456"
-            className="input input-bordered w-full mb-3"
+            className="input input-bordered w-full"
           />
 
-          <div className="flex flex-wrap gap-3">
-            <div className="flex-1 min-w-[100px]">
-              <label className="block text-sm font-semibold mb-1">
-                Expiry Month
-              </label>
-              <select
-                value={cardData.month}
-                onChange={(e) =>
-                  setCardData((s) => ({ ...s, month: e.target.value }))
-                }
-                className="select select-bordered w-full"
-              >
-                <option value="">MM</option>
-                {months.map((m) => (
-                  <option key={m} value={m}>
-                    {m}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="flex-1 min-w-[100px]">
-              <label className="block text-sm font-semibold mb-1">
-                Expiry Year
-              </label>
-              <select
-                value={cardData.year}
-                onChange={(e) =>
-                  setCardData((s) => ({ ...s, year: e.target.value }))
-                }
-                className="select select-bordered w-full"
-              >
-                <option value="">YY</option>
-                {years.map((y) => (
-                  <option key={y} value={y}>
-                    {y}
-                  </option>
-                ))}
-              </select>
-            </div>
-
+          <div className="flex flex-wrap gap-4">
+            <SelectField
+              label="Expiry Month"
+              value={cardData.month}
+              onChange={(v) => setCardData((s) => ({ ...s, month: v }))}
+              options={months}
+              placeholder="MM"
+            />
+            <SelectField
+              label="Expiry Year"
+              value={cardData.year}
+              onChange={(v) => setCardData((s) => ({ ...s, year: v }))}
+              options={years}
+              placeholder="YY"
+            />
             <div className="flex-[0.7] min-w-[90px]">
               <label className="block text-sm font-semibold mb-1">CVV</label>
               <input
@@ -259,8 +180,8 @@ const handlePayment = async () => {
         </div>
       )}
 
-      {/* TERMS */}
-      <label className="flex items-start gap-2 mt-2 cursor-pointer">
+      {/* Terms */}
+      <label className="flex items-start gap-3 mt-2 cursor-pointer">
         <input
           type="checkbox"
           checked={termsAccepted}
@@ -268,7 +189,8 @@ const handlePayment = async () => {
           className="checkbox checkbox-primary mt-1"
         />
         <div className="text-sm leading-tight">
-          I have read and agree to the <strong>Service Delivery</strong>,{" "}
+          I agree to the{" "}
+          <strong>Service Delivery</strong>,{" "}
           <strong>Pre-Information Form</strong>,{" "}
           <strong>Cancellation & Refund Policy</strong> and{" "}
           <strong>Distance Sales Agreement</strong>.
@@ -294,15 +216,78 @@ const handlePayment = async () => {
 
       {message && (
         <div
-          className={`mt-3 text-center rounded-lg py-2 text-sm font-medium transition-all duration-300 ${
+          className={`mt-3 text-center rounded-lg py-2 text-sm font-medium border ${
             message.type === "error"
-              ? "bg-red-100 text-red-700 border border-red-300"
-              : "bg-green-100 text-green-700 border border-green-300"
+              ? "bg-red-100 text-red-700 border-red-400"
+              : "bg-green-100 text-green-700 border-green-400"
           }`}
         >
           {message.text}
         </div>
       )}
+    </article>
+  );
+}
+
+/* ------------------------- Sub Components ------------------------- */
+
+function PaymentOption({
+  icon,
+  label,
+  active,
+  onClick,
+}: {
+  icon: string;
+  label: string;
+  active: boolean;
+  onClick: () => void;
+}) {
+  return (
+    <div
+      onClick={onClick}
+      className={`cursor-pointer flex justify-between items-center h-16 px-4 rounded-box border-2 transition-all duration-300 ${
+        active
+          ? "border-primary bg-base-200 text-primary"
+          : "border-base-content/10 hover:border-primary/50"
+      }`}
+    >
+      <div className="flex items-center gap-3 text-base">
+        <span className="text-xl">{icon}</span>
+        <span>{label}</span>
+      </div>
+      {active && <span className="text-xl">✓</span>}
+    </div>
+  );
+}
+
+function SelectField({
+  label,
+  value,
+  onChange,
+  options,
+  placeholder,
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  options: string[];
+  placeholder: string;
+}) {
+  return (
+    <div className="flex-1 min-w-[100px]">
+      <label className="block text-sm font-semibold mb-1">{label}</label>
+      <select
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        className="select select-bordered w-full"
+      >
+        <option value="">{placeholder}</option>
+        {options.map((opt) => (
+          <option key={opt} value={opt}>
+            {opt}
+          </option>
+        ))}
+      </select>
     </div>
   );
 }
