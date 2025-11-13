@@ -33,32 +33,30 @@ export default function Home() {
       {/* === Main Content === */}
       <article
         id="above-the-fold"
-        className="relative z-10 flex flex-col justify-between gap-6 p-4 my-24 sm:my-48 lg:flex-row lg:px-0 xl:max-w-6xl mx-auto"
+        className="relative z-10 flex flex-col justify-between gap-10 p-4 my-24 sm:my-48 lg:flex-row lg:px-0 xl:max-w-9/12 lg:max-w-11/12 mx-auto" 
       >
         {/* === Left Side (Hero Text) === */}
-        <div className="flex flex-col gap-5 text-base-100">
-          <h1 className="font-bold tracking-tight title leading-snug text-2xl sm:text-4xl xl:text-[2.7rem] lg:leading-tight xl:w-10/12">
+        <div className="flex flex-col gap-5 text-base-100 lg:w-[55%]">
+          <h1 className="font-bold tracking-tight title leading-snug text-2xl sm:text-4xl xl:text-[2.6rem] lg:leading-tight">
             Reliable <span className="text-warning">Airport Travels.</span>{" "}
             Travel with Confidence and Luxury at Great Prices.
           </h1>
 
-          <p className="font-paragraph xl:pb-8 text-base font-light text-white opacity-80 sm:text-sm xl:text-xl xl:w-8/12 leading-relaxed tracking-tight">
+          <p className="font-paragraph xl:pb-8 text-base font-light text-white opacity-80 sm:text-sm xl:text-lg leading-relaxed tracking-tight">
             At Airport to Hotels, we provide seamless, reliable, and comfortable
             transfers directly from airports to your hotel. Start and end your
             trip effortlessly with professional drivers and luxury vehicles.
           </p>
 
           <a href="/#steps" aria-label="Navigate to booking steps section">
-            <button
-              className="btn btn-md lg:btn-lg font-paragraph font-light self-baseline hover:bg-primary hover:border-primary hover:text-base-100"
-            >
+            <button className="btn btn-md lg:btn-lg font-paragraph font-light self-baseline hover:bg-primary hover:border-primary hover:text-base-100 transition-all">
               How to book your ride
             </button>
           </a>
         </div>
 
         {/* === Right Side (Booking Form) === */}
-        <div className="relative sm:max-w-96 h-fit w-full mt-8 lg:mt-0">
+        <div className="relative sm:max-w-80 md:max-w-96 w-full mt-8 lg:mt-0 lg:w-[45%]">
           <CurrencyWrapper>
             <Form />
           </CurrencyWrapper>
