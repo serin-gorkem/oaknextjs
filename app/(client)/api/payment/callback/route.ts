@@ -116,11 +116,11 @@ export async function POST(req: Request) {
       errorMessage = payload.mdErrorMsg || "3D authentication failed";
     }
 
+    const fullErrorJson = encodeURIComponent(JSON.stringify(payload));
+
     const redirectUrl = approved
       ? `${base}/success?uuid=${orderId}&status=paid`
-      : `${base}/failed?uuid=${orderId}&status=failed&code=${errorCode}&error=${encodeURIComponent(
-          errorMessage
-        )}`;
+      : `${base}/failed?uuid=${orderId}&status=failed&code=${errorCode}&error=${fullErrorJson}`;
 
     const html = `
       <html><head>
