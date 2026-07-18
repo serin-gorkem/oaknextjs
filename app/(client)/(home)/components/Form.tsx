@@ -56,7 +56,7 @@ export default function Form() {
       id: "ADB",
       name: "Izmir",
       query: "Izmir Airport, Turkey",
-    }
+    },
     {
       id: "BJV",
       name: "Milas–Bodrum",
