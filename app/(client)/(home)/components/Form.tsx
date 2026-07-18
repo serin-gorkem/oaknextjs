@@ -95,7 +95,7 @@ export default function Form() {
   const airportRadiusKm: Record<string, number> = {
     "Istanbul International Airport": 70,
     "Sabiha Gökçen International Airport": 70,
-    "Izmir Adnan Menderes Airport": 180,
+    "Izmir Airport": 180,
     "Milas–Bodrum Airport": 70,
     "Muğla Dalaman Airport": 70,
     "Antalya International Airport": 100,
